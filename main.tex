@@ -1,0 +1,240 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.7}
+\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{marginnote}
+\usepackage[makeroom]{cancel}
+
+\usepackage[
+    backend=biber,
+    style=alphabetic,
+    sorting=ynt
+]{biblatex}
+
+\addbibresource{mybib.bib} %Imports local bibliography file
+
+
+
+\title{Master Thesis}
+\author{Alberto Tiraboschi}
+%\date{ }
+
+\begin{document}
+
+\numberwithin{equation}{section}
+
+\maketitle
+\cleardoublepage
+
+\tableofcontents
+\cleardoublepage
+
+Expected 40 pgg everything included
+\section{Example citing}
+
+Using \texttt{biblatex} you can display bibliography divided into sections, depending of citation type. 
+Let's cite! Einstein's journal paper \cite{friis_m} and the Dirac's book \cite{dirac} are physics related items. Also Einstein \cite{einstein}. Next, \textit{The \LaTeX\ Companion} book \cite{latexcompanion}, the Donald Knuth's website \cite{knuthwebsite}, \textit{The Comprehensive Tex Archive Network} (CTAN) \cite{ctan} are \LaTeX\ related items; but the others Donald Knuth's items \cite{knuth-fa,knuth-acp} are dedicated to programming. 
+\clearpage
+
+\section{Abstract, possibili applicazioni, descrizione (1 pg)}
+\clearpage
+
+\section{Modello matematico della propagazione del segnale (2 pag)}
+\subsection{Path loss model}
+From \cite{friis_m}...
+
+\begin{equation}
+RSSI(d) = A-10\alpha\log\bigg(\frac{d}{d_0}\bigg)    
+\end{equation}
+
+where $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that 
+
+\begin{equation}
+RSSI(d) = A-10\alpha\log(d_0)    
+\end{equation}
+$\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles).
+\clearpage
+
+
+\section{Alterazioni della misura dovute all'ambiente (3 pag)}
+\subsection{Descrizione}
+\subsection{Analisi probailistica degli algoritmi errore uniforme}
+https://github.com/pspachos/RSSI-Dataset\\
+$https://www.jmp.com/en_us/statistics-knowledge-portal/chi-square-test/chi-square-goodness-of-fit-test.html$
+
+\clearpage
+
+
+
+\section{Algoritmi (15 pag)}
+scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche, commenti e opinioni.
+\subsection{General overview and recurring terms}
+We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node.
+\subsection{Recurring terms}
+We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
+
+\subsection{Linear methods}
+\subsubsection{Trilateration}
+
+  \begin{center}
+  \textbf{Need to know:}
+  \begin{itemize}
+    \centering
+    \item $A$
+    \item $\alpha$
+  \end{itemize}
+  \end{center}
+%\textbf{Description}\\
+The trilateration algorithm works as follow. Since we know the propagation model (eqn ??), the current position, $A$ and $\alpha$ we can invert the formula and obtain
+\begin{equation}
+    d_i=\sqrt{(x_t-x_i)^2+(y_t-y_i)^2}=10^{\frac{A-rssi_i}{10\alpha}}    
+\end{equation}
+therefore, the target position can be on a circle of radius $d_i$ centered at $(x_i,y_i)$. 
+To estimate the target point we need two additional circles. The result then is obtained by the intersection of all the three.
+\begin{center}
+\scalebox{1}{
+\begin{tikzpicture}
+    \draw[very thin,color=gray] (-4,-4) grid (4,4);
+    \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+    \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+    \draw[color=red] (-2.4,2) circle (1.5);
+        \draw (-2.4,2) node {$\bullet$};
+        \node[anchor=north west] at (-2.4,2) {$A$};
+        
+    \draw[color=green] (-0.5,1.5) circle (1);
+        \draw (-0.5,1.5) node {$\bullet$};
+        \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+    \draw[color=blue] (-1,0) circle (1); %2-2sqrt(3)
+        \draw (-1,0) node {$\bullet$};
+        \node[anchor=north west] at (-1,0) {$C$};
+        
+    \draw (-1.35,0.95) node {$\bullet$};
+    \node[anchor=north west] at (-1.2,1) {$D$};   
+\end{tikzpicture}
+}
+\end{center}
+However this basic version has many drawbacks. The most important to note is the effect of the noise. Suppose for example to repeat the experiment in a noisy environment, and to obtain a new outcome as in fig ??
+\begin{figure}
+\centering
+\scalebox{1}{
+\begin{tikzpicture}
+    \draw[very thin,color=gray] (-4,-4) grid (4,4);
+    \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+    \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+    \draw[color=red] (-2.4,2) circle (1);
+        \draw (-2.4,2) node {$\bullet$};
+        \node[anchor=north west] at (-2.4,2) {$A$};
+        
+    \draw[color=green] (-0.5,1.5) circle (0.7);
+        \draw (-0.5,1.5) node {$\bullet$};
+        \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+    \draw[color=blue] (-1,0) circle (0.6); %2-2sqrt(3)
+        \draw (-1,0) node {$\bullet$};
+        \node[anchor=north west] at (-1,0) {$C$};
+\end{tikzpicture}}
+\caption{M1} \label{fig:M1}
+\end{figure}
+Here there are no intersections, therefore the algorithm would cause a runtime error, and give no results. This problem is overcome by other algorithms, shown later in ?? and ??. Another important drawback is the low number of measurements needed. Indeed, an algorithm that takes few measures is attractive, but the noise cause a not negligible error in the estimated position, that reduces as the number of samples fed to the algorithm increases.
+
+\subsubsection{Min-max Method (intersection of rectangles)}
+After deriving the distance as shown in ?? of each anchor node, 
+\clearpage
+\subsubsection{pag 80 book}
+\subsubsection{line passing between circles pag 385-386 book}
+\subsubsection{NLS to LLS transformation pag 410 book}
+\subsubsection{WLLS pag 87 book}
+
+\clearpage
+
+\subsection{Nonlinear methods}
+\subsubsection{Multilateration}
+If you assume to know $A$ then good results with GN method...\\
+This algorithm is the generalization of the trilateration method, and is known as multilateration. 
+This method can provide two main benefits over the classic trilateration:
+\begin{itemize}
+    \item Always give a result
+    \item The result is made on more observation than the trilateration
+\end{itemize}
+The first point can be explained as follows:
+We start by measuring the rssi value in each position.This measurement can be fitted to the model of $RSSI$ propagation. Assuming that the exact distribution follows 
+\begin{equation}
+rssi(x,y)=A^*-10\alpha^*\log_{10}\big(\sqrt{(x_t^*-x)^2+(y_t^*-y)^2}\big)    
+\end{equation}
+with $A^*,\alpha^*,x^*_t,y^*_t$ unknown, we can write a performance index $J$
+\begin{equation}
+    J(A,n,x_t,y_t)=\sum_{i=1}^n\bigg(rssi_i-A+10\alpha\log_{10}\big(\sqrt{(x_i-x_t)^2+(y_i-y_t)^2}\big)\bigg)
+\end{equation}
+and then choosing 
+\begin{equation}
+\Bar{x_t}, \Bar{y_t}=\min_{A,\alpha,x_t,y_t}J(A,\alpha,x_t,y_t)
+\end{equation}
+
+\clearpage
+
+\section{Probabilistic approaches}
+\begin{itemize}
+    \item Maximum Likelihood with covariance weights (improved NLS with the covariance matrix)
+    \item Generation of lognormal distribution according to sampled measurements
+\end{itemize}
+\clearpage
+
+\section{Statistical supervised Learning techniques} 
+pag 414 415 book	
+\begin{itemize}
+    \item M1
+    \item M2
+\end{itemize}
+\clearpage
+
+\section{Others maybe}
+\begin{itemize}
+    \item Centroid Algorithm
+    \item DV-Hop Algorithm
+    \item Fingerprinting
+    \item AmorphousAlgorithm
+    \item DV-HopMax Algorithm
+\end{itemize}
+
+\clearpage
+
+
+
+
+
+\section{Conclusioni (1 pag)}
+
+
+
+
+
+
+
+
+
+\clearpage
+\printbibliography[
+heading=bibintoc,
+title={Whole bibliography}
+]
+%Prints the entire bibliography with the title "Whole bibliography"
+
+\clearpage
+
+%Filters bibliography
+\printbibliography[heading=subbibintoc,type=article,title={Articles only}]
+\printbibliography[type=book,title={Books only}]
+\printbibliography[keyword={physics},title={Physics-related only}]
+\printbibliography[keyword={latex},title={\LaTeX-related only}]
+
+\end{document}
