@@ -122,7 +122,6 @@ To estimate the target point we need two additional circles. The result then is 
 \end{tikzpicture}
 }
 \end{center}
-However this basic version has many drawbacks. The most important to note is the effect of the noise. Suppose for example to repeat the experiment in a noisy environment, and to obtain a new outcome as in fig ??
 \begin{figure}
 \centering
 \scalebox{1}{
@@ -143,8 +142,11 @@ However this basic version has many drawbacks. The most important to note is the
         \draw (-1,0) node {$\bullet$};
         \node[anchor=north west] at (-1,0) {$C$};
 \end{tikzpicture}}
-\caption{M1} \label{fig:M1}
+\caption{trilKO} \label{fig:trilKO}
 \end{figure}
+
+However this basic version has many drawbacks. The most important to note is the effect of the noise. Suppose for example to repeat the experiment in a noisy environment, and to obtain a new outcome as in Fig. \ref{fig:trilKO}.
+
 Here there are no intersections, therefore the algorithm would cause a runtime error, and give no results. This problem is overcome by other algorithms, shown later in ?? and ??. Another important drawback is the low number of measurements needed. Indeed, an algorithm that takes few measures is attractive, but the noise cause a not negligible error in the estimated position, that reduces as the number of samples fed to the algorithm increases.
 
 \subsubsection{Min-max Method (intersection of rectangles)}
