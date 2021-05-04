@@ -81,6 +81,7 @@ scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche
 We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node.
 \section{Recurring terms}
 We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
+\clearpage
 
 \section{Linear methods}
 \subsection{Linear Trilateration}
@@ -310,7 +311,7 @@ the target position can be finally obtained as
 \clearpage
 
 
-\subsection{WLLS pag 87 book}
+\subsection{WLLS pag 87 book (si puo omettere)}
 \clearpage
 
 
@@ -438,7 +439,7 @@ $$\mathbf{b}=\begin{bmatrix}
 \vdots\\
 (x^2_n+y^2_n)-(x_{n-1}^2+y^2_{n-1})-(d_n^2-d_{n-1}^2)\\
 \end{bmatrix}$$
-Highly resistant to noise. Always give a result. Quick.
+Highly resistant to noise. Always gives a result. Fast.
 \clearpage
 
 \section{Nonlinear methods}
@@ -447,7 +448,7 @@ If you assume to know $A$ then good results with GN method...\\
 This algorithm is the generalization of the trilateration method, and is known as multilateration. 
 This method can provide two main benefits over the classic trilateration:
 \begin{itemize}
-    \item Always give a result
+    \item Always exists a solution (the algorithm may not be able to find it though)
     \item The result is made on more observation than the trilateration
 \end{itemize}
 The first point can be explained as follows:
