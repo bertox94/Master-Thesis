@@ -202,7 +202,7 @@ From [handbook of position location zekavat]. Consider this slightly different m
 \begin{equation}
     RSS_i=-\ln{d_i^{2\frac{\alpha}{2\ln{10}}}}+n_{RSS,i}
 \end{equation}
-where $\ln$ is the natural logarithm (correct with the base ten the next steps), $n_{RSS,i}$ is the noise, represented as a gaussian random variable with mean $\mu$ and variance $\sigma^2$. Note that $RSS_i=RSSI_i-A$. By taking the inverse of ?? we have 
+where $\ln(\bullet)$ is the natural logarithm (correct with the base ten the next steps), $n_{RSS,i}$ is the noise, represented as a gaussian random variable with mean $\mu$ and variance $\sigma^2$. Note that $RSS_i=RSSI_i-A$. By taking the inverse of ?? we have 
 \begin{equation}
     e^{RSS_i}=e^{-\ln\big(d_i^{2\frac{\alpha}{2}}\big)+n_{RSS,i}}
 \end{equation}
@@ -221,17 +221,16 @@ where $\ln$ is the natural logarithm (correct with the base ten the next steps),
 \begin{equation}
     e^{-2\frac{RSS_i}{\alpha}}=d_i^2e^{-2\frac{n_{RSS,i}}{\alpha}}
 \end{equation}
-From \cite{Beran2011} (??spiega tutto il passaggio dai momenti alla media e varianza con dmostrazione...).  Thus if $n\sim\mathcal{N}(\mu,\sigma^2)$ and $c$ a constant then
+From \cite{Beran2011} (??spiega tutto il passaggio dai momenti alla media e varianza con dmostrazione...).  Thus if $n\sim\mathcal{N}(\mu,\sigma^2)$ and $k$ a constant then (lognormal distirbution, see wiki and Lognormal Distributions: Theory and Applications Crow., Shimizu, Kunio)
+If $n\sim \mathcal{N}(\mu,\sigma^2)$ then $u=e^n$ is lognormal distributed with mean and variance
 \begin{equation}
     E[e^n]=e^{\mu+\frac{\sigma^2}{2}}
 \end{equation}
 \begin{equation}
-    E[e^{cn}]=??
-\end{equation}
-\begin{equation}
 Var[e^n]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}    
 \end{equation}
-therefore 
+thus
+if $n\sim\mathcal{N}(\mu,\sigma^2)$, then $u=an+b\sim \mathcal{N}(a\mu+b,a^2\sigma^2)$, therefore 
 \begin{equation}
 E\bigg[e^{-2\frac{RSS_i}{\alpha}}\bigg]=d_i^2e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
 \end{equation}
@@ -464,7 +463,7 @@ with $A^*,\alpha^*,x^*_t,y^*_t$ unknown, we can write a performance index $J$
 \end{equation}
 and then choosing 
 \begin{equation}
-\Bar{x_t}, \Bar{y_t}=\min_{A,\alpha,x_t,y_t}J(A,\alpha,x_t,y_t)
+\Bar{x_t}, \Bar{y_t}=\arg \min_{A,\alpha,x_t,y_t}J(A,\alpha,x_t,y_t)
 \end{equation}
 \clearpage
 
