@@ -199,9 +199,9 @@ does it always converge? $x_max$ is always greater than $x_min$?
   \end{center}
 From [handbook of position location zekavat]. Consider this slightly different model, obtained by the canonical one as ??...
 \begin{equation}
-    RSS_i=-\ln{d_i^{2\frac{\alpha}{2}}}+n_{RSS,i}
+    RSS_i=-\ln{d_i^{2\frac{\alpha}{2\ln{10}}}}+n_{RSS,i}
 \end{equation}
-where $\ln$ is the natural logarithm, $n_{RSS,i}$ is the noise, represented as a gaussian random variable with mean $\mu$ and variance $\sigma^2$. Note that $RSS_i=RSSI_i-A$. By taking the inverse of ?? we have 
+where $\ln$ is the natural logarithm (correct with the base ten the next steps), $n_{RSS,i}$ is the noise, represented as a gaussian random variable with mean $\mu$ and variance $\sigma^2$. Note that $RSS_i=RSSI_i-A$. By taking the inverse of ?? we have 
 \begin{equation}
     e^{RSS_i}=e^{-\ln\big(d_i^{2\frac{\alpha}{2}}\big)+n_{RSS,i}}
 \end{equation}
@@ -307,8 +307,13 @@ the target position can be finally obtained as
     [\hat{\theta}]_2
 \end{bmatrix}
 \end{equation}
-
 \clearpage
+
+
+\subsection{WLLS pag 87 book}
+\clearpage
+
+
 \subsection{NL to Linear transformation pag 410 book}
   \begin{center}
   \textbf{Assume to know:}
@@ -391,7 +396,6 @@ then the solution can be computed with the usual Linear Least Square procedure o
 
 \clearpage
 \subsection{line passing between circles pag 385-386 book}
-\subsection{WLLS pag 87 book}
 
 \clearpage
 
