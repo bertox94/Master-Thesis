@@ -80,17 +80,10 @@ scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche
 \section{General overview and recurring terms}
 We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
 \section{Classification}
-from \cite{10.5555/2161958} as an idea
-\begin{itemize}
-    \item Range free (whether or not it is in trasmission range) vs range based
-    \item Centralized versus Distributed Methods
-    \item Probabilistic versus Deterministic Methods
-    \item Model-Based versus Fingerprinting Methods
-\end{itemize}
+
 \clearpage
 
-\section{Linear methods}
-\subsection{Linear Trilateration}
+\section{210}
 
   \begin{center}
   \textbf{Assume to know:}
@@ -159,7 +152,7 @@ However, this algorithm has many drawbacks. The most important to note is the ef
 Here there are no intersections, therefore the basic version of this algorithm (without any software level exception catching) would cause a runtime error, and give no results. This problem is overcome by other algorithms, shown later in ?? and ??. Another important drawback is the low number of measurements needed. Indeed, an algorithm that takes few measures is attractive, but the noise cause a not negligible error in the estimated position, that reduces as the number of samples fed to the algorithm increases.
 \clearpage
 
-\subsection{Min-max method (intersection of rectangles)}
+\section{151}
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
@@ -194,7 +187,7 @@ The final location will be estimated as the center of this rectangle, as follows
 does it always converge? $x_max$ is always greater than $x_min$?
 \clearpage
 
-\subsection{Linear estimator pag 80 book}
+\section{881}
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
@@ -316,12 +309,12 @@ the target position can be finally obtained as
 \clearpage
 
 
-\subsection{WLLS pag 87 book (si puo omettere)}
+\section{270}
 The variance is estimated from the previous ??, then we can introduce the weighting matrix as $diag(estimated var1, estimated var 2,...)^{-1}$ BLUE (SEE PAG 87)
 \clearpage
 
 
-\subsection{Distance-based linearization}
+\subsection{510}
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
@@ -401,7 +394,7 @@ Also valid for non RSSI based localization
 \clearpage
 
 
-\subsection{Linear Multilateration}
+\section{858}
 Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
@@ -450,8 +443,7 @@ $$\mathbf{b}=\begin{bmatrix}
 Highly resistant to noise. Always gives a result. Fast.
 \clearpage
 
-\section{Nonlinear methods}
-\subsection{Nonlinear Multilateration}
+\section{435}
 If you assume to know $A$ then good results with GN method...\\
 This algorithm is the generalization of the trilateration method, and is known as multilateration. 
 This method can provide two main benefits over the classic trilateration:
@@ -479,8 +471,7 @@ and then choosing
 
 \clearpage
 
-\section{Probabilistic approaches}
-\subsection{Maximum Likelihood with covariance weights (improved NLS with the covariance matrix)}
+\section{486}
 When the error follows a zero mean gaussian distribution, this method is a weighted version of the Nonlinear Multilateration method. 
 \begin{equation}
     \alpha'=\frac{\alpha}{\ln(10)}
@@ -504,31 +495,22 @@ For $n$ indepentent and (identically? mean is the value read which changes) dist
     \pi(\mathbf{r}_{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}|\mathbf{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)\mathbf{\Sigma}^{-1}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)}
 \end{equation}
 For the Maximum Likelihood method we need to find the minimum of ??. To facilitate it we consider the log. The first part is independent of x, so we need only to maxmize the second part. We can now remove the logarithm because it is a monotonic increasing function, then we oibtain the previous forumula to be minimized. As you can see when $\mathbf{\Sigma}=diag{(\sigma_1,...)}$. The solution can be found with Newton raphson, GN...
-
 \clearpage
 
-%\section{Statistical supervised Learning techniques} 
-%pag 414 415 book	
-%\begin{itemize}
-%    \item M1
-%    \item M2
-%\end{itemize}
-%\clearpage
 
-\section{Others maybe}
 From \cite{KAUR201982} and also each bibliography
-\subsection{Centroid Algorithm}
+\section{Centroid algorithm 677}
 The algorithm works in two phases: the first phase is that each node bradcast its location to all the nearby device with RSSI above the threshold (a computed RSSI value). After that each node compute the centroid as average of all the position received. Low accuracy, may be difficult to determine threshold value. many unknown nodes, depends on the physical location of the anchor nodes, assume some regularity.
-\subsection{DV-Hop Algorithm}
+\section{DV-Hop Algorithm 422}
 Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
-\subsection{Weighted centroid algorithm}
+\section{Weighted centroid algorithm 306}
 just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average
-\subsection{little improvement IWCL}
+\section{little improvement IWCL 117}
 $\bigg(\frac{1}{h_{u,i}}\bigg)^{\frac{r}{k}}$
 where k is the average of all hop size
-\subsection{EWCL}
+\section{EWCL 777}
 from article cited, also results
-\subsection{Fingerprinting}
+\section{Fingerprinting 437}
 from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k 
 
 \clearpage
