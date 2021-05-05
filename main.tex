@@ -36,20 +36,23 @@
 \tableofcontents
 \cleardoublepage
 
-\chapter{Example citing}
-Expected 40 pgg everything included
-
-Using \texttt{biblatex} you can display bibliography divided into sections, depending of citation type. 
-Let's cite! Einstein's journal paper \cite{friis_m} and the Dirac's book \cite{dirac} are physics related items. Also Einstein \cite{einstein}. Next, \textit{The \LaTeX\ Companion} book \cite{latexcompanion}, the Donald Knuth's website \cite{knuthwebsite}, \textit{The Comprehensive Tex Archive Network} (CTAN) \cite{ctan} are \LaTeX\ related items; but the others Donald Knuth's items \cite{knuth-fa,knuth-acp} are dedicated to programming. 
-\clearpage
-
 \chapter{Abstract, possibili applicazioni, descrizione (1 pg)}
 \clearpage
 
 \chapter{Modello matematico della propagazione del segnale (2 pag)}
 \section{Path loss model}
-From \cite{friis_m}...
-
+From \cite{330153} and more recently \cite{10.5555/2161958} or \cite{330153,10.5555/2161958}.
+\begin{equation}
+    P_{r,i}=K_iP_td_i^{-\alpha}
+\end{equation}
+Therefore the log-normal path loss model can be expressed as 
+\begin{equation}
+    \ln(P_{r,l})=ln(K_i)+ln(P_t)-\alpha\ln(d_i)+n_{RSS}
+\end{equation}
+K antenna gain, antenna height, known by the manufacturer alpha is path loss constant, noe we define
+\begin{equation}
+    r_{RSS}=\ln(P_{r,l}-ln...)=-\alpha...
+\end{equation}
 \begin{equation}
 RSSI(d) = A-10\alpha\log\bigg(\frac{d}{d_0}\bigg)    
 \end{equation}
@@ -75,9 +78,15 @@ IQR, Z score
 \chapter{Algoritmi (16 pag)}
 scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche, commenti e opinioni.
 \section{General overview and recurring terms}
-We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node.
-\section{Recurring terms}
-We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
+We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
+\section{Classification}
+from \cite{10.5555/2161958} as an idea
+\begin{itemize}
+    \item Range free (whether or not it is in trasmission range) vs range based
+    \item Centralized versus Distributed Methods
+    \item Probabilistic versus Deterministic Methods
+    \item Model-Based versus Fingerprinting Methods
+\end{itemize}
 \clearpage
 
 \section{Linear methods}
@@ -308,7 +317,7 @@ the target position can be finally obtained as
 
 
 \subsection{WLLS pag 87 book (si puo omettere)}
-The variance is estimated from the previous ??, then we can introduce the weighting matrix as $diag(estimated var1, estimated var 2,...)^{-1}$
+The variance is estimated from the previous ??, then we can introduce the weighting matrix as $diag(estimated var1, estimated var 2,...)^{-1}$ BLUE (SEE PAG 87)
 \clearpage
 
 
@@ -508,18 +517,18 @@ For the Maximum Likelihood method we need to find the minimum of ??. To facilita
 
 \section{Others maybe}
 From \cite{KAUR201982} and also each bibliography
-\section{Centroid Algorithm}
+\subsection{Centroid Algorithm}
 The algorithm works in two phases: the first phase is that each node bradcast its location to all the nearby device with RSSI above the threshold (a computed RSSI value). After that each node compute the centroid as average of all the position received. Low accuracy, may be difficult to determine threshold value. many unknown nodes, depends on the physical location of the anchor nodes, assume some regularity.
-\section{DV-Hop Algorithm}
+\subsection{DV-Hop Algorithm}
 Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
-\section{Weighted centroid algorithm}
+\subsection{Weighted centroid algorithm}
 just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average
-\section{little improvement IWCL}
+\subsection{little improvement IWCL}
 $\bigg(\frac{1}{h_{u,i}}\bigg)^{\frac{r}{k}}$
 where k is the average of all hop size
-\section{EWCL}
+\subsection{EWCL}
 from article cited, also results
-\section{Fingerprinting}
+\subsection{Fingerprinting}
 from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k 
 
 \clearpage
