@@ -195,31 +195,31 @@ does it always converge? $x_max$ is always greater than $x_min$?
     \centering
     \item $A$
     \item $\alpha$
-    \item $\forall i , 1\leq i\leq n\quad \sigma_{RSS,i}$
+    \item error distribution ($\mu, \sigma^2$)
   \end{itemize}
   \end{center}
 From [handbook of position location zekavat]. Consider this slightly different model, obtained by the canonical one as ??...
 \begin{equation}
-    RSS_i=-\ln{d_i^{2\frac{\alpha}{2\ln{10}}}}+n_{RSS,i}
+    RSS_i=-\ln{d_i^{2\frac{\alpha}{2\ln(10)}}}+n_{RSS,i}
 \end{equation}
 where $\ln(\bullet)$ is the natural logarithm (correct with the base ten the next steps), $n_{RSS,i}$ is the noise, represented as a gaussian random variable with mean $\mu$ and variance $\sigma^2$. Note that $RSS_i=RSSI_i-A$. By taking the inverse of ?? we have 
 \begin{equation}
-    e^{RSS_i}=e^{-\ln\big(d_i^{2\frac{\alpha}{2}}\big)+n_{RSS,i}}
+    e^{RSS_i}=e^{-\ln\big(d_i^{2\frac{\alpha}{2\ln(10)}}\big)+n_{RSS,i}}
 \end{equation}
 \begin{equation}
-    \bigg(e^{RSS_i}\bigg)^{-1}=\bigg(e^{-\ln\big(d_i^{2\frac{\alpha}{2}}\big)+n_{RSS,i}}\bigg)^{-1}
+    \bigg(e^{RSS_i}\bigg)^{-1}=\bigg(e^{-\ln\big(d_i^{2\frac{\alpha}{2\ln(10)}}\big)+n_{RSS,i}}\bigg)^{-1}
 \end{equation}
 \begin{equation}
-    e^{-RSS_i}=e^{\ln\big(d_i^{2\frac{\alpha}{2}}\big)-n_{RSS,i}}
+    e^{-RSS_i}=e^{\ln\big(d_i^{2\frac{\alpha}{2\ln(10)}}\big)-n_{RSS,i}}
 \end{equation}
 \begin{equation}
-    e^{-RSS_i}=d_i^{2\frac{\alpha}{2}}e^{-n_{RSS,i}}
+    e^{-RSS_i}=d_i^{2\frac{\alpha}{2\ln(10)}}e^{-n_{RSS,i}}
 \end{equation}
 \begin{equation}
-    \bigg(e^{-RSS_i}\bigg)^{\frac{2}{\alpha}}=\bigg(d_i^{2\frac{\alpha}{2}}e^{-n_{RSS,i}}\bigg)^{\frac{2}{\alpha}}
+    \bigg(e^{-RSS_i}\bigg)^{\frac{2\ln(10)}{\alpha}}=\bigg(d_i^{2\frac{\alpha}{2\ln(10)}}e^{-n_{RSS,i}}\bigg)^{\frac{2\ln(10)}{\alpha}}
 \end{equation}
 \begin{equation}
-    e^{-2\frac{RSS_i}{\alpha}}=d_i^2e^{-2\frac{n_{RSS,i}}{\alpha}}
+    e^{-2\ln(10)\frac{RSS_i}{\alpha}}=d_i^2e^{-2\ln(10)\frac{n_{RSS,i}}{\alpha}}
 \end{equation}
 From \cite{Beran2011} (??spiega tutto il passaggio dai momenti alla media e varianza con dmostrazione...).  Thus if $n\sim\mathcal{N}(\mu,\sigma^2)$ and $k$ a constant then (lognormal distirbution, see wiki and Lognormal Distributions: Theory and Applications Crow., Shimizu, Kunio)
 If $n\sim \mathcal{N}(\mu,\sigma^2)$ then $u=e^n$ is lognormal distributed with mean and variance
@@ -311,6 +311,7 @@ the target position can be finally obtained as
 
 
 \subsection{WLLS pag 87 book (si puo omettere)}
+The variance is estimated from the previous ??, then we can introduce the weighting matrix as $diag(estimated var1, estimated var 2,...)^{-1}$
 \clearpage
 
 
@@ -467,16 +468,37 @@ and then choosing
 \end{equation}
 \clearpage
 
-\subsection{ML page 75}
+%\subsection{ML page 75}
 
 
 \clearpage
 
 \section{Probabilistic approaches}
-\begin{itemize}
-    \item Maximum Likelihood with covariance weights (improved NLS with the covariance matrix)
-    \item Generation of lognormal distribution according to sampled measurements
-\end{itemize}
+\subsection{Maximum Likelihood with covariance weights (improved NLS with the covariance matrix)}
+When the error follows a zero mean gaussian distribution, this method is a weighted version of the Nonlinear Multilateration method. 
+\begin{equation}
+    \alpha'=\frac{\alpha}{\ln(10)}
+\end{equation}
+Each anchor $i$ has a distribution like $\mathcal{N}(-\alpha'\ln(d_i),\sigma^2_i)$
+A look more closely related to the probability point of view is
+\begin{equation}
+    \pi(RSS_i)=\frac{1}{\sqrt{2\pi\sigma^2_{RSS_i}}}e^{-\frac{1}{2}\frac{(RSS_i+\alpha\ln(d_i))^2}{\sigma^2_{RSS_i}}}
+\end{equation}
+$\mathbf{\Sigma}$ is diagonal for independent variables
+$$\mathbf{f}(\mathbf{x})=-\alpha'\begin{bmatrix}
+\ln(\sqrt{(x-x_1)^2+(y-y_1)^2})\\
+\vdots\\
+\ln(\sqrt{(x-x_n)^2+(y-y_n)^2})
+\end{bmatrix}$$
+For $n$ indepentent and (identically? mean is the value read which changes) distributed, the joint probabilty distribution is the product
+\begin{equation}
+    \pi(\mathbf{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_{RSS_i}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(RSS_i+\alpha\ln(d_i))^2}{\sigma^2_{RSS_i}}}
+\end{equation}
+\begin{equation}
+    \pi(\mathbf{r}_{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}|\mathbf{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)\mathbf{\Sigma}^{-1}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)}
+\end{equation}
+For the Maximum Likelihood method we need to find the minimum of ??. To facilitate it we consider the log. The first part is independent of x, so we need only to maxmize the second part. We can now remove the logarithm because it is a monotonic increasing function, then we oibtain the previous forumula to be minimized. As you can see when $\mathbf{\Sigma}=diag{(\sigma_1,...)}$. The solution can be found with Newton raphson, GN...
+
 \clearpage
 
 %\section{Statistical supervised Learning techniques} 
@@ -488,13 +510,20 @@ and then choosing
 %\clearpage
 
 \section{Others maybe}
-\begin{itemize}
-    \item Centroid Algorithm
-    \item DV-Hop Algorithm
-    \item Fingerprinting
-    \item AmorphousAlgorithm
-    \item DV-HopMax Algorithm
-\end{itemize}
+From \cite{KAUR201982} and also each bibliography
+\section{Centroid Algorithm}
+The algorithm works in two phases: the first phase is that each node bradcast its location to all the nearby device with RSSI above the threshold (a computed RSSI value). After that each node compute the centroid as average of all the position received. Low accuracy, may be difficult to determine threshold value. many unknown nodes, depends on the physical location of the anchor nodes, assume some regularity.
+\section{DV-Hop Algorithm}
+Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
+\section{Weighted centroid algorithm}
+just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average
+\section{little improvement IWCL}
+$\bigg(\frac{1}{h_{u,i}}\bigg)^{\frac{r}{k}}$
+where k is the average of all hop size
+\section{EWCL}
+from article cited, also results
+\section{Fingerprinting}
+from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k 
 
 \clearpage
 
