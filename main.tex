@@ -1,4 +1,4 @@
-\documentclass[12pt]{report}
+\documentclass[12pt,twoside]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{csquotes}
@@ -8,7 +8,8 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.7}
-\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
+%\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{marginnote}
 \usepackage[makeroom]{cancel}
 \usepackage[ruled,vlined]{algorithm2e}
@@ -35,10 +36,13 @@
 \numberwithin{equation}{section}
 
 \maketitle
-\cleardoublepage
-
+\clearpage
+\thispagestyle{empty}
 \tableofcontents
-\cleardoublepage
+\thispagestyle{empty}
+\clearpage
+
+\setcounter{page}{1}
 
 \chapter{Abstract, possibili applicazioni, descrizione (1 pg)}
 \clearpage
@@ -47,18 +51,18 @@
 \section{Path loss model}
 The log-normal propagation model, see \cite{MUNOZ200923}, is
 \begin{equation}
-r_{RSSI}(d) = A-10\alpha\log_{10}\bigg(\frac{d}{d_0}\bigg) + \xi, \quad d>d_0
+\upsilon(d) = A-10\alpha\log_{10}\bigg(\frac{d}{d_0}\bigg) + \xi, \quad d>d_0
 \end{equation}
 where $\xi$ is a zero-mean gaussian variable that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify the ?? as
 \begin{equation}
-r_{RSSI}(d) = A-10\alpha\log_{10}(d) + \xi   
+\upsilon(d) = A-10\alpha\log_{10}(d) + \xi   
 \end{equation}
-In some algorithms that don't not require a high precision the noise is not taken into account. Instead for some other algorithms it is a good idea to rewrite the model as follows, by letting $\alpha'=10\alpha/\ln(10)$:
+In some algorithms that don't not require a high precision the noise is not taken into account. Instead for some other algorithms it is a good idea to rewrite the model as follows, by letting $\beta=10\alpha/\ln(10)$:
 \begin{equation}
-r_{RSSI}(d) = A-\alpha'\ln(d) + \xi
+\upsilon(d) = A-\beta\ln(d) + \xi
 \end{equation} where $\ln(\bullet)$ is the natural logarithm, and then deriving a slightly different model
 \begin{equation}
-r_{RSS}(d) = r_{RSSI}(d)-A= -\alpha'\ln(d) + \xi
+\nu(d) = r_{RSSI}(d)-A= -\beta\ln(d) + \xi
 \end{equation}
 \clearpage
 
@@ -74,6 +78,7 @@ IQR, Z score
 \chapter{Algoritmi per la stima di alcuni parametri}
 \cite{MUNOZ200923}
 \section{Estimation of path loss index}
+\clearpage
 \section{Estimation of $\sigma^2$}
 \clearpage
 
@@ -82,8 +87,8 @@ scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche
 \section{General overview and recurring terms}
 We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
 \section{Classification}
-\clearpage
 
+\clearpage
 \section{210}
 
   \begin{center}
@@ -213,7 +218,6 @@ The result is now given as an area that corresponds to the intersection of all t
     \label{fig:annulus}
 \end{figure}
 One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
-
 \clearpage
 
 \section{151}
@@ -293,67 +297,79 @@ does it always converge? $x_max$ is always greater than $x_min$?
     \item $\xi_i,\forall i$
   \end{itemize}
   \end{center}
-In \cite{10.5555/2161958} you can find this version but using a slighty different model. Rewrite the ?? as follows 
+In \cite{10.5555/2161958} you can find this version but using a slighty different model.
+Consider the model ?? below reported
 \begin{equation}
-    r_{RSS,i}=-\ln\big(d_i^{2\frac{\alpha'}{2}}\big)+\xi_i
+    \nu_i=-\beta\ln(d_i)+\xi_i
 \end{equation}
-By exponentiating both members of ?? we have 
+After some time, for each anchor node we will have a list of measurements, drawn from the random variable 
 \begin{equation}
-    e^{r_{RSS,i}}=e^{-\ln\big(d_i^{2\frac{\alpha'}{2}}\big)+\xi_i}
+N_i=-\beta\ln(d_i)+\xi_i.
 \end{equation}
-\begin{equation}
-    \bigg(e^{r_{RSS,i}}\bigg)^{-1}=\bigg(e^{-\ln\big(d_i^{2\frac{\alpha'}{2}}\big)+\xi_i}\bigg)^{-1}
-\end{equation}
-\begin{equation}
-    e^{-r_{RSS,i}}=e^{\ln\big(d_i^{2\frac{\alpha'}{2}}\big)-\xi_i}
-\end{equation}
-\begin{equation}
-    e^{-r_{RSS,i}}=d_i^{2\frac{\alpha'}{2}}e^{-\xi_i}
-\end{equation}
-\begin{equation}
-    \bigg(e^{-r_{RSS,i}}\bigg)^{\frac{2}{\alpha'}}=\bigg(d_i^{2\frac{\alpha'}{2}}e^{-\xi_i}\bigg)^{\frac{2}{\alpha'}}
-\end{equation}
-\begin{equation}
-    e^{-\frac{2}{\alpha'}r_{RSS,i}}=d_i^2e^{-\frac{2}{\alpha'}\xi_i}
-\end{equation}
-Remind that $\xi_i$ is a zero-mean gaussian distribution. The exponentiation of a gaussian distribution is \cite{Beran2011} a log-normal distribution. In other words, given $X\sim \mathcal{N}(\mu,\sigma^2)$, then $Y=e^X\sim \text{Lognormal}(\mu,\sigma^2)$. The 
+Cite ross also here, only for $\mathcal{N}+a$, and remind $xi_i\sim\mathcal{N}(0,\sigma^2_i)$. To give an idea, each anchor node outputs data as a gaussian distribution shifted by the mean, so for the anchor node we have samples extracted from $\mathcal{N}(-\beta\ln(d_i), \sigma_i^2)$. Note that $\sigma_i$ is not necessarily contant, for all $i$.
 
-
-\cite{alma9926534668905776}
-
-
-
-
-The term $e^{-2/\alpha'\xi_i}$
-From  (??spiega tutto il passaggio dai momenti alla media e varianza con dmostrazione...).  Thus if $n\sim\mathcal{N}(\mu,\sigma^2)$ and $k$ a constant then (lognormal distirbution, see wiki and Lognormal Distributions: Theory and Applications Crow., Shimizu, Kunio)
-If $n\sim \mathcal{N}(\mu,\sigma^2)$ then $u=e^n$ is lognormal distributed with mean and variance
+Rewrite the ?? as follows 
 \begin{equation}
-    E[e^n]=e^{\mu+\frac{\sigma^2}{2}}
+    \nu_i=-\ln\big(d_i^{2\frac{\beta}{2}}\big)+\xi_i
+\end{equation}
+By exponentiating both members of ??(previous) we have 
+\begin{equation}
+    e^{\nu_i}=e^{-\ln\big(d_i^{2\frac{\beta}{2}}\big)+\xi_i}
 \end{equation}
 \begin{equation}
-Var[e^n]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}    
-\end{equation}
-thus
-if $n\sim\mathcal{N}(\mu,\sigma^2)$, then $u=an+b\sim \mathcal{N}(a\mu+b,a^2\sigma^2)$, therefore 
-\begin{equation}
-E\bigg[e^{-2\frac{r_{RSS,i}}{\alpha}}\bigg]=d_i^2e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+    \bigg(e^{\nu_i}\bigg)^{-1}=\bigg(e^{-\ln\big(d_i^{2\frac{\beta}{2}}\big)+\xi_i}\bigg)^{-1}
 \end{equation}
 \begin{equation}
-    Var\bigg[e^{-2\frac{r_{RSS,i}}{\alpha}}\bigg]=d_i^4e^{\frac{4\sigma_{r_{RSS,i}}^2}{\alpha^2}}\bigg(e^{\frac{4\sigma_{r_{RSS,i}}^2}{\alpha^2}}-1\bigg)
-\end{equation}
-As we can see from ??, $e^{-2\frac{r_{RSS,i}}{\alpha}}$ is a biased estimate of $d_i^2$, however we can remove its bias by dividing it by $e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}$. Therefore, an unbiased estimate of $d_i^2$ is 
-\begin{equation}
-    e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
-\end{equation}
-We want to use the above estimator obtained from the measurements to build a linear models in $\mathbf{x}$. Since the estimator is now unbiased we can write
-\begin{equation}
-    (x-x_i)^2+(y-y_i)^2=e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+    e^{-\nu_i}=e^{\ln\big(d_i^{2\frac{\beta}{2}}\big)-\xi_i}
 \end{equation}
 \begin{equation}
-    -2x_ix-2y_iy+x^2+y^2+x_i^2+y_i^2=e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+    e^{-\nu_i}=d_i^{2\frac{\beta}{2}}e^{-\xi_i}
 \end{equation}
 \begin{equation}
-    -2x_ix-2y_iy+x^2+y^2=e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}-x_i^2-y_i^2
+    \bigg(e^{-\nu_i}\bigg)^{\frac{2}{\beta}}=\bigg(d_i^{2\frac{\beta}{2}}e^{-\xi_i}\bigg)^{\frac{2}{\beta}}
+\end{equation}
+\begin{equation}
+    e^{-\frac{2}{\beta}\nu_i}=d_i^2e^{-\frac{2}{\beta}\xi_i}
+\end{equation}
+Remind that $\xi_i\sim \mathcal{N}(0,\sigma^2_i)$ is a zero-mean gaussian distribution. The exponentiation of a gaussian distribution is \cite{Beran2011} a log-normal distribution. In other words, given $X\sim \mathcal{N}(\mu,\sigma^2)$, then $Y=e^X\sim \text{Lognormal}(\mu,\sigma^2)$ with
+\begin{equation}
+    E[Y]=E\big[e^X\big]=e^{\mu+\frac{\sigma^2}{2}}
+\end{equation}
+\begin{equation}
+    Var[Y]=Var\big[e^X\big]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}
+\end{equation}
+From \cite{alma9926534668905776}, it is clear that if $a\in \mathbb{R}$ and $X\sim \mathcal{N}(\mu,\sigma^2)$ then
+\begin{equation}
+aX\sim \mathcal{N}(a\mu,a^2\sigma^2)    
+\end{equation}
+so in this case, 
+\begin{equation}
+    -\frac{2}{\beta}\xi_i\sim \mathcal{N}\bigg(0,\frac{4}{\beta^2}\sigma^2_i\bigg)
+\end{equation}
+From equations ?? and ?? (previous equation)
+\begin{equation}
+    E\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]=E\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]=d_i^2E\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]=d_i^2e^{\frac{2}{\beta^2}\sigma^2_i}
+\end{equation}
+\begin{equation}
+    Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]=Var\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]=d_i^4Var\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]=(e^{\frac{4}{\beta^2}\sigma^2}-1)e^{\frac{4}{\beta^2}\sigma^2}
+\end{equation}
+As we can see from ??, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since from ?? its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$. Therefore, an unbiased estimate of $d_i^2$ is 
+\begin{equation}
+    e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+\end{equation}
+We want to use the above estimator obtained from the measurements to build a linear models in $\mathbf{x}$. Since the estimator is now unbiased by writing 
+\begin{equation}
+    d_i^2=(x-x_i)^2+(y-y_i)^2
+\end{equation}
+we can write
+\begin{equation}
+    (x-x_i)^2+(y-y_i)^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+\end{equation}
+\begin{equation}
+    -2x_ix-2y_iy+x^2+y^2+x_i^2+y_i^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+\end{equation}
+\begin{equation}
+    -2x_ix-2y_iy+x^2+y^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}-x_i^2-y_i^2
 \end{equation}
 By calling $R^2=x^2+y^2$ we can write it in matrix form
 \begin{equation}
@@ -368,9 +384,9 @@ By calling $R^2=x^2+y^2$ we can write it in matrix form
         R^2
     \end{bmatrix} = 
     \begin{bmatrix}
-        e^{-2\frac{RSS_1}{\alpha}-2\frac{\sigma^2_{RSS,1}}{\alpha^2}} & -x_1^2 & -y_1^2\\
+       e^{-\frac{2}{\beta}\nu_1-\frac{2}{\beta^2}\sigma^2_1} & -x_1^2 & -y_1^2\\
         \vdots&\vdots&\vdots\\
-        e^{-2\frac{RSS_n}{\alpha}-2\frac{\sigma^2_{RSS,n}}{\alpha^2}} & -x_n^2 & -y_n^2\\
+        e^{-\frac{2}{\beta}\nu_n-\frac{2}{\beta^2}\sigma^2_n} & -x_n^2 & -y_n^2\\
     \end{bmatrix}
 \end{equation}
 with $$M=\begin{bmatrix}
@@ -384,19 +400,19 @@ $$\theta^* =     \begin{bmatrix}
         R^2
     \end{bmatrix}$$
 $$b=    \begin{bmatrix}
-        e^{-2\frac{RSS_1}{\alpha}-2\frac{\sigma^2_{RSS,1}}{\alpha^2}} & -x_1^2 & -y_1^2\\
+        e^{-\frac{2}{\beta}\nu_1-\frac{2}{\beta^2}\sigma^2_1} & -x_1^2 & -y_1^2\\
         \vdots&\vdots&\vdots\\
-        e^{-2\frac{RSS_n}{\alpha}-2\frac{\sigma^2_{RSS,n}}{\alpha^2}} & -x_n^2 & -y_n^2\\
+        e^{-\frac{2}{\beta}\nu_n-\frac{2}{\beta^2}\sigma^2_n} & -x_n^2 & -y_n^2\\
     \end{bmatrix}$$
 Now since $\theta^*$ is unknown we would like to choose $\theta\approx\theta^*$ to have 
 \begin{equation}
     M\theta-b\approx0
 \end{equation}
-One easy way is to find it is to seek the minimum of 
+One easy way is to seek the minimum of 
 \begin{equation}
     J(\theta)=(M\theta - b)^T(M\theta - b)
 \end{equation}
-We can fit this model with the Least Square Method, that for a linear model (which is the ours) has a known explicit solution (cite something here):
+We can fit this model with the Least Square Method, that for a linear model (which is the ours) has a known explicit solution \cite{10.5555/1557273,}:
 \begin{equation}
     \hat{\theta}=(M^TM)^{-1}M^Tb
 \end{equation}
@@ -415,8 +431,17 @@ the target position can be finally obtained as
 
 
 \section{270}
-The variance is estimated from the previous ??, then we can introduce the weighting matrix as $diag(estimated var1, estimated var 2,...)^{-1}$ BLUE (SEE PAG 87)
-\clearpage
+As we have seen in the case before we have used the statistics, to obtain an estimator for a given distibution. However we can still improve it by giving to each anchor node a weight, bound to the variance of the anchor node itself, in a way to give more importance to the nodes that produces a steadier output (low variance) and less importance to those nodes that produces more irregular values (high variance). To ease the computation we consider each anchor node to be independent from each other. It is important to note that this improvement affects only the LLS computation, and not the definition of the estimator. The choice of the symmetric weighting matrix $W$ will be done according to BLUE (Best Linear Unbiased Estimator) \cite{899498y4hd,10.5555/151045}.
+The new cost function will be
+\begin{equation}
+    J(\theta)=(M\theta-b)^TW(M\theta-b)
+\end{equation}
+\cite{5765553}.
+Following the LLS framework,
+\begin{equation}
+    \hat{\theta}=\arg \min_{\theta} J(\theta)=(\mathbf{M}^T\mathbf{WM})^{-1}\mathbf{M^TWb}
+\end{equation}
+rewrite better
 
 
 \subsection{510}
@@ -455,12 +480,37 @@ Consider
 \frac{1}{n}&\sum_{i=1}^nd_i^2=\\
 &=\frac{1}{n}\sum_{i=1}^n\big[(x_i-x)^2+(y_i-y)^2\big]\\
 &=\frac{1}{n}\sum_{i=1}^n(x_i-x)^2+\frac{1}{n}\sum_{i=1}^n(y_i-y)^2\\
-&=\frac{1}{n}\sum_{i=1}^n[x_1^2-2x_ix-x^2] + \frac{1}{n}\sum_{i=1}^n[y_1^2-2y_iy-y^2]\\
-&=\frac{1}{n}\sum_{i=1}^nx_1^2-2x\frac{1}{n}\sum_{i=1}^nx_i- x^2 + \frac{1}{n}\sum_{i=1}^ny_1^2-2y\frac{1}{n}\sum_{i=1}^ny_i- y^2
+&=\frac{1}{n}\sum_{i=1}^n[x_i^2-2x_ix+x^2] + \frac{1}{n}\sum_{i=1}^n[y_i^2-2y_iy+y^2]\\
+&=\frac{1}{n}\sum_{i=1}^n[x_i^2]-2x\frac{1}{n}\sum_{i=1}^n[x_i]+ x^2 + \frac{1}{n}\sum_{i=1}^n[y_i^2]-2y\frac{1}{n}\sum_{i=1}^n[y_i]+ y^2
 \end{align}
-By adding ?? to the right member of the previous set of equations and ?? to the left member we have:
-
-
+Frone one of the ?? it follows
+\begin{equation}
+x_i^2+x^2-2x_ix+y_i^2+y^2-2y_iy=d_i^2      
+\end{equation}
+\begin{equation}
+-x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy=-d_i^2      
+\end{equation}
+Now by adding ?? to ?? previous you have 
+\begin{equation}
+\begin{split}
+    \bigg(-x_i^2  + \frac{1}{n}\sum_{i=1}^n[x_i^2]\bigg)+
+    \bigg(-y_i^2+ \frac{1}{n}\sum_{i=1}^n[y_i^2]\bigg)+\\
+    +\bigg(2x_ix-2x\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
+    \bigg(2y_iy -2y\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)
+    =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
+\end{split}    
+\end{equation}
+and by rearranging some factors
+\begin{equation}
+\begin{split}
+    +2x\bigg(x_i-\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
+    2y\bigg(y_i -\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)\\
+    \bigg(-x_i^2  + \frac{1}{n}\sum_{i=1}^n[x_i^2]\bigg)+
+    \bigg(-y_i^2+ \frac{1}{n}\sum_{i=1}^n[y_i^2]\bigg)+
+    =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
+\end{split}    
+\end{equation}
+then the previous set of equations ?? becomes
 \begin{align}
 \begin{split} 
     \bigg(x_1-\frac{1}{n}&\sum_{i=1}^nx_i\bigg)x+\bigg(y_1-\frac{1}{n}\sum_{i=1}^ny_i\bigg)y\\
@@ -548,6 +598,7 @@ $$\mathbf{b}=\begin{bmatrix}
 Highly resistant to noise. Always gives a result. Fast.
 \clearpage
 
+
 \section{435}
 If you assume to know $A$ then good results with GN method...\\
 This algorithm is the generalization of the trilateration method, and is known as multilateration. 
@@ -571,54 +622,60 @@ and then choosing
 \end{equation}
 \clearpage
 
-%\subsection{ML page 75}
-
-
-\clearpage
 
 \section{486}
 When the error follows a zero mean gaussian distribution, this method is a weighted version of the Nonlinear Multilateration method. 
 \begin{equation}
-    \alpha'=\frac{\alpha}{\ln(10)}
+    \beta=\frac{\alpha}{\ln(10)}
 \end{equation}
-Each anchor $i$ has a distribution like $\mathcal{N}(-\alpha'\ln(d_i),\sigma^2_i)$
+Each anchor $i$ has a distribution like $\mathcal{N}(-\beta\ln(d_i),\sigma^2_i)$
 A look more closely related to the probability point of view is
 \begin{equation}
-    \pi(r_{RSS,i})=\frac{1}{\sqrt{2\pi\sigma^2_{r_{RSS,i}}}}e^{-\frac{1}{2}\frac{(r_{RSS,i}+\alpha\ln(d_i))^2}{\sigma^2_{r_{RSS,i}}}}
+    \pi(\nu_i)=\frac{1}{\sqrt{2\pi\sigma^2_{\nu_i}}}e^{-\frac{1}{2}\frac{(\nu_i+\alpha\ln(d_i))^2}{\sigma^2_{\nu_i}}}
 \end{equation}
 $\mathbf{\Sigma}$ is diagonal for independent variables
-$$\mathbf{f}(\mathbf{x})=-\alpha'\begin{bmatrix}
+$$\mathbf{f}(\mathbf{x})=-\beta\begin{bmatrix}
 \ln(\sqrt{(x-x_1)^2+(y-y_1)^2})\\
 \vdots\\
 \ln(\sqrt{(x-x_n)^2+(y-y_n)^2})
 \end{bmatrix}$$
 For $n$ indepentent and (identically? mean is the value read which changes) distributed, the joint probabilty distribution is the product
 \begin{equation}
-    \pi(\mathbf{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_{r_{RSS,i}}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(r_{RSS,i}+\alpha\ln(d_i))^2}{\sigma^2_{r_{RSS,i}}}}
+    \pi(\mathbf{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_{\nu_i}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(\nu_i+\alpha\ln(d_i))^2}{\sigma^2_{\nu_i}}}
 \end{equation}
 \begin{equation}
     \pi(\mathbf{r}_{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}|\mathbf{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)\mathbf{\Sigma}^{-1}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)}
 \end{equation}
 For the Maximum Likelihood method we need to find the minimum of ??. To facilitate it we consider the log. The first part is independent of x, so we need only to maxmize the second part. We can now remove the logarithm because it is a monotonic increasing function, then we oibtain the previous forumula to be minimized. As you can see when $\mathbf{\Sigma}=diag{(\sigma_1,...)}$. The solution can be found with Newton raphson, GN...
-\clearpage
 
 
 From \cite{KAUR201982} and also each bibliography
+\clearpage
+
+
 \section{Centroid algorithm 677}
 The algorithm works in two phases: the first phase is that each node bradcast its location to all the nearby device with RSSI above the threshold (a computed RSSI value). After that each node compute the centroid as average of all the position received. Low accuracy, may be difficult to determine threshold value. many unknown nodes, depends on the physical location of the anchor nodes, assume some regularity.
-\section{DV-Hop Algorithm 422}
-Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
 \section{Weighted centroid algorithm 306}
 just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average
+
+
 \section{little improvement IWCL 117}
 $\bigg(\frac{1}{h_{u,i}}\bigg)^{\frac{r}{k}}$
 where k is the average of all hop size
+
+
 \section{EWCL 777}
 from article cited, also results
+\clearpage
+
+\section{DV-Hop Algorithm 422}
+Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
+\clearpage
+
+
 \section{Fingerprinting 437}
 from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k 
 
-\clearpage
 
 
 
