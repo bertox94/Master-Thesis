@@ -11,12 +11,16 @@
 \usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{marginnote}
 \usepackage[makeroom]{cancel}
+\usepackage[ruled,vlined]{algorithm2e}
 
 \usepackage[
     backend=biber,
     style=alphabetic,
     sorting=ynt
 ]{biblatex}
+
+
+
 
 \addbibresource{mybib.bib} %Imports local bibliography file
 
@@ -41,46 +45,43 @@
 
 \chapter{Modello matematico della propagazione del segnale (2 pag)}
 \section{Path loss model}
-From \cite{330153} and more recently \cite{10.5555/2161958} or \cite{330153,10.5555/2161958}.
+The log-normal propagation model, see \cite{MUNOZ200923}, is
 \begin{equation}
-    P_{r,i}=K_iP_td_i^{-\alpha}
+r_{RSSI}(d) = A-10\alpha\log_{10}\bigg(\frac{d}{d_0}\bigg) + \xi, \quad d>d_0
 \end{equation}
-Therefore the log-normal path loss model can be expressed as 
+where $\xi$ is a zero-mean gaussian variable that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify the ?? as
 \begin{equation}
-    \ln(P_{r,l})=ln(K_i)+ln(P_t)-\alpha\ln(d_i)+n_{RSS}
+r_{RSSI}(d) = A-10\alpha\log_{10}(d) + \xi   
 \end{equation}
-K antenna gain, antenna height, known by the manufacturer alpha is path loss constant, noe we define
+In some algorithms that don't not require a high precision the noise is not taken into account. Instead for some other algorithms it is a good idea to rewrite the model as follows, by letting $\alpha'=10\alpha/\ln(10)$:
 \begin{equation}
-    r_{RSS}=\ln(P_{r,l}-ln...)=-\alpha...
-\end{equation}
+r_{RSSI}(d) = A-\alpha'\ln(d) + \xi
+\end{equation} where $\ln(\bullet)$ is the natural logarithm, and then deriving a slightly different model
 \begin{equation}
-RSSI(d) = A-10\alpha\log\bigg(\frac{d}{d_0}\bigg)    
+r_{RSS}(d) = r_{RSSI}(d)-A= -\alpha'\ln(d) + \xi
 \end{equation}
-
-where $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that 
-
-\begin{equation}
-RSSI(d) = A-10\alpha\log(d_0)    
-\end{equation}
-$\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles).
 \clearpage
 
 
 \chapter{Alterazioni della misura dovute all'ambiente (2 pag)}
 \section{Descrizione}
+\section{Multipath fading}
 \section{Methods to remove outliers}
 IQR, Z score
 
 \clearpage
 
+\chapter{Algoritmi per la stima di alcuni parametri}
+\cite{MUNOZ200923}
+\section{Estimation of path loss index}
+\section{Estimation of $\sigma^2$}
+\clearpage
 
-
-\chapter{Algoritmi (16 pag)}
+\chapter{Algoritmi per la stima della posizione(16 pag)}
 scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche, commenti e opinioni.
 \section{General overview and recurring terms}
 We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
 \section{Classification}
-
 \clearpage
 
 \section{210}
@@ -93,63 +94,126 @@ We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the r
     \item $\alpha$
   \end{itemize}
   \end{center}
-%\textbf{Description}\\
-The trilateration algorithm works as follow. Since we know the propagation model (eqn ??), the current position, $A$ and $\alpha$ we can invert the formula and obtain
+Consider the trilateration method from a pure theoretical point of view. For this method it is required to have only 3 anchor nodes. Each of them can output its position $(x_i,y_i)$ along with the rssi read in its position of the unknown node. By exploiting the model of the distance and the rssi read, and assuming no noise or multipath fading at all, one can deduce the distance $d_i$ between the unknown node and current node from the model ?? $n_i$ as follows:  
 \begin{equation}
-    d_i=\sqrt{(x_t-x_i)^2+(y_t-y_i)^2}=10^{\frac{A-rssi_i}{10\alpha}}    
+    d_i=\sqrt{(x_u-x_i)^2+(y_u-y_i)^2}=10^{\frac{A-r_{rssi,i}}{10\alpha}}    
 \end{equation}
-therefore, the target position can be on a circle of radius $d_i$ centered at $(x_i,y_i)$. 
-To estimate the target point we need two additional circles. The result then is obtained by the intersection of all the three.
-\begin{center}
-\scalebox{1}{
-\begin{tikzpicture}
-    \draw[very thin,color=gray] (-4,-4) grid (4,4);
-    \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
-    \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
-    
-    \draw[color=red] (-2.4,2) circle (1.5);
-        \draw (-2.4,2) node {$\bullet$};
-        \node[anchor=north west] at (-2.4,2) {$A$};
-        
-    \draw[color=green] (-0.5,1.5) circle (1);
-        \draw (-0.5,1.5) node {$\bullet$};
-        \node[anchor=north west] at (-0.5,1.5) {$B$};
-        
-    \draw[color=blue] (-1,0) circle (1); %2-2sqrt(3)
-        \draw (-1,0) node {$\bullet$};
-        \node[anchor=north west] at (-1,0) {$C$};
-        
-    \draw (-1.35,0.95) node {$\bullet$};
-    \node[anchor=north west] at (-1.2,1) {$D$};   
-\end{tikzpicture}
-}
-\end{center}
+As a consequence we can imagine to draw a circle centered in $(x_i,y_i)$ with radius $d_i$. The unknown node $n_u$ should lay on this circumference. Of course, this is not enough to locate $n_u$. Therefore, we need to get data also from the the other 2 anchor nodes. In this way we can draw 3 circles and obtain a unique point of intersection as shown in \ref{fig:trilOK}. Note that 3 nodes are the minimum number of nodes to have an unambiguous result. In fact, if we were to have only 2 nodes, then there would be 2 possible outcomes (the intersection of two circumferences generally results in 2 points), instead of the required one.
 \begin{figure}
-\centering
-\scalebox{1}{
-\begin{tikzpicture}
-    \draw[very thin,color=gray] (-4,-4) grid (4,4);
-    \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
-    \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    \centering
+    \scalebox{1}{
+        \begin{tikzpicture}
+            \draw[very thin,color=gray] (-4,-4) grid (4,4);
+            \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+            \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
     
-    \draw[color=red] (-2.4,2) circle (1);
-        \draw (-2.4,2) node {$\bullet$};
-        \node[anchor=north west] at (-2.4,2) {$A$};
+            \draw[color=red] (-2.4,2) circle (1.5);
+            \draw (-2.4,2) node {$\bullet$};
+            \node[anchor=north west] at (-2.4,2) {$A$};
         
-    \draw[color=green] (-0.5,1.5) circle (0.7);
-        \draw (-0.5,1.5) node {$\bullet$};
-        \node[anchor=north west] at (-0.5,1.5) {$B$};
+            \draw[color=green] (-0.5,1.5) circle (1);
+            \draw (-0.5,1.5) node {$\bullet$};
+            \node[anchor=north west] at (-0.5,1.5) {$B$};
         
-    \draw[color=blue] (-1,0) circle (0.6); %2-2sqrt(3)
-        \draw (-1,0) node {$\bullet$};
-        \node[anchor=north west] at (-1,0) {$C$};
-\end{tikzpicture}}
-\caption{trilKO} \label{fig:trilKO}
+            \draw[color=blue] (-1,0) circle (1); %2-2sqrt(3)
+            \draw (-1,0) node {$\bullet$};
+            \node[anchor=north west] at (-1,0) {$C$};
+        
+            \draw (-1.35,0.95) [cyan] node {$\bullet$};
+            \node[anchor=north west] at (-1.2,1) {$U$};   
+        \end{tikzpicture}
+    }
+    %\includegraphics{}
+    \caption{}
+    \label{fig:trilOK}
 \end{figure}
+When we step into reality however the disturbances of the signal inevitably lead to wrong estimation of the distance between the current node and the unknown node, causing the circles to intersect in wrong points or to not intersect at all, as in fig. \ref{fig:trilKO}.
+\begin{figure}
+    \centering
+    \scalebox{1}{
+        \begin{tikzpicture}
+            \draw[very thin,color=gray] (-4,-4) grid (4,4);
+            \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+            \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+            \draw[color=red] (-2.4,2) circle (1);
+            \draw (-2.4,2) node {$\bullet$};
+            \node[anchor=north west] at (-2.4,2) {$A$};
+        
+            \draw[color=green] (-0.5,1.5) circle (0.7);
+            \draw (-0.5,1.5) node {$\bullet$};
+            \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+            \draw[color=blue] (-1,0) circle (0.6); %2-2sqrt(3)
+            \draw (-1,0) node {$\bullet$};
+            \node[anchor=north west] at (-1,0) {$C$};
+            
+            \draw (-1.35,0.95) [cyan] node {$\bullet$};
+            \node[anchor=north west] at (-1.2,1) {$U$};
+        \end{tikzpicture}
+    }
+    %\includegraphics{}
+    \caption{}
+    \label{fig:trilKO}
+\end{figure}
+In the latter case, provided the algorithm has no software-level exception-catching, it would cause a runtime error, and give no results at all. However some improvements can be applied. The most intuitive one is to consider from the rssi read not just a single value but taking the max and the min values recorded during the sampling phase, and draw an annulus of possible locations as follows:
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{min, max: radii of the annulus}
+ Set samples = $\emptyset$\;
+ \While{samples.size() < 10}{
+    samples.add(new measurement)\;
+ }
+ min = samples.min()\;
+ max = samples.max()\;
+ \caption{Obtaining the derived values}
+\end{algorithm}
+\noindent\\The new distances will be obtained as follows:
+\begin{equation}
+    d^i_{min}=10^{\frac{A-min}{10\alpha}}    
+\end{equation}
+\begin{equation}
+    d^i_{max}=10^{\frac{A-max}{10\alpha}}    
+\end{equation}
+The result is now given as an area that corresponds to the intersection of all the three annulus, shown in fig \ref{fig:annulus}
+\begin{figure}
+    \centering
+    \scalebox{1.3}{
+        \begin{tikzpicture}
+            \draw[very thin,color=gray] (-4,-4) grid (4,4);
+            \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+            \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+            \draw[color=red] (-2.4,2) circle (1.5+0.2);
+            \draw[color=red] (-2.4,2) circle (1.5-0.2);
+            \fill [red,even odd rule,opacity=0.1] (-2.4,2) circle[radius=1.5+0.2] circle[radius=1.5-0.2];
+            \draw[->](-2.4,2) -- (-1.5,3.45) node[midway,above,sloped] {$d^i_{max}$};
+            \draw[->](-2.4,2) -- (-3.55,1.4) node[midway,above,sloped] {$d^i_{min}$};
+            \draw (-2.4,2) node {$\bullet$};
+            \node[anchor=north west] at (-2.4,2) {$A$};
+        
+            \draw[color=green] (-0.5,1.5) circle (1+0.2);
+            \draw[color=green] (-0.5,1.5) circle (1-0.2);
+            \fill [green,even odd rule,opacity=0.1] (-0.5,1.5) circle[radius=1+0.2] circle[radius=1-0.2];
+            \draw (-0.5,1.5) node {$\bullet$};
+            \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+            \draw[color=blue] (-1,0) circle (1+0.2); %2-2sqrt(3)
+            \draw[color=blue] (-1,0) circle (1-0.2);
+            \fill [blue,even odd rule,opacity=0.1] (-1,0) circle[radius=1+0.2] circle[radius=1-0.2];
+            \draw (-1,0) node {$\bullet$};
+            \node[anchor=north west] at (-1,0) {$C$};
+            
+            \draw (-1.35,0.95) [cyan] node {$\bullet$};
+            \node[anchor=north west] at (-1.2,1) {$U$};
+        \end{tikzpicture}
+    }
+    %\includegraphics{}
+    \caption{}
+    \label{fig:annulus}
+\end{figure}
+One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
 
-However, this algorithm has many drawbacks. The most important to note is the effect of the noise. Suppose for example to repeat the experiment in a noisy environment, and to obtain a new outcome as in Fig. \ref{fig:trilKO}.
-
-Here there are no intersections, therefore the basic version of this algorithm (without any software level exception catching) would cause a runtime error, and give no results. This problem is overcome by other algorithms, shown later in ?? and ??. Another important drawback is the low number of measurements needed. Indeed, an algorithm that takes few measures is attractive, but the noise cause a not negligible error in the estimated position, that reduces as the number of samples fed to the algorithm increases.
 \clearpage
 
 \section{151}
@@ -161,10 +225,7 @@ Here there are no intersections, therefore the basic version of this algorithm (
     \item $\alpha$
   \end{itemize}
   \end{center}
-  \begin{itemize}
-      \item ProblemInvestigationofMin-maxMethodforRSSIbasedIndoorLocalization.pdf
-  \end{itemize}
-After deriving the distance as shown in ?? of each anchor node from the source, we can draw a circle around each anchor node, which is the locus of points where the target node can be located. Instead of referring to these circles, circumscribe a square to that circle, obtaining a square with side equal to the diameter of the circle. After taking some measurements, you have a set of overlapping squares, close to the representation in fig ??. As a result you can obtain a rectangle with vertices $(x_{min},x_{max},y_{min},y_{max})$ with the following equations:
+Consider the previous framework. As usual one can deduce the distance of the unknown node, by reverting the propagation model as done in the previous section. Then we can obtain a number of circumferences, one for each anchor node, that represent the possible locations of the unknown node. In this algorithm however you need to consider not circles but squares. The case with three anchor node can be reviewed in \cite{inproceedings}, here it is presented a logical generalization of that method with multiple nodes. More precisely, each anchor node $i$ with estimated distance $d_i$ from $n_u$ is associated to a square centered in $(x_i,y_i)$ with side equal to $2d_i$. At this point, one has a set of overlapping squares, and can easily find the intersection of all those squares,  which results in a rectangles of vertices $(x_{min},x_{max},y_{min},y_{max})$ with the following equations:
 \begin{equation}
     x_{min}=\max(x_1-d_1,...,x_n-d_n)
 \end{equation}
@@ -184,6 +245,41 @@ The final location will be estimated as the center of this rectangle, as follows
 \begin{equation}
     y_t=\frac{y_{min}+y_{max}}{2}
 \end{equation}
+The gray area in \ref{fig:mmax} shows the intersection of all the squares. The estimated point will be obtained as the center of this rectangle.
+\begin{figure}
+    \centering
+    \scalebox{1.3}{
+        \begin{tikzpicture}
+            \draw[very thin,color=gray] (-4,-4) grid (4,4);
+            \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+            \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+            \draw[color=red] (-2.4,2) circle (1.5);
+            \draw[red, thick] (-3.9,0.5) rectangle (-0.9,3.5);
+            \draw[->](-2.4,2) -- (-3.9,2) node[midway,above,sloped] {$d_i$};
+            \draw (-2.4,2) node {$\bullet$};
+            \node[anchor=north west] at (-2.4,2) {$A$};
+        
+            \draw[color=green] (-0.5,1.5) circle (1.2);
+            \draw[green, thick] (-1.7,0.3) rectangle (0.7,2.7);
+            \draw (-0.5,1.5) node {$\bullet$};
+            \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+            \draw[color=blue] (-1,0) circle (1.2); %2-2sqrt(3)
+            \draw[blue, thick] (-2.2,-1.2) rectangle (0.2,1.2);
+            \draw (-1,0) node {$\bullet$};
+            \node[anchor=north west] at (-1,0) {$C$};
+            
+            \draw (-1.35,0.95) [cyan] node {$\bullet$};
+            \node[anchor=north west] at (-1.2,1) {$U$};
+            
+            \fill [opacity=0.2] (-0.9,1.2) rectangle (-1.7,0.5);
+        \end{tikzpicture}
+    }
+    %\includegraphics{}
+    \caption{}
+    \label{fig:mmax}
+\end{figure}
 does it always converge? $x_max$ is always greater than $x_min$?
 \clearpage
 
@@ -194,33 +290,42 @@ does it always converge? $x_max$ is always greater than $x_min$?
     \centering
     \item $A$
     \item $\alpha$
-    \item error distribution ($\mu, \sigma^2$)
+    \item $\xi_i,\forall i$
   \end{itemize}
   \end{center}
-From [handbook of position location zekavat]. Consider this slightly different model, obtained by the canonical one as ??...
+In \cite{10.5555/2161958} you can find this version but using a slighty different model. Rewrite the ?? as follows 
 \begin{equation}
-    RSS_i=-\ln{d_i^{2\frac{\alpha}{2\ln(10)}}}+n_{RSS,i}
+    r_{RSS,i}=-\ln\big(d_i^{2\frac{\alpha'}{2}}\big)+\xi_i
 \end{equation}
-where $\ln(\bullet)$ is the natural logarithm (correct with the base ten the next steps), $n_{RSS,i}$ is the noise, represented as a gaussian random variable with mean $\mu$ and variance $\sigma^2$. Note that $RSS_i=RSSI_i-A$. By taking the inverse of ?? we have 
+By exponentiating both members of ?? we have 
 \begin{equation}
-    e^{RSS_i}=e^{-\ln\big(d_i^{2\frac{\alpha}{2\ln(10)}}\big)+n_{RSS,i}}
-\end{equation}
-\begin{equation}
-    \bigg(e^{RSS_i}\bigg)^{-1}=\bigg(e^{-\ln\big(d_i^{2\frac{\alpha}{2\ln(10)}}\big)+n_{RSS,i}}\bigg)^{-1}
+    e^{r_{RSS,i}}=e^{-\ln\big(d_i^{2\frac{\alpha'}{2}}\big)+\xi_i}
 \end{equation}
 \begin{equation}
-    e^{-RSS_i}=e^{\ln\big(d_i^{2\frac{\alpha}{2\ln(10)}}\big)-n_{RSS,i}}
+    \bigg(e^{r_{RSS,i}}\bigg)^{-1}=\bigg(e^{-\ln\big(d_i^{2\frac{\alpha'}{2}}\big)+\xi_i}\bigg)^{-1}
 \end{equation}
 \begin{equation}
-    e^{-RSS_i}=d_i^{2\frac{\alpha}{2\ln(10)}}e^{-n_{RSS,i}}
+    e^{-r_{RSS,i}}=e^{\ln\big(d_i^{2\frac{\alpha'}{2}}\big)-\xi_i}
 \end{equation}
 \begin{equation}
-    \bigg(e^{-RSS_i}\bigg)^{\frac{2\ln(10)}{\alpha}}=\bigg(d_i^{2\frac{\alpha}{2\ln(10)}}e^{-n_{RSS,i}}\bigg)^{\frac{2\ln(10)}{\alpha}}
+    e^{-r_{RSS,i}}=d_i^{2\frac{\alpha'}{2}}e^{-\xi_i}
 \end{equation}
 \begin{equation}
-    e^{-2\ln(10)\frac{RSS_i}{\alpha}}=d_i^2e^{-2\ln(10)\frac{n_{RSS,i}}{\alpha}}
+    \bigg(e^{-r_{RSS,i}}\bigg)^{\frac{2}{\alpha'}}=\bigg(d_i^{2\frac{\alpha'}{2}}e^{-\xi_i}\bigg)^{\frac{2}{\alpha'}}
 \end{equation}
-From \cite{Beran2011} (??spiega tutto il passaggio dai momenti alla media e varianza con dmostrazione...).  Thus if $n\sim\mathcal{N}(\mu,\sigma^2)$ and $k$ a constant then (lognormal distirbution, see wiki and Lognormal Distributions: Theory and Applications Crow., Shimizu, Kunio)
+\begin{equation}
+    e^{-\frac{2}{\alpha'}r_{RSS,i}}=d_i^2e^{-\frac{2}{\alpha'}\xi_i}
+\end{equation}
+Remind that $\xi_i$ is a zero-mean gaussian distribution. The exponentiation of a gaussian distribution is \cite{Beran2011} a log-normal distribution. In other words, given $X\sim \mathcal{N}(\mu,\sigma^2)$, then $Y=e^X\sim \text{Lognormal}(\mu,\sigma^2)$. The 
+
+
+\cite{alma9926534668905776}
+
+
+
+
+The term $e^{-2/\alpha'\xi_i}$
+From  (??spiega tutto il passaggio dai momenti alla media e varianza con dmostrazione...).  Thus if $n\sim\mathcal{N}(\mu,\sigma^2)$ and $k$ a constant then (lognormal distirbution, see wiki and Lognormal Distributions: Theory and Applications Crow., Shimizu, Kunio)
 If $n\sim \mathcal{N}(\mu,\sigma^2)$ then $u=e^n$ is lognormal distributed with mean and variance
 \begin{equation}
     E[e^n]=e^{\mu+\frac{\sigma^2}{2}}
@@ -231,24 +336,24 @@ Var[e^n]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}
 thus
 if $n\sim\mathcal{N}(\mu,\sigma^2)$, then $u=an+b\sim \mathcal{N}(a\mu+b,a^2\sigma^2)$, therefore 
 \begin{equation}
-E\bigg[e^{-2\frac{RSS_i}{\alpha}}\bigg]=d_i^2e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+E\bigg[e^{-2\frac{r_{RSS,i}}{\alpha}}\bigg]=d_i^2e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
 \end{equation}
 \begin{equation}
-    Var\bigg[e^{-2\frac{RSS_i}{\alpha}}\bigg]=d_i^4e^{\frac{4\sigma_{RSS_i}^2}{\alpha^2}}\bigg(e^{\frac{4\sigma_{RSS_i}^2}{\alpha^2}}-1\bigg)
+    Var\bigg[e^{-2\frac{r_{RSS,i}}{\alpha}}\bigg]=d_i^4e^{\frac{4\sigma_{r_{RSS,i}}^2}{\alpha^2}}\bigg(e^{\frac{4\sigma_{r_{RSS,i}}^2}{\alpha^2}}-1\bigg)
 \end{equation}
-As we can see from ??, $e^{-2\frac{RSS_i}{\alpha}}$ is a biased estimate of $d_i^2$, however we can remove its bias by dividing it by $e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}$. Therefore, an unbiased estimate of $d_i^2$ is 
+As we can see from ??, $e^{-2\frac{r_{RSS,i}}{\alpha}}$ is a biased estimate of $d_i^2$, however we can remove its bias by dividing it by $e^{2\frac{\sigma^2_{RSS,i}}{\alpha^2}}$. Therefore, an unbiased estimate of $d_i^2$ is 
 \begin{equation}
-    e^{-2\frac{RSS_i}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+    e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
 \end{equation}
 We want to use the above estimator obtained from the measurements to build a linear models in $\mathbf{x}$. Since the estimator is now unbiased we can write
 \begin{equation}
-    (x-x_i)^2+(y-y_i)^2=e^{-2\frac{RSS_i}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+    (x-x_i)^2+(y-y_i)^2=e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
 \end{equation}
 \begin{equation}
-    -2x_ix-2y_iy+x^2+y^2+x_i^2+y_i^2=e^{-2\frac{RSS_i}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
+    -2x_ix-2y_iy+x^2+y^2+x_i^2+y_i^2=e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}
 \end{equation}
 \begin{equation}
-    -2x_ix-2y_iy+x^2+y^2=e^{-2\frac{RSS_i}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}-x_i^2-y_i^2
+    -2x_ix-2y_iy+x^2+y^2=e^{-2\frac{r_{RSS,i}}{\alpha}-2\frac{\sigma^2_{RSS,i}}{\alpha^2}}-x_i^2-y_i^2
 \end{equation}
 By calling $R^2=x^2+y^2$ we can write it in matrix form
 \begin{equation}
@@ -479,7 +584,7 @@ When the error follows a zero mean gaussian distribution, this method is a weigh
 Each anchor $i$ has a distribution like $\mathcal{N}(-\alpha'\ln(d_i),\sigma^2_i)$
 A look more closely related to the probability point of view is
 \begin{equation}
-    \pi(RSS_i)=\frac{1}{\sqrt{2\pi\sigma^2_{RSS_i}}}e^{-\frac{1}{2}\frac{(RSS_i+\alpha\ln(d_i))^2}{\sigma^2_{RSS_i}}}
+    \pi(r_{RSS,i})=\frac{1}{\sqrt{2\pi\sigma^2_{r_{RSS,i}}}}e^{-\frac{1}{2}\frac{(r_{RSS,i}+\alpha\ln(d_i))^2}{\sigma^2_{r_{RSS,i}}}}
 \end{equation}
 $\mathbf{\Sigma}$ is diagonal for independent variables
 $$\mathbf{f}(\mathbf{x})=-\alpha'\begin{bmatrix}
@@ -489,7 +594,7 @@ $$\mathbf{f}(\mathbf{x})=-\alpha'\begin{bmatrix}
 \end{bmatrix}$$
 For $n$ indepentent and (identically? mean is the value read which changes) distributed, the joint probabilty distribution is the product
 \begin{equation}
-    \pi(\mathbf{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_{RSS_i}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(RSS_i+\alpha\ln(d_i))^2}{\sigma^2_{RSS_i}}}
+    \pi(\mathbf{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_{r_{RSS,i}}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(r_{RSS,i}+\alpha\ln(d_i))^2}{\sigma^2_{r_{RSS,i}}}}
 \end{equation}
 \begin{equation}
     \pi(\mathbf{r}_{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}|\mathbf{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)\mathbf{\Sigma}^{-1}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)}
