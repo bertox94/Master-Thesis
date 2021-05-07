@@ -347,12 +347,17 @@ so in this case,
     -\frac{2}{\beta}\xi_i\sim \mathcal{N}\bigg(0,\frac{4}{\beta^2}\sigma^2_i\bigg)
 \end{equation}
 From equations ?? and ?? (previous equation)
-\begin{equation}
-    E\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]=E\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]=d_i^2E\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]=d_i^2e^{\frac{2}{\beta^2}\sigma^2_i}
-\end{equation}
-\begin{equation}
-    Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]=Var\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]=d_i^4Var\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]=(e^{\frac{4}{\beta^2}\sigma^2}-1)e^{\frac{4}{\beta^2}\sigma^2}
-\end{equation}
+\begin{align}
+    &E\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
+    &=E\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]\\
+    &=d_i^2E\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]\\ &=d_i^2e^{\frac{2}{\beta^2}\sigma^2_i}
+\end{align}
+\begin{align}
+    &Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
+    &=Var\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]\\
+    &=d_i^4Var\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]\\
+    &=d_i^4(e^{\frac{4}{\beta^2}\sigma_i^2}-1)e^{\frac{4}{\beta^2}\sigma^2_i}
+\end{align}
 As we can see from ??, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since from ?? its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$. Therefore, an unbiased estimate of $d_i^2$ is 
 \begin{equation}
     e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
@@ -441,8 +446,16 @@ Following the LLS framework,
 \begin{equation}
     \hat{\theta}=\arg \min_{\theta} J(\theta)=(\mathbf{M}^T\mathbf{WM})^{-1}\mathbf{M^TWb}
 \end{equation}
-rewrite better
+rewrite better\\\\
+So we need to compute the variance of each estimator $\hat{d_i^2}$, correct the hat also in the previous
 
+\begin{align}
+&Var\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
+&=Var\bigg[e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg]\\
+&=\bigg(e^{-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
+&=e^{-\frac{4}{\beta^2}\sigma^2_i}d_i^4(e^{\frac{4}{\beta^2}\sigma^2}-1)e^{\frac{4}{\beta^2}\sigma^2}
+\end{align}
+\clearpage
 
 \subsection{510}
   \begin{center}
