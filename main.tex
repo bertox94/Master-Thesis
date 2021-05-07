@@ -360,11 +360,11 @@ From equations ?? and ?? (previous equation)
 \end{align}
 As we can see from ??, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since from ?? its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$. Therefore, an unbiased estimate of $d_i^2$ is 
 \begin{equation}
-    e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+    \hat{d}_i^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
 \end{equation}
 We want to use the above estimator obtained from the measurements to build a linear models in $\mathbf{x}$. Since the estimator is now unbiased by writing 
 \begin{equation}
-    d_i^2=(x-x_i)^2+(y-y_i)^2
+    \hat{d}_i^2=(x-x_i)^2+(y-y_i)^2
 \end{equation}
 we can write
 \begin{equation}
@@ -376,7 +376,11 @@ we can write
 \begin{equation}
     -2x_ix-2y_iy+x^2+y^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}-x_i^2-y_i^2
 \end{equation}
-By calling $R^2=x^2+y^2$ we can write it in matrix form
+By setting the condition 
+\begin{equation}
+R^2=x^2+y^2    
+\end{equation}
+we can write it in matrix form
 \begin{equation}
     \begin{bmatrix}
         -2x_1 & -2y_1 & 1\\
@@ -414,14 +418,27 @@ Now since $\theta^*$ is unknown we would like to choose $\theta\approx\theta^*$ 
     M\theta-b\approx0
 \end{equation}
 One easy way is to seek the minimum of 
+\begin{align}
+    J&(\theta)=(M\theta - b)^T(M\theta - b)\\
+    &=\theta^TM^TM\theta-2\theta^TM^Tb+b^Tb
+\end{align}
+We can fit this model with the Least Square Method, that for a linear model (which is the ours) has a known explicit solution \cite{10.5555/1557273} that can be easily verified. In fact since $J(\theta)$ is a quadratic function of $\theta$, then there is a unique minimum \cite{Ortega1987,10.5555/2161958}. The LLS estimate corresponds to:
 \begin{equation}
-    J(\theta)=(M\theta - b)^T(M\theta - b)
+    \hat{\theta}=\arg \min_\theta J(\theta)
 \end{equation}
-We can fit this model with the Least Square Method, that for a linear model (which is the ours) has a known explicit solution \cite{10.5555/1557273,}:
-\begin{equation}
-    \hat{\theta}=(M^TM)^{-1}M^Tb
-\end{equation}
-the target position can be finally obtained as 
+which can be found setting to $0$ its derivative
+    
+\begin{align}
+\begin{split}
+&\frac{\partial J(\theta)}{\partial \theta}=0\\
+    &2M^TM\hat{\theta}-2M^Tb=0\\
+    &A^TA\hat{\theta}=A^Tb\\
+    &\hat{\theta}=(M^TM)^{-1}M^Tb
+\end{split}
+\end{align}
+
+
+The target position can be finally obtained as 
 \begin{equation}
 \begin{bmatrix}
     \hat{x}\\
@@ -436,20 +453,9 @@ the target position can be finally obtained as
 
 
 \section{270}
-As we have seen in the case before we have used the statistics, to obtain an estimator for a given distibution. However we can still improve it by giving to each anchor node a weight, bound to the variance of the anchor node itself, in a way to give more importance to the nodes that produces a steadier output (low variance) and less importance to those nodes that produces more irregular values (high variance). To ease the computation we consider each anchor node to be independent from each other. It is important to note that this improvement affects only the LLS computation, and not the definition of the estimator. The choice of the symmetric weighting matrix $W$ will be done according to BLUE (Best Linear Unbiased Estimator) \cite{899498y4hd,10.5555/151045}.
-The new cost function will be
-\begin{equation}
-    J(\theta)=(M\theta-b)^TW(M\theta-b)
-\end{equation}
-Following the LLS framework,
-\begin{equation}
-    \hat{\theta}=\arg \min_{\theta} J(\theta)=(\mathbf{M}^T\mathbf{WM})^{-1}\mathbf{M^TWb}
-\end{equation}
-rewrite better\\\\
-So we need to compute the variance of each estimator $\hat{d_i^2}$, correct the hat also in the previous
-
+In section ?? we have seen how to use statistics to obtain an estimator of the distance for each anchor node to the unknown node, and then putting all this in a linear form, to deduce the location of the unknown node with a simple closed formula such as the Linear least squares. However we can still improve it by givin to each anchor node a weight, bound to the variance of the estimator $\hat{d}_i^2$ obtained from the anchor node $i$. A good idea would be to give more importance to the nodes that produces an estimator with low variance, and to give less importance to those node that produces estimators with high variance. To ease the computation we consider each anchor node to be indepentendet from each other. One way to do that is to introduce a symmetric covariance matrix, diagonal (because of the independence of anchor nodes). Since we want the weight assigned to each node to be inversely proportional to the variance we consider $W=(W')^{-1}$ \cite{10.5555/2161958,899498y4hd}. It is important to note that this improvement does not regard the generation of the vector of estimators, rather the minimization of the cost function. Now we compute the variance of each estimator $\hat{d}_i^2$, from ??
 \begin{align}
-&Var\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
+Var&\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
 &=Var\bigg[e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg]\\
 &=\bigg(e^{-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
 &=\cancel{e^{-\frac{4}{\beta^2}\sigma^2_i}}d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\cancel{e^{\frac{4}{\beta^2}\sigma^2}}\\
@@ -460,11 +466,23 @@ So we need to compute the variance of each estimator $\hat{d_i^2}$, correct the 
 &=e^{-\frac{4}{\beta}\nu_i}\bigg(1-e^{-\frac{4}{\beta^2}\sigma^2_i}\bigg)\\
 &=\frac{1-e^{-\frac{4}{\beta^2}\sigma^2_i}}{e^{\frac{4}{\beta}\nu_i}}
 \end{align}
-Therefore, the estimate is given with the improved equation ?? and the optimum weight matrix \cite{5765553} is 
+Now we get to the weighting matrix
 \begin{align}
     &\mathbf{W}=\text{diag}\big((\sigma^2_{d_1})^{-1},...,(\sigma^2_{d_n})^{-1}\big)\\
     &=\text{diag}\bigg(\frac{e^{\frac{4}{\beta}\nu_1}}{1-e^{-\frac{4}{\beta^2}\sigma^2_1}},...,\frac{e^{\frac{4}{\beta}\nu_n}}{1-e^{-\frac{4}{\beta^2}\sigma^2_n}}\bigg)
 \end{align}
+The improved cost function \cite{10.5555/2161958} takes the following form 
+\begin{align}
+    J&(\theta)=(M\theta - b)^TW(M\theta - b)\\
+    &=\theta^TM^TWM\theta-2\theta^TM^TWb+b^TWb
+\end{align}
+that can be minimized with the usual LLS
+\begin{align}
+    \hat{\theta}=(M^TWM)^{-1}M^TWb
+\end{align}
+The precision of this estimation can be further improved by imposing the constraint ?? ($\hat{\theta}_3=\hat{R}^2$) on the minimization. This condition is ignored if we use LLS, but it can be successfully employed with the method of Lagrange multipliers \cite{Lopez1994, pasa}.
+
+
 \clearpage
 
 \subsection{510}
