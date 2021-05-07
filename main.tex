@@ -441,7 +441,6 @@ The new cost function will be
 \begin{equation}
     J(\theta)=(M\theta-b)^TW(M\theta-b)
 \end{equation}
-\cite{5765553}.
 Following the LLS framework,
 \begin{equation}
     \hat{\theta}=\arg \min_{\theta} J(\theta)=(\mathbf{M}^T\mathbf{WM})^{-1}\mathbf{M^TWb}
@@ -453,7 +452,18 @@ So we need to compute the variance of each estimator $\hat{d_i^2}$, correct the 
 &Var\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
 &=Var\bigg[e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg]\\
 &=\bigg(e^{-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
-&=e^{-\frac{4}{\beta^2}\sigma^2_i}d_i^4(e^{\frac{4}{\beta^2}\sigma^2}-1)e^{\frac{4}{\beta^2}\sigma^2}
+&=\cancel{e^{-\frac{4}{\beta^2}\sigma^2_i}}d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\cancel{e^{\frac{4}{\beta^2}\sigma^2}}\\
+&=d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
+&\approx \big(\hat{d_i}^2\big)^2\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
+&=\bigg(e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
+&=e^{-\frac{4}{\beta}\nu_i-\frac{4}{\beta^2}\sigma^2_i}\bigg(e^{\frac{4}{\beta^2}\sigma^2_i}-1\bigg)\\
+&=e^{-\frac{4}{\beta}\nu_i}\bigg(1-e^{-\frac{4}{\beta^2}\sigma^2_i}\bigg)\\
+&=\frac{1-e^{-\frac{4}{\beta^2}\sigma^2_i}}{e^{\frac{4}{\beta}\nu_i}}
+\end{align}
+Therefore, the estimate is given with the improved equation ?? and the optimum weight matrix \cite{5765553} is 
+\begin{align}
+    &\mathbf{W}=\text{diag}\big((\sigma^2_{d_1})^{-1},...,(\sigma^2_{d_n})^{-1}\big)\\
+    &=\text{diag}\bigg(\frac{e^{\frac{4}{\beta}\nu_1}}{1-e^{-\frac{4}{\beta^2}\sigma^2_1}},...,\frac{e^{\frac{4}{\beta}\nu_n}}{1-e^{-\frac{4}{\beta^2}\sigma^2_n}}\bigg)
 \end{align}
 \clearpage
 
@@ -646,7 +656,7 @@ A look more closely related to the probability point of view is
 \begin{equation}
     \pi(\nu_i)=\frac{1}{\sqrt{2\pi\sigma^2_{\nu_i}}}e^{-\frac{1}{2}\frac{(\nu_i+\alpha\ln(d_i))^2}{\sigma^2_{\nu_i}}}
 \end{equation}
-$\mathbf{\Sigma}$ is diagonal for independent variables
+$\mathbf{\Sigma}$ is diagonal for uncorrelated (remember independent implies uncorrelated, but not the reverse) variables
 $$\mathbf{f}(\mathbf{x})=-\beta\begin{bmatrix}
 \ln(\sqrt{(x-x_1)^2+(y-y_1)^2})\\
 \vdots\\
