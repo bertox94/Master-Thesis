@@ -68,13 +68,94 @@ In some algorithms that don't not require a high precision the noise is not take
 \clearpage
 
 
-\chapter{Alterazioni della misura dovute all'ambiente (2 pag)}
+\chapter{Disturbances of RSSI}
 The RSSI noise has a great influence over the measurements, thereby complicating the attempt to get precise location. To give some numbers, the available range of signal intensity that a common WiFi device can measure varies in the interval $-30\div-90$ dbm and the value obtained can generally deviate from the exact value at most $6$ dbm which is as much as $10\%$ over the range of measurement.
 Due to its significant influence, it has been investigated many times in order to discover some patterns, but up to now no answer has been found. For example \cite{4608603} showed that there are no significant patterns over the time domain neither in the frequency domain. Instead the causes of the noise are well known and are the same that affects the propagation of any electromagnetic wave.
-\cite{rzk} found 4 main issue that causes RSSI instability: Multipath Fading (it is totally randomic \cite{10.5555/559977}, some attempts to mitigate this effect \cite{5208736}) and NLOS Propagation, Shadow Fading (showed spatial correlation \cite{244122,732812}), Systematic Bias or Error, Geometric Node Configuration (Geometric diluition of precision)
-\section{Descrizione}
-\section{Methods to remove outliers}
-IQR, Z score
+We can summarize two main issues that cause RSSI instability: 
+\section{Multipath Fading, NLOS propagation} 
+As outlined in \cite{onl11}, multipath fading occurs when there are multiple ways for the signal to reach the receiving device. This causes the signal waves to reach the receiving end with in two different times, that is, there is a non negligible delay between the two (or more) waves. This means phase shifting, leading to constructive/destructive interference of the signal. This effect is very preeminent in closed environments, when there are many surfaces able to reflect the signal. It is totally randomic \cite{10.5555/559977} therefore it is unpredictable by definition. The good new is that it can be removed by filtering the outliers, with some of the methods presented later.
+\section{Shadow Fading}
+This effect is the attenuation of the signal caused by heavy and large (w.r.t. the wavelength) obstacles between the receiver and the sender that adsorb (or may even block) the waves. This is classically related to NLOS (Non Line Of Sight) environments that is, when the signal is not receiver cannot "see" the sender. This effect is taken into account in the model as the path loss index $\alpha$. This is quite a problem when there are many obstacles obstructing the way, therefore the correct path loss index can only be estimated with some algorithms, one of them is presented later, and not analitically computed. It showed spatial correlation \cite{244122,732812}, which is in fact intuitive, all the measurements taken in a certain position, with a certain number of obstacles will be all affected by an almost equal shadow fading, whereas in another locations it will not. The problematic effect of this noise is that is shows a systematic behaviour, in other words, each measurement is affected by an almost equal way, therefore trying to remove it by removing outliers is not an effective way. If the path loss index is taken wrong in the model for some reasons, the estimated position will be altered with some significant errors, that may set negligible the improvement of other source of noise. Even more complicate is when there are persons moving freely between the sender and the receiver. The body of each passing person adsorb the signal, therefore alterating the measure. The estimated position will inevitably bear some non negligible errors.
+
+\chapter{Noise removal}
+I will present here some method to remove outliers in a series of data. I will present them from a mathematical point of view before, and then an extract of the algorithm in pseudocode.
+\subsection{IQR}
+This method, whose name is InterQuartile Range method, is based, as the name suggest, on the quartiles of a dataset. I will present an algorithm that can be used to obtain the quartiles. I will assume some facts:
+\begin{itemize}
+    \item Arrays index starts from zero
+    \item Float numbers are cast to integer with truncation of the decimal part
+    \item Initial dataset is d1
+\end{itemize}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Q1, Q2, Q3}
+d1.sort(ascending)\;
+Q1 = Q2 = Q3 = 0\;
+s1 = d1.size()\;
+\eIf{s1.is\_even()}{
+    Q2 = (d1[s1/2 - 1] + d1[s1/2])/2\;
+    d2 = d1[0 : s1/2 - 1]\;
+    d3 = d1[s1/2 : s1 - 1]\;
+}{
+    Q2 = d1[s1/2]\;
+    d2 = d1[0 : s1/2 - 1]\;
+    d3 = d1[s1/2 + 1 : s1 - 1]\;
+}
+
+s2 = d2.size()\;
+s3 = d3.size()\;
+\eIf{s2.is\_even()}{
+    Q1 = (d2[s1/2 - 1] + d2[s1/2])/2\;
+}{
+    Q1 = d2[s1/2]\;
+}
+\eIf{s3.is\_even()}{
+    Q3 = (d2[s1/2 - 1] + d2[s1/2])/2\;
+}{
+    Q3 = d2[s1/2]\;
+}
+ \caption{Quartiles computation}
+\end{algorithm}
+\noindent \\Going back to the IQR method you have to do the following steps:
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{The filtered dataset}
+Q1, Q2, Q3 known from the previous algorithm\;
+IQR=Q3-Q1\;
+$I=[Q1-1.5\cdot IQR,\quad Q2 + 1.5\cdot IQR]$\;
+ \While{$k \in [1:n]$}{
+    \If{! $dataset[k]\in I$}{
+        dataset.remove(k)\;
+        k=k-1\;   
+  }
+    k=k+1\;
+ }
+ \caption{Outliers removal with IQR}
+\end{algorithm}
+\noindent \\Here it is given a numeric example. Suppose you have the following dataset $$\{-1.9, 0.3, 3.7, 4.1, 6, 6.1, 7.2, 9, 19\}$$ already sorted, where the first seven nuberers are extracted from $-2+X$, where $X$ follows the uniform distribution in $[0,10]$. The latest two values are possible outliers. Since the size of the dataset is odd, $Q2$ can be found at the fifth position and is $6$. We have then the first half and the second half. Since the first half has an even number of data points, the median of the first half ($Q1$) will be $(0.3+3.7)/2=2$, the same reasoning applies to $Q3$ for the second half, which is equal to $8.1$. Therefore the IQR will be $8.1-2=6.1$ the interval $I$ will be
+$$I=[2-1.5\cdot6.1,8.1+1.5\cdot6.1]=[-7.15,17.25]$$
+As you can see, the number $19$ will be treated as an outlier anf thus be removed. You can also choose how wide the interval you want it to be, for example if you wanted to be more strict you could choose $1$ instead of $1.5$ as a multiplying factor, obtaining the following interval
+$$I'=[2-1\cdot6.1,8.1+1\cdot6.1]=[-4.1,14.2]$$
+
+\subsection{Z-score}
+The Z-score is another method to find outliers. In few words, the procedure estimates the sample mean and sample standard deviation as follows
+\begin{equation}
+    \hat{\mu}=\frac{1}{n}\sum_{i=1}^nx_i
+\end{equation}
+\begin{equation}
+    \hat{\sigma}=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(x_i-\hat{\mu})^2}
+\end{equation}
+Then we compute the z-score $y_i$ of each value $x_i$
+\begin{equation}
+    y_i=\frac{x_i-\hat{\mu}}{\hat{\sigma}}
+\end{equation}
+The filtering process now removes every data whose z-score is outside the interval $[-3,3]$. Here an axample, with the same dataset of the previous algorithm
+$$\{-1.9, 0.3, 3.7, 4.1, 6, 6.1, 7.2, 9, 19\}$$
+The estimated mean is $\hat{\mu}=5.94$ and the sample standard deviation is $\hat{\sigma}=5.32$. Then the corresponding set of z-scores is
+$$\{-1.47, -1.06, -0.42, -0.34, 0.01, 0.02, 0.23, 0.57, 2.45\}$$
+note the last value, for the previous algorithm it should have been discarded, but according to this one it is still kept. Clearly you can choose a narrower interval than $[-3,3]$.
 
 \clearpage
 
@@ -141,7 +222,7 @@ The derivative of ?? w.r.t $\sigma^2_i$ is
 \end{equation}
 Since $\sigma^2_i>0$ we have
 \begin{equation}
-    \sigma^2_i=\frac{2}{m}\sum_{j=1}^m(\upsilon_i-\mu)^2
+    \sigma^2_i=\frac{1}{m}\sum_{j=1}^m(\upsilon_i-\mu)^2
 \end{equation}
 
 \clearpage
@@ -153,7 +234,7 @@ We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the r
 \section{Classification}
 
 \clearpage
-\section{210}
+\section{Trilateration 210}
 
   \begin{center}
   \textbf{Assume to know:}
@@ -284,7 +365,7 @@ The result is now given as an area that corresponds to the intersection of all t
 One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
 \clearpage
 
-\section{151}
+\section{Min Max 151}
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
@@ -351,7 +432,7 @@ The gray area in \ref{fig:mmax} shows the intersection of all the squares. The e
 does it always converge? $x_max$ is always greater than $x_min$?
 \clearpage
 
-\section{881}
+\section{Linear estimation 881}
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
@@ -516,7 +597,7 @@ The target position can be finally obtained as
 \clearpage
 
 
-\section{270}
+\section{Weighted linear estimation 270}
 In section ?? we have seen how to use statistics to obtain an estimator of the distance for each anchor node to the unknown node, and then putting all this in a linear form, to deduce the location of the unknown node with a simple closed formula such as the Linear least squares. However we can still improve it by givin to each anchor node a weight, bound to the variance of the estimator $\hat{d}_i^2$ obtained from the anchor node $i$. A good idea would be to give more importance to the nodes that produces an estimator with low variance, and to give less importance to those node that produces estimators with high variance. To ease the computation we consider each anchor node to be indepentendet from each other. One way to do that is to introduce a symmetric covariance matrix, diagonal (because of the independence of anchor nodes). Since we want the weight assigned to each node to be inversely proportional to the variance we consider $W=(W')^{-1}$ \cite{rzk,899498y4hd}. It is important to note that this improvement does not regard the generation of the vector of estimators, rather the minimization of the cost function. Now we compute the variance of each estimator $\hat{d}_i^2$, from ??
 \begin{align}
 Var&\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
@@ -549,7 +630,7 @@ The precision of this estimation can be further improved by imposing the constra
 
 \clearpage
 
-\subsection{510}
+\subsection{Quadratic linearization 510}
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
@@ -654,7 +735,7 @@ Also valid for non RSSI based localization
 \clearpage
 
 
-\section{858}
+\section{Line intersection 858}
 Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
@@ -704,7 +785,7 @@ Highly resistant to noise. Always gives a result. Fast.
 \clearpage
 
 
-\section{435}
+\section{Multilateration 435}
 (We can also set many different $\alpha_i$ one for each node deduced with previous chapter)
 Disadvantage, need a starting point quite close to the actual location, maybe estimated with some of the above methods, otherwise it diverges.
 If you assume to know $A$ then good results with GN method...\\
@@ -730,7 +811,7 @@ and then choosing
 \clearpage
 
 
-\section{486}
+\section{Maximum Likelihood method 486}
 When the error follows a zero mean gaussian distribution, this method is a weighted version of the Nonlinear Multilateration method. 
 \begin{equation}
     \beta=\frac{\alpha}{\ln(10)}
