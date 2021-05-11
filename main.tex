@@ -840,18 +840,25 @@ For the Maximum Likelihood method we need to find the minimum of ??. To facilita
 
 From \cite{KAUR201982} and also each bibliography
 \section{Centroid algorithm 677}
-The algorithm works in two phases: the first phase is that each node bradcast its location to all the nearby device with RSSI above the threshold (a computed RSSI value). After that each node compute the centroid as average of all the position received. Low accuracy, may be difficult to determine threshold value. many unknown nodes, depends on the physical location of the anchor nodes, assume some regularity.
-\section{Weighted centroid algorithm 306}
-just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average
-
-
-\section{little improvement IWCL 117}
-$\bigg(\frac{1}{h_{u,i}}\bigg)^{\frac{r}{k}}$
-where k is the average of all hop size
-
-
-\section{EWCL 777}
-from article cited, also results
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Estimated position of the unknown node}
+ Each node $i$ broadcasts its position $(x_i,y_i)$ to every other node\;
+ Define threshold\;
+ Each anchor node retain the information of the nodes that are above the threshold\;
+ The unknown node computes its position as:
+ \begin{equation}
+     x_u=\frac{\sum_{i=1}^mx_i}{m},\quad y_u=\frac{\sum_{i=1}^my_i}{m}
+ \end{equation}
+ which is the mean of the position of the retained nodes.
+ \caption{Centroid algorithm}
+\end{algorithm}
+\noindent\\From \cite{878533} the threshold can be calculated in two ways. The first method consists of a simple selection based on the rssi level, that is, every nearest node (whose level is above the rssi threshold) is kept. The second method employs a more sofisticated approach. Every node broadcasts multiple packets in the network, then each node replies with one packet per packet received. Therefore we can draw a list for every node $i$ as follows 
+\begin{equation}
+    g_i = \frac{\text{n. of packets sent to node $i$}}{\text{n. of packets received from node $i$}}
+\end{equation}
+Since the quality/quantity of packets degrades with the distance, closer node will have a higher grade, while farther nodes will have a lower one. Then only the packets with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold). There exists some improvements of the previous algorithm, for example weighted centroid algorithm. The new metric Just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average.
+(new algorithm here)
 \clearpage
 
 \section{DV-Hop Algorithm 422}
