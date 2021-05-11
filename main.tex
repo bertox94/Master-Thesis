@@ -692,7 +692,7 @@ and by rearranging the equation
     +2x\bigg(x_i-\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
     2y\bigg(y_i -\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)\\
     \bigg(-x_i^2  + \frac{1}{n}\sum_{i=1}^n[x_i^2]\bigg)+
-    \bigg(-y_i^2+ \frac{1}{n}\sum_{i=1}^n[y_i^2]\bigg)+
+    \bigg(-y_i^2+ \frac{1}{n}\sum_{i=1}^n[y_i^2]\bigg)
     =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
 \end{split}    
 \end{equation}
@@ -836,11 +836,9 @@ For $n$ indepentent and (identically? mean is the value read which changes) dist
 \end{equation}
 For the Maximum Likelihood method we need to find the minimum of ??. To facilitate it we consider the log. The first part is independent of x, so we need only to maxmize the second part. We can now remove the logarithm because it is a monotonic increasing function, then we oibtain the previous forumula to be minimized. As you can see when $\mathbf{\Sigma}=diag{(\sigma_1,...)}$. The solution can be found with Newton raphson, GN...
 
-
-From \cite{KAUR201982} and also each bibliography
 \clearpage
 
-
+From \cite{KAUR201982} and also each bibliography
 \section{Centroid algorithm 677}
 The algorithm works in two phases: the first phase is that each node bradcast its location to all the nearby device with RSSI above the threshold (a computed RSSI value). After that each node compute the centroid as average of all the position received. Low accuracy, may be difficult to determine threshold value. many unknown nodes, depends on the physical location of the anchor nodes, assume some regularity.
 \section{Weighted centroid algorithm 306}
