@@ -12,7 +12,8 @@
 %\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{marginnote}
 \usepackage[makeroom]{cancel}
-\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{algorithmic}
 
 \usepackage[
     backend=biber,
@@ -735,7 +736,7 @@ Also valid for non RSSI based localization
 \clearpage
 
 
-\section{Line intersection 858}
+\section{Lines intersection 858}
 Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
@@ -862,7 +863,41 @@ Since the quality/quantity of packets degrades with the distance, closer node wi
 \clearpage
 
 \section{DV-Hop Algorithm 422}
-Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
+The DV-Hop algorithm was first published by in \cite{965964}.\\
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Estimated position of the unknown node}
+ Each node has the minimum hop count from itself to each node\;
+Each node compute average 
+\begin{equation}
+    AvgHopDistance_i=\frac{\sum_{i=1,i\neq j}^m\sqrt{(x_j-x_i)^2+(y_j-y_i)^2}}{\sum_{i=1,i\neq j}^mh_{j,i}}
+\end{equation}\\
+Each unknown node $u$ computes the approximate distance from anchor node i using 
+\begin{equation}
+    d_{u,i}=AvgHopDistance_i \cdot h_{u,i}
+\end{equation}
+ \caption{Centroid algorithm}
+\end{algorithm}
+\noindent\\ Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
+\\here...................................................................................\\
+\begin{align}
+\begin{split} 
+(x_1-x_u)^2+(y_1-y_u)^2&=d_{u,1}^2 \\ 
+(x_2-x_u)^2+(y_2-y_u)^2&=d_{u,2}^2 \\ 
+&\;\;\vdots\\
+(x_n-x_u)^2+(y_n-y_u)^2&=d_{u,n}^2 \\
+\end{split}
+\end{align}
+By subtracting the $n$-th equation to all the others, those can be transformed to
+\begin{align}
+\begin{split} 
+(x_1-x_u)^2+(y_1-y_u)^2&=d_{u,1}^2 \\ 
+(x_2-x_u)^2+(y_2-y_u)^2&=d_{u,2}^2 \\ 
+&\;\;\vdots\\
+(x_n-x_u)^2+(y_n-y_u)^2&=d_{u,n}^2 \\
+\end{split}
+\end{align}
+Can be written in matrix...
 \clearpage
 
 

@@ -1,0 +1,29 @@
+%\documentclass[12pt,twoside,landscape]{report}
+\documentclass[tikz,convert=false]{standalone}
+\usepackage{forest}
+\begin{document}
+\begin{forest}
+    for tree={
+        grow=0,reversed, % tree direction
+        parent anchor=east,child anchor=west, % edge anchors
+        edge={line cap=round},outer sep=+1pt, % edge/node connection
+        rounded corners,minimum width=15mm,minimum height=8mm, % node shape
+        l sep=10mm % level distance
+    }
+ [Root
+ [Model Based
+ [Closed Formula
+ [W/O Statistics [Trilateration ] [Min-Max ] [Quadratic linearization] [Lines intersection] ]
+ [W Statistics [Linear estimation ] [Weighted linear estimation ] ] ]
+ [Iterative Methods
+ [W/O Statistics [Multilateration ] ]
+ [W Statistics [Maximum Likelihood ] ] ] ]
+ [Model Free
+ [Closed Formula
+ [W/O Statistics  [Centroid Algorithm] [DV - Hop Algorithm ] ]]
+ [Iterative Methods
+ [W/O Statistics  [Fingerprinting
+ ] ]]
+ ] ]
+\end{forest}
+\end{document}
