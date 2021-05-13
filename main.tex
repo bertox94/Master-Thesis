@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{mathrsfs}
 \usepackage{tikz}
+\usepackage{forest}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.7}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
@@ -232,7 +233,54 @@ Since $\sigma^2_i>0$ we have
 scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche, commenti e opinioni.
 \section{General overview and recurring terms}
 We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
+
+\section{Common Paradigm}
+To avoid redundancy, given the fact that each algorithm differences itself from the others only because of the mathematic tools employes, it make sense to focus on it in the description of the algorithms, and to present here the common instructions of those algorithms.
+When instead the steps are quite different, there will be a more detailed describtion of all the procedure.
+
+\begin{algorithm}[H]
+\SetAlgoLined
+Collect the signal strength\;
+Eventually process the data\;
+\eIf{the method has a closed formula}{
+    apply the formula and obtain $\hat{\mathbf{x}}$
+}{
+    \While{convergence or max iteration reached}{
+        update $\hat{\mathbf{x}}$\;
+ }
+}
+return results\;
+ \caption{Common steps of localization algorithms}
+\end{algorithm}
+
 \section{Classification}
+Here follows a quite complete classification of the localization methods considered. Model based means that the algorithms that depart from that node, employs directly the model of log prpagation seen in ??, whereas model free don't use it. Closed formula/iterative methods are quite self explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$ in the previous ?? that affects the reading. Of course, model free methods, since they do not use the model ??, they do not consider also the variance of the noise, nor any other probabilistic parameters.
+\scalebox{0.8}{
+\begin{forest}
+    for tree={
+        grow=0,reversed, % tree direction
+        parent anchor=east,child anchor=west, % edge anchors
+        edge={line cap=round},outer sep=+1pt, % edge/node connection
+        rounded corners,minimum width=15mm,minimum height=8mm, % node shape
+        l sep=10mm % level distance
+    }
+ [Root
+ [Model Based
+ [Closed Formula
+ [W/O Statistics [Trilateration ] [Min-Max ] [Quadratic linearization] [Lines intersection] ]
+ [W Statistics [Linear estimation ] [Weighted linear estimation ] ] ]
+ [Iterative Methods
+ [W/O Statistics [Multilateration ] ]
+ [W Statistics [Maximum Likelihood ] ] ] ]
+ [Model Free
+ [Closed Formula
+ [W/O Statistics  [Centroid Algorithm] [DV-Hop Algorithm ] ]]
+ [Iterative Methods
+ [W/O Statistics  [Fingerprinting
+ ] ]]
+ ] ]
+\end{forest}
+}
 
 \clearpage
 \section{Trilateration 210}
@@ -338,8 +386,8 @@ The result is now given as an area that corresponds to the intersection of all t
             \draw[color=red] (-2.4,2) circle (1.5+0.2);
             \draw[color=red] (-2.4,2) circle (1.5-0.2);
             \fill [red,even odd rule,opacity=0.1] (-2.4,2) circle[radius=1.5+0.2] circle[radius=1.5-0.2];
-            \draw[->](-2.4,2) -- (-1.5,3.45) node[midway,above,sloped] {$d^i_{max}$};
-            \draw[->](-2.4,2) -- (-3.55,1.4) node[midway,above,sloped] {$d^i_{min}$};
+            \draw[->](-2.4,2) -- (-1.5,3.45) node[midway,above,sloped] {$d^A_{max}$};
+            \draw[->](-2.4,2) -- (-3.55,1.4) node[midway,above,sloped] {$d^A_{min}$};
             \draw (-2.4,2) node {$\bullet$};
             \node[anchor=north west] at (-2.4,2) {$A$};
         
@@ -858,7 +906,7 @@ From \cite{KAUR201982} and also each bibliography
 \begin{equation}
     g_i = \frac{\text{n. of packets sent to node $i$}}{\text{n. of packets received from node $i$}}
 \end{equation}
-Since the quality/quantity of packets degrades with the distance, closer node will have a higher grade, while farther nodes will have a lower one. Then only the packets with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold). There exists some improvements of the previous algorithm, for example weighted centroid algorithm. The new metric Just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average.
+Since the quality/quantity of packets degrades with the distance, closer node will have a higher grade, while farther nodes will have a lower one. Then only the packets with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold). There exists some improvements of the previous algorithm, for example the Weighted Centroid Algorithm. The new metric Just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average.
 (new algorithm here)
 \clearpage
 
@@ -867,7 +915,7 @@ The DV-Hop algorithm was first published by in \cite{965964}.\\
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwResult{Estimated position of the unknown node}
- Each node has the minimum hop count from itself to each node\;
+Each node has the minimum hop count from itself to each node\;
 Each node compute average 
 \begin{equation}
     AvgHopDistance_i=\frac{\sum_{i=1,i\neq j}^m\sqrt{(x_j-x_i)^2+(y_j-y_i)^2}}{\sum_{i=1,i\neq j}^mh_{j,i}}
@@ -876,10 +924,11 @@ Each unknown node $u$ computes the approximate distance from anchor node i using
 \begin{equation}
     d_{u,i}=AvgHopDistance_i \cdot h_{u,i}
 \end{equation}
- \caption{Centroid algorithm}
+ \caption{DV-Hop algorithm}
 \end{algorithm}
-\noindent\\ Three phases. First: each anchor node sends a packet, its GPS location and hop count initially set to 0. Then the nodes that receive the packets sends it to its neigboring nodes by increasing its hop count by one. Every packet extract the minimum hop count and position information of each other node. then average hop distance (physical distance between al nodes/number of hops...), the multiplies this to the numerb of hops and get a estimate of the distance from the unknown node to each node. Then (little different from the previous?) LLS is used.
-\\here...................................................................................\\
+\noindent\\
+The algorithm begins with a broadcast of all nodes with a packet, that contains informations about its position and the hop count, which starts from zero and it is incremented by at each node it passes through. Each node upgrade its metrics accordingly. After some time necessary to reach a stable point where no information update happen, we have a situation where every node has the minimum hop count from itself to each node and the positions of each node in a table like... (table here). (picture of some nodes, show many paths, show the one with less hop counts) For example, node A has 2 path to reach node B, but the path abababa has hop count = 3...
+As soon as the data is available each unknown node can compute its approximated distance from each node $i $ as in line $3$ of the Algo ??. Therefore each unknown node $u$ is able to derive the following equations
 \begin{align}
 \begin{split} 
 (x_1-x_u)^2+(y_1-y_u)^2&=d_{u,1}^2 \\ 
@@ -887,26 +936,57 @@ Each unknown node $u$ computes the approximate distance from anchor node i using
 &\;\;\vdots\\
 (x_n-x_u)^2+(y_n-y_u)^2&=d_{u,n}^2 \\
 \end{split}
-\end{align}
+\end{align} 
+where $d_{u,i}$ is the distance (in meters) from node $u$ to node $i$.
 By subtracting the $n$-th equation to all the others, those can be transformed to
 \begin{align}
 \begin{split} 
-(x_1-x_u)^2+(y_1-y_u)^2&=d_{u,1}^2 \\ 
-(x_2-x_u)^2+(y_2-y_u)^2&=d_{u,2}^2 \\ 
+x_1^2-x_m^2+y_1^2-d_{u,1}^2-d_{u,n}^2&=2x_u(x_1-x_n)+2y_u(y_1-y_u)\\ 
+x_2^2-x_m^2+y_2^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_2-x_n)+2y_u(y_2-y_u)\\
 &\;\;\vdots\\
-(x_n-x_u)^2+(y_n-y_u)^2&=d_{u,n}^2 \\
+x_2^2-x_m^2+y_2^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_{n-1}-x_n)+2y_u(y_2-y_u)
 \end{split}
 \end{align}
-Can be written in matrix...
+Can be written in matrix form $AX_u=B$
+where 
+\begin{equation}
+    A=2\begin{bmatrix}
+    x_1-x_m & y_1-y_m\\
+    x_2-x_m & y_2-y_m\\
+    \vdots & \vdots\\
+    x_{m-1}-x_m & y_{m-1}-y_m
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+    X_u=\begin{bmatrix}
+    x_u\\
+    y_u
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+    B=\begin{bmatrix}
+        x_{1}^2-x_m^2+y_{1}^2-y_m^2-d_{u,1}^2-d^2_{u,m}\\
+        x_{2}^2-x_m^2+y_{2}^2-y_m^2-d_{u,2}^2-d^2_{u,m}\\
+        \vdots\\
+        x_{m-1}^2-x_m^2+y_{m-1}^2-y_m^2-d_{u,n-1}^2-d^2_{u,m}
+    \end{bmatrix}
+\end{equation}
+The result can be computed with the closed formula of the LLS
+\begin{equation}
+    X_u=(A^TA)^{-1}A^TB
+\end{equation}
 \clearpage
 
 
 \section{Fingerprinting 437}
-from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k 
-
-
-
-
+from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k\\\\\\
+Fingerprinting is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node w.r.t. the other nodes. The algorithm employed by this method is known as K-NN or K nearest neighbours \cite{10.5555/1162264}. Here it is presented the version working with $1-NN$, 
+In the learining (offline) phase, every node build an internal database with records of every node along with the received signal strength as in the the following table (table). As soon as the localization phase starts, (centralized algorithm?) the following formula is used
+\begin{equation}
+    \hat{i}=\arg \min_{\mathbf{x_h}}\bigg\{\sum_{k=1}^n(r_i(k)-r_{n+1(k)})^2\bigg\}
+\end{equation}
+metti meglio, descrivi $(...)^2$ come cifra di merito,
+dunque questo algoritmo seleziona il nodo $i$ tale per cui la somma delle differenze di come il nodo $i$ vede tutti i nodi diversi da $i$ sia minore, ovvero, ideally, that, according to the signal intensity read, it should be closest to the unknown node. The estimated position is that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.  
 
 
 \chapter{Conclusioni (1 pag)}
