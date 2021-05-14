@@ -52,11 +52,11 @@ Scopo della tesi fare un po di ordine nello stato attuale degli algoritmi di ric
 
 \chapter{Modello matematico della propagazione del segnale (2 pag)}
 \section{Path loss model}
-The log-normal propagation model, see \cite{MUNOZ200923}, is
+Given a transmitter device and a receiver device, placed at distance $d$ to one another, the  the log-normal propagation model, see \cite{MUNOZ200923}, is
 \begin{equation}
 \upsilon(d) = A-10\alpha\log_{10}\bigg(\frac{d}{d_0}\bigg) + \xi, \quad d>d_0
 \end{equation}
-where $\xi$ is a zero-mean gaussian variable that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify the ?? as
+where $\xi$ is a zero-mean gaussian variable (a.k.a. $\mathcal{N}(0,\sigma^2)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify the ?? as
 \begin{equation}
 \upsilon(d) = A-10\alpha\log_{10}(d) + \xi   
 \end{equation}
