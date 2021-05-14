@@ -60,6 +60,7 @@ Given a transmitting device $j$ and a receiving device $i$, placed at distance $
 where $\xi_i$ is a zero-mean gaussian variable ( $\mathcal{N}(0,\sigma^2_i)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $\upsilon_0^j$ is the RSSI read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify, the \ref{eq:1} as:
 \begin{equation}
 \upsilon_i = \upsilon_0-10\alpha\log_{10}(d_i) + \xi_i, \quad d_i>d_0
+\label{eq:2}
 \end{equation}
 where the letter $j$ is usually dropped.
 Some algorithms that don't require a high precision usually don't account for the noise whereas for some other it is convenient to rewrite the model as
@@ -185,7 +186,7 @@ The Z-score is another method to find outliers. In few words, the procedure esti
 \begin{equation}
     \hat{\sigma}=\sqrt{\frac{1}{n-1}\sum_{i=1}^n(x_i-\hat{\mu})^2}
 \end{equation}
-Then we compute the z-score $y_i$ of each value $x_i$
+Then it computes the z-score $y_i$ of each value $x_i$
 \begin{equation}
     y_i=\frac{x_i-\hat{\mu}}{\hat{\sigma}}
 \end{equation}
@@ -221,78 +222,142 @@ note the last value, for the previous algorithm it should have been discarded, b
 
 \clearpage
 
-\chapter{Algoritmi per la stima di alcuni parametri}
-A must be known, since can be regarded as a factory data.
-\section{Estimation of path loss index}
-For the anchor node $i$, the values are obtained according to the following equation
-\begin{equation}
-  \upsilon_i=A-10\alpha_i\log_{10}(d_i)+\xi_i
-\end{equation}
-The above model is basically a constant term added to a zero mean gaussian variable, so from \cite{alma9926534668905776}
+\chapter{Algorithm }
+\section{Estimation of path loss index $\alpha_i$}
+For the anchor node $i$, the values are obtained according to \ref{eq:2}. The referenced model is basically a constant term added to a zero mean gaussian variable, so from \cite{alma9926534668905776}, let $a \in \mathbb{R}$
 \begin{equation}
 a+\mathcal{N}(0,\sigma^2)\sim\mathcal{N}(a,\sigma^2)
-\end{equation} therefore the ?? is gaussian as follows:
+\end{equation} therefore the \ref{eq:2} is gaussian as follows:
 \begin{equation}
-    \upsilon_i \sim \mathcal{N}(A-10\alpha_i\log_{10}(d_i),\sigma^2_i)
+    X_i\sim \mathcal{N}(\mu_i,\sigma^2_i)
+    \label{eq:3}
 \end{equation}
-which has its probability density function
+where 
 \begin{equation}
-    p(x)=\frac{1}{\sqrt{2\pi\sigma_i^2}}e^{-\frac{1}{2}\frac{(x-\mu)^2}{\sigma^2_i}}
+    \mu_i = \upsilon_0-10\alpha_i\log_{10}(d_i)
 \end{equation}
-where
+which has probability density function
 \begin{equation}
-    \mu = A-10\alpha_i\log_{10}(d_i)
-\end{equation}
-Given a sample $1<j<m$ of measurements, all given by the same node, that is, that follow the distribution ?? we can employ the Maximum Likelihood to estimate the path loss index specific of this anchr node. It follows
+    p_i(x)=\frac{1}{\sqrt{2\pi\sigma_i^2}}e^{-\frac{1}{2}\frac{(x-\mu_i)^2}{\sigma^2_i}}
+\end{equation} 
+Given a sample $1<j<m$ of $m$ measurements, all given by the same node, that is, that follow the distribution \ref{eq:3} we can employ the Maximum Likelihood to estimate the path loss index specific of this anchor node. It follows
 \begin{equation}
-    L_m^i(\alpha_i,\sigma_i^2)=
-    \frac{1}{(2\pi\sigma_i^2)^{\frac{m}{2}}}e^{-\frac{1}{2}\sum_{j=1}^m\frac{(\upsilon_j-\mu)^2}{\sigma^2_i}}
+    L_m^i(\alpha_i,\sigma_i^2)=\prod_{j=1}^mP(X_i=\upsilon_i^j)=
+    \frac{1}{(2\pi\sigma_i^2)^{\frac{m}{2}}}e^{-\frac{1}{2}\sum_{j=1}^m\frac{(\upsilon_j-\mu_i)^2}{\sigma^2_i}}
 \end{equation}
 by applying the logarithm to both members
 \begin{equation}
-    \ell_m^i(\alpha_i,\sigma^2_i)=-\frac{m}{2}\ln(2\pi\sigma^2_i)-\frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_i-\mu)^2
+    \ell_m^i(\alpha_i,\sigma^2_i)=-\frac{m}{2}\ln(2\pi\sigma^2_i)-\frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_j-\mu_i)^2
+    \label{eq:4}
 \end{equation}
-Maximizing $\ell_m^i$ w.r.t to $\alpha_i$ is equal to minimize the second term in the above equation, therefore \cite{MUNOZ200923} 
+Maximizing $\ell_m^i$ w.r.t to $\alpha_i$ is equal to minimize the second term in the above equation, since the first one is independent of $\alpha_i$ therefore \cite{MUNOZ200923} 
 \begin{equation}
-\frac{\partial}{\partial \alpha_i} \frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_i-\mu)^2 =0
-\end{equation}
-\begin{equation}
-\frac{\partial}{\partial \alpha_i} \frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_i-A+10\alpha_i\log_{10}(d_i))^2 =0
+\frac{\partial}{\partial \alpha_i} \frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_j-\mu_i)^2 =0
 \end{equation}
 \begin{equation}
-\frac{\partial}{\partial \alpha_i} \frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_j-A+10\alpha_i\log_{10}(d_i))^2 =0
+\frac{\partial}{\partial \alpha_i} \frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_j-\upsilon_0+10\alpha_i\log_{10}(d_i))^2 =0
 \end{equation}
 \begin{equation}
-\frac{1}{2\sigma^2_i}\sum_{j=1}^m2\big(\upsilon_j-A+10\alpha_i\log_{10}(d_i)\big)(10\log_{10}(d_i)) =0
+\frac{\partial}{\partial \alpha_i} \frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_j-\upsilon_0+10\alpha_i\log_{10}(d_i))^2 =0
 \end{equation}
 \begin{equation}
-\sum_{j=1}^m\big(\upsilon_j-A+10\alpha_i\log_{10}(d_i)\big) =0
+\frac{1}{2\sigma^2_i}\sum_{j=1}^m2\big(\upsilon_j-\upsilon_0+10\alpha_i\log_{10}(d_i)\big)(10\log_{10}(d_i)) =0
 \end{equation}
 \begin{equation}
-\sum_{j=1}^m\upsilon_j-mA+10m\alpha_i\log_{10}(d_i)=0
+\sum_{j=1}^m\big(\upsilon_j-\upsilon_0+10\alpha_i\log_{10}(d_i)\big) =0
 \end{equation}
 \begin{equation}
-    \alpha_i=\frac{mA-\sum_{j=1}^m\upsilon_j}{10m\log_{10}(d_i)}
+\sum_{j=1}^m\upsilon_j-m\upsilon_0+10m\alpha_i\log_{10}(d_i)=0
+\end{equation}
+\begin{equation}
+    \alpha_i=\frac{m\upsilon_0-\sum_{j=1}^m\upsilon_j}{10m\log_{10}(d_i)}
 \end{equation}
 The path loss index can also be approximatedby taking the mean of the path loss deduced between the ther nodes..
 Important to assume homogeneous distribution of anchor nodes this in conclusions, fai anche qualche immagine.
-\section{Estimation of $\sigma^2_i$}
-Assume to know...\\
-The derivative of ?? w.r.t $\sigma^2_i$ is 
+Mi sa meglio fare un solo path loss $\alpha$ e non $\alpha_i$, non is puo fare online perche' manca d...
+
+\section{Estimation of path loss index $\alpha$}
+Place a transmitting device $n+1$ at known position. For the anchor node $i$, the values of signal intensity of the node $n+1$ are obtained according to \ref{eq:2}. The referenced model is basically a constant term added to a zero mean gaussian variable, so from \cite{alma9926534668905776}, let $a \in \mathbb{R}$
 \begin{equation}
-    \frac{-m\sigma^2_i+\sum_{j=1}^m(\upsilon_i-\mu)^2}{2\sigma^4_i}=0
+a+\mathcal{N}(0,\sigma^2)\sim\mathcal{N}(a,\sigma^2)
+\end{equation} therefore the \ref{eq:2} is gaussian as follows:
+\begin{equation}
+    X_i\sim \mathcal{N}(\mu_i,\sigma^2_i)
+    \label{eq:3}
+\end{equation}
+where 
+\begin{equation}
+    \mu_i = \upsilon_0-10\alpha_i\log_{10}(d_i)
+\end{equation}
+which has probability density function
+\begin{equation}
+    p_i(x)=\frac{1}{\sqrt{2\pi\sigma_i^2}}e^{-\frac{1}{2}\frac{(x-\mu_i)^2}{\sigma^2_i}}
+\end{equation} 
+Given a sample of $n$ measurements $\upsilon_i$, one for each node, that follow the distribution \ref{eq:3} we can employ the Maximum Likelihood to estimate the path loss index. It follows
+\begin{equation}
+    L_n(\alpha,\sigma_i^2)=\prod_{i=1}^nP(X_i=\upsilon_i)=
+    \frac{1}{(2\pi\sigma_i^2)^{\frac{n}{2}}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i}}
+\end{equation}
+by applying the logarithm to both members
+\begin{equation}
+    \ell_m(\alpha,\sigma^2_i)=-\frac{n}{2}\ln(2\pi\sigma^2_i)-\frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i}
+    \label{eq:4}
+\end{equation}
+Maximizing $\ell_m^i$ w.r.t to $\alpha$ is equal to minimize the second term in the above equation, since the first one is independent of $\alpha$ therefore \cite{MUNOZ200923} 
+\begin{equation}
+\frac{\partial}{\partial \alpha} \frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i} =0
+\end{equation}
+
+\begin{equation}
+\frac{\partial}{\partial \alpha} \frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\upsilon_0+10\alpha\log_{10}(d_i))^2}{\sigma^2_i} =0
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^n\frac{\big(\upsilon_i-\upsilon_0+10\alpha\log_{10}(d_i)\big)(10\log_{10}(d_i))}{\sigma^2_i}=0
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^n\frac{\big(\upsilon_i-\upsilon_0+10\alpha\log_{10}(d_i)\big)(\log_{10}(d_i))}{\sigma^2_i}=0
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)-\upsilon_0\log_{10}(d_i)+10\alpha(\log_{10}(d_i))^2}{\sigma^2_i}=0
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)}{\sigma^2_i}-\upsilon_0\sum_{i=1}^n\frac{\log_{10}(d_i)}{\sigma^2_i}+10\alpha\sum_{i=1}^n\frac{(\log_{10}(d_i))^2}{\sigma^2_i}=0
+\end{equation}
+
+\begin{equation}
+\alpha=\frac{\sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)}{\sigma^2_i}-\upsilon_0\sum_{i=1}^n\frac{\log_{10}(d_i)}{\sigma^2_i}}{10\sum_{i=1}^n\frac{(\log_{10}(d_i))^2}{\sigma^2_i}}
+\end{equation}
+In the cases $\sigma^2_i$ can be assumed constant $\sigma^2$, the equation simplifies as
+\begin{equation}
+\alpha=\frac{\sum_{i=1}^n\upsilon_i\log_{10}(d_i)-\upsilon_0\sum_{i=1}^n\log_{10}(d_i)}{10\sum_{i=1}^n(\log_{10}(d_i))^2}
+\end{equation}
+\section{Estimation of $\sigma^2_i$}
+  \begin{center}
+  \textbf{Assume to know:}
+  \begin{itemize}
+    \centering
+    \item $A$
+    \item $\alpha$
+  \end{itemize}
+  \end{center}
+The derivative of \ref{eq:4} w.r.t $\sigma^2_i$ set to $0$ has the following form 
+\begin{equation}
+    \frac{-m\sigma^2_i+\sum_{j=1}^m(\upsilon_j-\mu_i)^2}{2\sigma^4_i}=0
 \end{equation}
 Since $\sigma^2_i>0$ we have
 \begin{equation}
-    \sigma^2_i=\frac{1}{m}\sum_{j=1}^m(\upsilon_i-\mu)^2
+    \sigma^2_i=\frac{1}{m}\sum_{j=1}^m(\upsilon_j-\mu_i)^2
 \end{equation}
 
 \clearpage
 
 \chapter{Algoritmi per la stima della posizione(16 pag)}
-scrivere vantaggi e svantaggi ognuno, testo algoritmo, dimostrazioni matematiche, commenti e opinioni.
 \section{General overview and recurring terms}
-We want to locate a device, (with a LOS or NLOS condition ?) by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
+We want to locate a device, by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
 
 \section{Common Paradigm}
 To avoid redundancy, given the fact that each algorithm differences itself from the others only because of the mathematic tools employes, it make sense to focus on it in the description of the algorithms, and to present here the common instructions of those algorithms.
