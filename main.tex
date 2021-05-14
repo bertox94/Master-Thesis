@@ -52,45 +52,62 @@ Scopo della tesi fare un po di ordine nello stato attuale degli algoritmi di ric
 
 \chapter{Modello matematico della propagazione del segnale (2 pag)}
 \section{Path loss model}
-Given a transmitter device and a receiver device, placed at distance $d$ to one another, the  the log-normal propagation model, see \cite{MUNOZ200923}, is
+Given a transmitting device $j$ and a receiving device $i$, placed at distance $d$ to one another, the receiver device can measure the signal intensity of the transmitting device $\upsilon_i^j$. Those readings (according to the log-normal propagation model  \cite{MUNOZ200923}) are of the form
 \begin{equation}
-\upsilon(d) = A-10\alpha\log_{10}\bigg(\frac{d}{d_0}\bigg) + \xi, \quad d>d_0
+\upsilon_i^j = \upsilon_0^j-10\alpha\log_{10}\bigg(\frac{d_i}{d_0}\bigg) + \xi_i, \quad d_i>d_0
+\label{eq:1}
 \end{equation}
-where $\xi$ is a zero-mean gaussian variable (a.k.a. $\mathcal{N}(0,\sigma^2)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $A$ is the $RSSI$ read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify the ?? as
+where $\xi_i$ is a zero-mean gaussian variable ( $\mathcal{N}(0,\sigma^2_i)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $\upsilon_0^j$ is the RSSI read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify, the \ref{eq:1} as:
 \begin{equation}
-\upsilon(d) = A-10\alpha\log_{10}(d) + \xi   
+\upsilon_i = \upsilon_0-10\alpha\log_{10}(d_i) + \xi_i, \quad d_i>d_0
 \end{equation}
-In some algorithms that don't not require a high precision the noise is not taken into account. Instead for some other algorithms it is a good idea to rewrite the model as follows, by letting $\beta=10\alpha/\ln(10)$:
+where the letter $j$ is usually dropped.
+Some algorithms that don't require a high precision usually don't account for the noise whereas for some other it is convenient to rewrite the model as
 \begin{equation}
-\upsilon(d) = A-\beta\ln(d) + \xi
-\end{equation} where $\ln(\bullet)$ is the natural logarithm, and then deriving a slightly different model
+\upsilon_i= \upsilon_0-\beta\ln(d_i) + \xi_i
+\end{equation}
+with
+\begin{itemize}
+    \item $\beta=10\alpha/\ln(10)$
+    \item $\ln(\bullet)\quad \text{as the natural logarithm}$
+\end{itemize}
+and finally deriving a slightly different model
 \begin{equation}
-\nu(d) = \upsilon(d)-A= -\beta\ln(d) + \xi
+\nu_i = \upsilon_i-\upsilon_0= -\beta\ln(d_i) + \xi_i
 \end{equation}
 \clearpage
 
 
 \chapter{Disturbances of RSSI}
-The RSSI noise has a great influence over the measurements, thereby complicating the attempt to get precise location. To give some numbers, the available range of signal intensity that a common WiFi device can measure varies in the interval $-30\div-90$ dbm and the value obtained can generally deviate from the exact value at most $6$ dbm which is as much as $10\%$ over the range of measurement.
-Due to its significant influence, it has been investigated many times in order to discover some patterns, but up to now no answer has been found. For example \cite{4608603} showed that there are no significant patterns over the time domain neither in the frequency domain. Instead the causes of the noise are well known and are the same that affects the propagation of any electromagnetic wave.
-We can summarize two main issues that cause RSSI instability: 
-\section{Multipath Fading, NLOS propagation} 
-As outlined in \cite{onl11}, multipath fading occurs when there are multiple ways for the signal to reach the receiving device. This causes the signal waves to reach the receiving end with in two different times, that is, there is a non negligible delay between the two (or more) waves. This means phase shifting, leading to constructive/destructive interference of the signal. This effect is very preeminent in closed environments, when there are many surfaces able to reflect the signal. It is totally randomic \cite{10.5555/559977} therefore it is unpredictable by definition. The good new is that it can be removed by filtering the outliers, with some of the methods presented later.
+The RSSI noise has a great influence over the measurements, thereby complicating the attempt to get precise location. To give some numbers, the theoretical range within the RSSI can vary goes from $-30$ to $-120$ however the available range of signal intensity that a common WiFi device can measure varies in the interval $-30\div-90$ dbm. This is because to estabilish a connection (and to retrieve at least the name of the transmitting device), some packets must be sent, and if the signal strength is too low, the quality of the packets degrades, therefore making impossible the communication. The value measured at the receiving end includes also the noise, so the measurement generally deviate from the exact value by at most $6$ dbm which is as much as $10\%$ over the range of measurement.
+Due to its significant influence, it has been investigated many times in order to discover something more, for example about its probability distribution, but up to now, few to no answers have been found. To cite one, \cite{4608603} showed that there are no significant patterns over the time domain neither in the frequency domain. The causes of the noise are the same that affects the propagation of any electromagnetic wave. Of course in industrial environments with strong Electro Magnetic interferences the noise is more pronounced \cite{746e8399}. We can summarize the main sources of noise in the following sections: 
+\section{Multipath Fading} 
+As outlined in \cite{onl11}, multipath fading occurs when there are multiple ways for the signal to reach the receiving device. This causes the signal waves to reach the receiving end in two different times, that is, there is a non negligible delay between the two (or more) waves. This means phase shifting, leading to constructive/destructive interference, therefore causing oscillations in the signal intensity read. This effect is very preeminent in closed environments, when there are many surfaces able to reflect the signal. It is totally randomic \cite{10.5555/559977} which means unpredictable by definition. Due to its nature, the alterations of the signal caused are like spikes above or below the mean value. Therefore it can be removed to some extent by filtering the outliers with some of the methods presented later.
 \section{Shadow Fading}
-This effect is the attenuation of the signal caused by heavy and large (w.r.t. the wavelength) obstacles between the receiver and the sender that adsorb (or may even block) the waves. This is classically related to NLOS (Non Line Of Sight) environments that is, when the signal is not receiver cannot "see" the sender. This effect is taken into account in the model as the path loss index $\alpha$. This is quite a problem when there are many obstacles obstructing the way, therefore the correct path loss index can only be estimated with some algorithms, one of them is presented later, and not analitically computed. It showed spatial correlation \cite{244122,732812}, which is in fact intuitive, all the measurements taken in a certain position, with a certain number of obstacles will be all affected by an almost equal shadow fading, whereas in another locations it will not. The problematic effect of this noise is that is shows a systematic behaviour, in other words, each measurement is affected by an almost equal way, therefore trying to remove it by removing outliers is not an effective way. If the path loss index is taken wrong in the model for some reasons, the estimated position will be altered with some significant errors, that may set negligible the improvement of other source of noise. Even more complicate is when there are persons moving freely between the sender and the receiver. The body of each passing person adsorb the signal, therefore alterating the measure. The estimated position will inevitably bear some non negligible errors.
+This effect is the attenuation of the signal caused by heavy and large (w.r.t. the wavelength) obstacles between the receiver and the sender that can adsorb the waves partially, or even totally. This is directly related to NLOS (Non Line Of Sight) environments that is, when the receiver cannot "see directly`" the sender. The shadow fading effect is taken into account in the model as the path loss index $\alpha$. This parameter is easily obtained in open field with no obstacles, whereas it is quite a problem when there are many obstacles obstructing the way. In the latter case, the analytical way (by considering the absorption coefficients of the obstacles) is rarely used, instead a somehow correct path loss index is usually estimated with some algorithms, one of them is presented later. It showed spatial correlation \cite{244122,732812}, which is in fact intuitive, all the measurements taken in a certain position, with a certain number of obstacles will be all affected by an almost equal shadow fading, whereas in another locations it will not. The problematic effect of this noise is that is shows a systematic behaviour, in other words, each measurement is affected by an almost equal amount, therefore trying to remove it by removing outliers is not an effective way. If the path loss index is taken wrong in the model for some reasons, the estimated position will be altered with some significant errors, that may invalidate the other source of noise. Even more complicate is when there are persons moving freely between the sender and the receiver. The body of each passing person adsorb the signal, therefore alterating the measure. The estimated position will inevitably bear some non negligible errors.
 
 \chapter{Noise removal}
-I will present here some method to remove outliers in a series of data. I will present them from a mathematical point of view before, and then an extract of the algorithm in pseudocode.
+Here I will present some algorithms to remove outliers in a series of data. Clearly those metods, given their independence from the RSSI can be used to remove outliers of any series of data.
 \subsection{IQR}
-This method, whose name is InterQuartile Range method, is based, as the name suggest, on the quartiles of a dataset. I will present an algorithm that can be used to obtain the quartiles. I will assume some facts:
+This method, whose name is InterQuartile Range method, is based, as the name suggest, on the quartiles of a dataset. First, let's start with an algorithm that can be used to obtain the quartiles. I will assume some facts:
 \begin{itemize}
     \item Arrays index starts from zero
-    \item Float numbers are cast to integer with truncation of the decimal part
+    \item Float numbers are cast to integer with truncation of the decimal part, e.g.
+    $$1.2 \to 1,\quad -1.8 \to -1$$
     \item Datasets
     \begin{itemize}
         \item d1
         \item d2
         \item d3
+    \end{itemize}
+    \item Size of each dataset
+    \begin{itemize}
+        \item s1
+        \subitem size of d1
+        \item s2
+        \subitem size of d2
+        \item s3
+        \subitem size of d3
     \end{itemize}
 \end{itemize}
 
@@ -100,7 +117,7 @@ This method, whose name is InterQuartile Range method, is based, as the name sug
 d1.sort(ascending)\;
 Q1 = Q2 = Q3 = 0\;
 s1 = d1.size()\;
-\eIf{s1.is\_even()}{
+\eIf{s1 is even}{
     Q2 = (d1[s1/2 - 1] + d1[s1/2])/2\;
     d2 = d1[0 : s1/2 - 1]\;
     d3 = d1[s1/2 : s1 - 1]\;
@@ -112,25 +129,25 @@ s1 = d1.size()\;
 
 s2 = d2.size()\;
 s3 = d3.size()\;
-\eIf{s2.is\_even()}{
+\eIf{s2 is even}{
     Q1 = (d2[s1/2 - 1] + d2[s1/2])/2\;
 }{
     Q1 = d2[s1/2]\;
 }
-\eIf{s3.is\_even()}{
+\eIf{s3 is even}{
     Q3 = (d2[s1/2 - 1] + d2[s1/2])/2\;
 }{
     Q3 = d2[s1/2]\;
 }
  \caption{Quartiles computation}
 \end{algorithm}
-\noindent \\Going back to the IQR method you have to do the following steps:
+\noindent \\A little explanation here is required. At the beginning the algorithm sort the initial dataset $d1$ in ascending order. We will take the median ($Q2$) of $d1$. Therefore we have two possible paths. If $s1$, size of $d1$ is odd, then the median is at $s1/2$, the central position (remind the assumption about array indexing and decimal casting). If it is not, the mediane will be the average of the two elements at the center. Either the cases, we get two datasets, the upper half ($d2$) and the lower half ($d3$), separated by the median. Then the operation is repeated for each one of $d2,d3$, in order to obtain $Q1$ median of the upper half, and $Q3$ median of the lower half. As can be seen, $25\%$ of data is below $Q1$, $50\%$ of data is below $Q2$, which is the common median, and $75\%$ of data is below $Q3$. \\\\Going back to the IQR method the algorithm goes through the following steps:
 
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwResult{The filtered dataset}
 Q1, Q2, Q3 known from the previous algorithm\;
-IQR=Q3-Q1\;
+IQR = Q3 - Q1\;
 $I=[Q1-1.5\cdot IQR,\quad Q2 + 1.5\cdot IQR]$\;
  \While{$k \in [1:n]$}{
     \If{! $dataset[k]\in I$}{
@@ -141,7 +158,21 @@ $I=[Q1-1.5\cdot IQR,\quad Q2 + 1.5\cdot IQR]$\;
  }
  \caption{Outliers removal with IQR}
 \end{algorithm}
-\noindent \\Here it is given a numeric example. Suppose you have the following dataset $$\{-1.9, 0.3, 3.7, 4.1, 6, 6.1, 7.2, 9, 19\}$$ already sorted, where the first seven nuberers are extracted from $-2+X$, where $X$ follows the uniform distribution in $[0,10]$. The latest two values are possible outliers. Since the size of the dataset is odd, $Q2$ can be found at the fifth position and is $6$. We have then the first half and the second half. Since the first half has an even number of data points, the median of the first half ($Q1$) will be $(0.3+3.7)/2=2$, the same reasoning applies to $Q3$ for the second half, which is equal to $8.1$. Therefore the IQR will be $8.1-2=6.1$ the interval $I$ will be
+\noindent \\Here it is given a numeric example. Suppose you have the following dataset 
+$$
+\text{dataset}=\begin{bmatrix}
+-1.9\\ 
+0.3\\ 
+3.7\\
+4.1\\
+6\\
+6.1\\
+7.2\\
+9\\
+19
+\end{bmatrix}
+$$
+already sorted, where the first seven nuberers are extracted from $-2+X$, where $X$ follows the uniform distribution in $[0,10]$. The latest two values are possible outliers. Since the size of the dataset is odd, $Q2$ can be found at the fifth position and is $6$. We have then the first half and the second half. Since the first half has an even number of data points, the median of the first half ($Q1$) will be $(0.3+3.7)/2=2$, the same reasoning applies to $Q3$ for the second half, which is equal to $8.1$. Therefore the IQR will be $8.1-2=6.1$ the interval $I$ will be
 $$I=[2-1.5\cdot6.1,8.1+1.5\cdot6.1]=[-7.15,17.25]$$
 As you can see, the number $19$ will be treated as an outlier anf thus be removed. You can also choose how wide the interval you want it to be, for example if you wanted to be more strict you could choose $1$ instead of $1.5$ as a multiplying factor, obtaining the following interval
 $$I'=[2-1\cdot6.1,8.1+1\cdot6.1]=[-4.1,14.2]$$
@@ -159,10 +190,34 @@ Then we compute the z-score $y_i$ of each value $x_i$
     y_i=\frac{x_i-\hat{\mu}}{\hat{\sigma}}
 \end{equation}
 The filtering process now removes every data whose z-score is outside the interval $[-3,3]$. Here an axample, with the same dataset of the previous algorithm
-$$\{-1.9, 0.3, 3.7, 4.1, 6, 6.1, 7.2, 9, 19\}$$
+$$
+\text{dataset}=\begin{bmatrix}
+-1.9\\ 
+0.3\\ 
+3.7\\
+4.1\\
+6\\
+6.1\\
+7.2\\
+9\\
+19
+\end{bmatrix}
+$$
 The estimated mean is $\hat{\mu}=5.94$ and the sample standard deviation is $\hat{\sigma}=5.32$. Then the corresponding set of z-scores is
-$$\{-1.47, -1.06, -0.42, -0.34, 0.01, 0.02, 0.23, 0.57, 2.45\}$$
-note the last value, for the previous algorithm it should have been discarded, but according to this one it is still kept. Clearly you can choose a narrower interval than $[-3,3]$.
+$$
+\text{z-scores}=\begin{bmatrix}
+-1.47\\
+-1.06\\
+-0.42\\
+-0.34\\
+0.01\\
+0.02\\
+0.23\\
+0.57\\
+2.45
+\end{bmatrix}
+$$
+note the last value, for the previous algorithm it should have been discarded, but according to this one it is still kept. Clearly you can choose a narrower interval than $[-3,3]$ if you want to be more strict on the outliers.
 
 \clearpage
 
@@ -259,7 +314,7 @@ return results\;
 \end{algorithm}
 
 \section{Classification}
-Here follows a quite complete classification of the localization methods considered. Model based means that the algorithms that depart from that node, employs directly the model of log prpagation seen in ??, whereas model free don't use it. Closed formula/iterative methods are quite self explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$ in the previous ?? that affects the reading. Of course, model free methods, since they do not use the model ??, they do not consider also the variance of the noise, nor any other probabilistic parameters.
+Here follows a quite complete classification of the localization methods considered. Model based means that the algorithms that depart from that node, employs directly the model of log prpagation seen in ??, whereas model free don't use it. Closed formula/iterative methods are quite self explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$ in the previous ?? that affects the reading. Of course, model free methods, since they do not use the model ??, they do not consider also the variance of the noise, nor any other probabilistic parameters.\\\\\\
 \scalebox{0.8}{
 \begin{forest}
     for tree={
