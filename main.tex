@@ -8,6 +8,7 @@
 \usepackage{tikz}
 \usepackage{forest}
 \usepackage{pgfplots}
+\usepackage{rotating}
 \pgfplotsset{compat=1.7}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
 %\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
@@ -47,15 +48,22 @@
 \setcounter{page}{1}
 
 \chapter{Abstract, possibili applicazioni, descrizione (1 pg)}
-Scopo della tesi fare un po di ordine nello stato attuale degli algoritmi di ricerca tramite rssi. qui faccio un revisiting dei piu noti algoritmi, cercando di mediare fra la teoria e l'applicazione, adattando i modelli proposti in una forma che si presta meglio all'implementazione algoritmica.
+Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate hiding objects, and that technology is now low cost and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language you prefer.
+
+\section{Environment settings}
+The main setting that we will present is the most common used up to now, which is a space filled with receiving/transmitting devices (anchor nodes), each placed in regular position (usually a grid) with known postions, that can read the signal intensity of the other nodes. The activity starts when a device with unknown position is put in the area and many (if not every) nodes are close enough to get the signal instensity of that unknown node. This range of sensitivity can be seen as a circle of radius of about $50$ meters. At this point each anchor node can communicate outside the a tuple like this $(x_i,y_i,\upsilon_i)$ where $x_i,y_i$ are the position of the node itself, and $\upsilon_i$ is the signal strenght intensity of the unknown node, measured by the anchor node $i$. Usually the data is sent to a central processing device that makes the computations and outputs the estimated position. This is not the only way however, the other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and one target node with unknown position. The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $\upsilon_i$. 
+
 \clearpage
 
 \chapter{Modello matematico della propagazione del segnale (2 pag)}
 \section{Path loss model}
 Given a transmitting device $j$ and a receiving device $i$, placed at distance $d$ to one another, the receiver device can measure the signal intensity of the transmitting device $\upsilon_i^j$. Those readings (according to the log-normal propagation model  \cite{MUNOZ200923}) are of the form
 \begin{equation}
-\upsilon_i^j = \upsilon_0^j-10\alpha\log_{10}\bigg(\frac{d_i}{d_0}\bigg) + \xi_i, \quad d_i>d_0
+\upsilon_i^j = \upsilon_0^j-10\alpha\log_{10}\bigg(\frac{d_i^j}{d_0}\bigg) + \xi_i, \quad d_i^j>d_0
 \label{eq:1}
+\end{equation}
+\begin{equation}
+    d_i^j=\sqrt{(x_i-x_j)^2+(y_i-y_j)^2}
 \end{equation}
 where $\xi_i$ is a zero-mean gaussian variable ( $\mathcal{N}(0,\sigma^2_i)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $\upsilon_0^j$ is the RSSI read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify, the \ref{eq:1} as:
 \begin{equation}
@@ -75,9 +83,9 @@ with
 and finally deriving a slightly different model
 \begin{equation}
 \nu_i = \upsilon_i-\upsilon_0= -\beta\ln(d_i) + \xi_i
+\label{eq:5}
 \end{equation}
 \clearpage
-
 
 \chapter{Disturbances of RSSI}
 The RSSI noise has a great influence over the measurements, thereby complicating the attempt to get precise location. To give some numbers, the theoretical range within the RSSI can vary goes from $-30$ to $-120$ however the available range of signal intensity that a common WiFi device can measure varies in the interval $-30\div-90$ dbm. This is because to estabilish a connection (and to retrieve at least the name of the transmitting device), some packets must be sent, and if the signal strength is too low, the quality of the packets degrades, therefore making impossible the communication. The value measured at the receiving end includes also the noise, so the measurement generally deviate from the exact value by at most $6$ dbm which is as much as $10\%$ over the range of measurement.
@@ -94,7 +102,8 @@ This method, whose name is InterQuartile Range method, is based, as the name sug
 \begin{itemize}
     \item Arrays index starts from zero
     \item Float numbers are cast to integer with truncation of the decimal part, e.g.
-    $$1.2 \to 1,\quad -1.8 \to -1$$
+    $$1.2 \to 1$$
+    $$-1.8 \to -1$$
     \item Datasets
     \begin{itemize}
         \item d1
@@ -222,7 +231,15 @@ note the last value, for the previous algorithm it should have been discarded, b
 
 \clearpage
 
-\chapter{Algorithm }
+\chapter{Algorithms to estimate some parameters}
+
+
+
+
+
+
+
+\iffalse
 \section{Estimation of path loss index $\alpha_i$}
 For the anchor node $i$, the values are obtained according to \ref{eq:2}. The referenced model is basically a constant term added to a zero mean gaussian variable, so from \cite{alma9926534668905776}, let $a \in \mathbb{R}$
 \begin{equation}
@@ -275,6 +292,11 @@ Maximizing $\ell_m^i$ w.r.t to $\alpha_i$ is equal to minimize the second term i
 The path loss index can also be approximatedby taking the mean of the path loss deduced between the ther nodes..
 Important to assume homogeneous distribution of anchor nodes this in conclusions, fai anche qualche immagine.
 Mi sa meglio fare un solo path loss $\alpha$ e non $\alpha_i$, non is puo fare online perche' manca d...
+\fi
+
+
+
+
 
 \section{Estimation of path loss index $\alpha$}
 Place a transmitting device $n+1$ at known position. For the anchor node $i$, the values of signal intensity of the node $n+1$ are obtained according to \ref{eq:2}. The referenced model is basically a constant term added to a zero mean gaussian variable, so from \cite{alma9926534668905776}, let $a \in \mathbb{R}$
@@ -303,7 +325,7 @@ by applying the logarithm to both members
     \ell_m(\alpha,\sigma^2_i)=-\frac{n}{2}\ln(2\pi\sigma^2_i)-\frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i}
     \label{eq:4}
 \end{equation}
-Maximizing $\ell_m^i$ w.r.t to $\alpha$ is equal to minimize the second term in the above equation, since the first one is independent of $\alpha$ therefore \cite{MUNOZ200923} 
+Maximizing $\ell_m^i$ w.r.t to $\alpha$ is equal to finding the stationary point the second term in the above equation, since the first one is independent of $\alpha$ therefore \cite{MUNOZ200923} 
 \begin{equation}
 \frac{\partial}{\partial \alpha} \frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i} =0
 \end{equation}
@@ -331,7 +353,7 @@ Maximizing $\ell_m^i$ w.r.t to $\alpha$ is equal to minimize the second term in 
 \begin{equation}
 \alpha=\frac{\sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)}{\sigma^2_i}-\upsilon_0\sum_{i=1}^n\frac{\log_{10}(d_i)}{\sigma^2_i}}{10\sum_{i=1}^n\frac{(\log_{10}(d_i))^2}{\sigma^2_i}}
 \end{equation}
-In the cases $\sigma^2_i$ can be assumed constant $\sigma^2$, the equation simplifies as
+Sometimes to ease the computation, $\sigma^2_i$ is assumed constant, so $\sigma_1^2=...=\sigma_n^2=\sigma^2$. Then the equation simplifies as
 \begin{equation}
 \alpha=\frac{\sum_{i=1}^n\upsilon_i\log_{10}(d_i)-\upsilon_0\sum_{i=1}^n\log_{10}(d_i)}{10\sum_{i=1}^n(\log_{10}(d_i))^2}
 \end{equation}
@@ -356,9 +378,6 @@ Since $\sigma^2_i>0$ we have
 \clearpage
 
 \chapter{Algoritmi per la stima della posizione(16 pag)}
-\section{General overview and recurring terms}
-We want to locate a device, by exploiting the relation between the received signal strength and the distance between the source node and the position where the measurement is taken. In real scenarios these samples can be provided mainly in two ways. One typical way is to place various anchor nodes, such that the anchor node $i$, can give samples like $(x_i,y_i,rssi_i)$. The other way, which is lately becoming increasingly used is the employment of a drone, that given some bounds on the area to scan, it collects and outputs the samples, behaving as a "moving" anchor node. We have $n$ anchor nodes with known position, and a $t$-th target node with unknown position.The anchor node $i$ at position $x_i,y_i$ gets the measurement of the $rssi_i$.The data is sent to a central processing device that makes the computations and outputs the estimated position. 
-
 \section{Common Paradigm}
 To avoid redundancy, given the fact that each algorithm differences itself from the others only because of the mathematic tools employes, it make sense to focus on it in the description of the algorithms, and to present here the common instructions of those algorithms.
 When instead the steps are quite different, there will be a more detailed describtion of all the procedure.
@@ -379,8 +398,10 @@ return results\;
 \end{algorithm}
 
 \section{Classification}
-Here follows a quite complete classification of the localization methods considered. Model based means that the algorithms that depart from that node, employs directly the model of log prpagation seen in ??, whereas model free don't use it. Closed formula/iterative methods are quite self explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$ in the previous ?? that affects the reading. Of course, model free methods, since they do not use the model ??, they do not consider also the variance of the noise, nor any other probabilistic parameters.\\\\\\
-\scalebox{0.8}{
+Here follows a quite complete classification of the localization methods considered. Model based means that the algorithms that depart from that node, employs directly the model of log propagation seen in Chapter 2, whereas model free don't use it. Closed formula/iterative methods are quite self explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$ in the previous \ref{eq:2} that affects the reading. Of course, model free methods, since they do not use the model above, they do not consider also the variance of the noise, nor any other probabilistic parameters.
+
+\begin{sidewaysfigure}
+\scalebox{1}{
 \begin{forest}
     for tree={
         grow=0,reversed, % tree direction
@@ -406,6 +427,7 @@ Here follows a quite complete classification of the localization methods conside
  ] ]
 \end{forest}
 }
+\end{sidewaysfigure}
 
 \clearpage
 \section{Trilateration 210}
@@ -603,7 +625,6 @@ The gray area in \ref{fig:mmax} shows the intersection of all the squares. The e
     \caption{}
     \label{fig:mmax}
 \end{figure}
-does it always converge? $x_max$ is always greater than $x_min$?
 \clearpage
 
 \section{Linear estimation 881}
@@ -617,21 +638,22 @@ does it always converge? $x_max$ is always greater than $x_min$?
   \end{itemize}
   \end{center}
 In \cite{rzk} you can find this version but using a slighty different model.
-Consider the model ?? below reported
+Consider the model \ref{eq:5} below reported
 \begin{equation}
     \nu_i=-\beta\ln(d_i)+\xi_i
+    \label{eq:15}
 \end{equation}
 After some time, for each anchor node we will have a list of measurements, drawn from the random variable 
 \begin{equation}
-N_i=-\beta\ln(d_i)+\xi_i.
+-\beta\ln(d_i)+\xi_i\sim \mathcal{N}(-\beta\ln(d_i),\sigma^2)
+\label{eq:14}
 \end{equation}
-Cite ross also here, only for $\mathcal{N}+a$, and remind $xi_i\sim\mathcal{N}(0,\sigma^2_i)$. To give an idea, each anchor node outputs data as a gaussian distribution shifted by the mean, so for the anchor node we have samples extracted from $\mathcal{N}(-\beta\ln(d_i), \sigma_i^2)$. Note that $\sigma_i$ is not necessarily contant, for all $i$.
-
-Rewrite the ?? as follows 
+Rewrite the \ref{eq:15} as follows 
 \begin{equation}
     \nu_i=-\ln\big(d_i^{2\frac{\beta}{2}}\big)+\xi_i
+    \label{eq:6}
 \end{equation}
-By exponentiating both members of ??(previous) we have 
+By exponentiating both members of \ref{eq:6} we have 
 \begin{equation}
     e^{\nu_i}=e^{-\ln\big(d_i^{2\frac{\beta}{2}}\big)+\xi_i}
 \end{equation}
@@ -650,12 +672,14 @@ By exponentiating both members of ??(previous) we have
 \begin{equation}
     e^{-\frac{2}{\beta}\nu_i}=d_i^2e^{-\frac{2}{\beta}\xi_i}
 \end{equation}
-Remind that $\xi_i\sim \mathcal{N}(0,\sigma^2_i)$ is a zero-mean gaussian distribution. The exponentiation of a gaussian distribution is \cite{Beran2011} a log-normal distribution. In other words, given $X\sim \mathcal{N}(\mu,\sigma^2)$, then $Y=e^X\sim \text{Lognormal}(\mu,\sigma^2)$ with
+Remind that the exponentiation of a gaussian distribution is \cite{Beran2011} a log-normal distribution. In other words, given $X\sim \mathcal{N}(\mu,\sigma^2)$, then $Y=e^X\sim \text{Lognormal}(\mu,\sigma^2)$ with
 \begin{equation}
     E[Y]=E\big[e^X\big]=e^{\mu+\frac{\sigma^2}{2}}
+    \label{eq:6}
 \end{equation}
 \begin{equation}
     Var[Y]=Var\big[e^X\big]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}
+    \label{eq:7}
 \end{equation}
 From \cite{alma9926534668905776}, it is clear that if $a\in \mathbb{R}$ and $X\sim \mathcal{N}(\mu,\sigma^2)$ then
 \begin{equation}
@@ -665,11 +689,12 @@ so in this case,
 \begin{equation}
     -\frac{2}{\beta}\xi_i\sim \mathcal{N}\bigg(0,\frac{4}{\beta^2}\sigma^2_i\bigg)
 \end{equation}
-From equations ?? and ?? (previous equation)
+From equations \ref{eq:6} and \ref{eq:7}
 \begin{align}
     &E\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
     &=E\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]\\
     &=d_i^2E\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]\\ &=d_i^2e^{\frac{2}{\beta^2}\sigma^2_i}
+    \label{eq:8}
 \end{align}
 \begin{align}
     &Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
@@ -677,9 +702,10 @@ From equations ?? and ?? (previous equation)
     &=d_i^4Var\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]\\
     &=d_i^4(e^{\frac{4}{\beta^2}\sigma_i^2}-1)e^{\frac{4}{\beta^2}\sigma^2_i}
 \end{align}
-As we can see from ??, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since from ?? its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$. Therefore, an unbiased estimate of $d_i^2$ is 
+As we can see from \ref{eq:8}, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$ (which is the bias itself). Therefore, an unbiased estimate of $d_i^2$ is 
 \begin{equation}
     \hat{d}_i^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+    \label{eq:9}
 \end{equation}
 We want to use the above estimator obtained from the measurements to build a linear models in $\mathbf{x}$. Since the estimator is now unbiased by writing 
 \begin{equation}
@@ -698,6 +724,7 @@ we can write
 By setting the condition 
 \begin{equation}
 R^2=x^2+y^2    
+\label{eq:10}
 \end{equation}
 we can write it in matrix form
 \begin{equation}
@@ -722,7 +749,7 @@ with $$M=\begin{bmatrix}
         \vdots&\vdots&\vdots\\
         -2x_n & -2y_n & 1
     \end{bmatrix}$$
-$$\theta^* =     \begin{bmatrix}
+$$\theta =     \begin{bmatrix}
         x\\
         y\\
         R^2
@@ -772,10 +799,10 @@ The target position can be finally obtained as
 
 
 \section{Weighted linear estimation 270}
-In section ?? we have seen how to use statistics to obtain an estimator of the distance for each anchor node to the unknown node, and then putting all this in a linear form, to deduce the location of the unknown node with a simple closed formula such as the Linear least squares. However we can still improve it by givin to each anchor node a weight, bound to the variance of the estimator $\hat{d}_i^2$ obtained from the anchor node $i$. A good idea would be to give more importance to the nodes that produces an estimator with low variance, and to give less importance to those node that produces estimators with high variance. To ease the computation we consider each anchor node to be indepentendet from each other. One way to do that is to introduce a symmetric covariance matrix, diagonal (because of the independence of anchor nodes). Since we want the weight assigned to each node to be inversely proportional to the variance we consider $W=(W')^{-1}$ \cite{rzk,899498y4hd}. It is important to note that this improvement does not regard the generation of the vector of estimators, rather the minimization of the cost function. Now we compute the variance of each estimator $\hat{d}_i^2$, from ??
+In the previous section we have seen how to use statistics to obtain an estimator of the distance for each anchor node to the unknown node, and then putting all this in a linear form, to deduce the location of the unknown node with a simple closed formula such as the linear least squares. However we can still improve it by givin to each anchor node a weight, bound to the variance of the estimator $\hat{d}_i^2$ obtained from the anchor node $i$. A good idea would be to give more importance to the nodes that produces an estimator with low variance, and to give less importance to those node that produces estimators with high variance. To ease the computation we consider each anchor node to be indepentendet from each other. One way to do that is to introduce a symmetric covariance matrix $W'$, which is also diagonal (because of the independence of anchor nodes). Since we want the weight assigned to each node to be inversely proportional to the variance we consider $W=(W')^{-1}$ \cite{rzk,899498y4hd}. It is important to note that this improvement does not regard the generation of the vector of estimators, rather the minimization of the cost function. Now we compute the variance of each estimator $\hat{d}_i^2$
 \begin{align}
-Var&\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
-&=Var\bigg[e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg]\\
+\sigma^2_{\hat{d_i}}=&Var\big[\hat{d_i^2}\big]=&& \\
+&=Var\bigg[e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg] && \text{from \ref{eq:9}}\\
 &=\bigg(e^{-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
 &=\cancel{e^{-\frac{4}{\beta^2}\sigma^2_i}}d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\cancel{e^{\frac{4}{\beta^2}\sigma^2}}\\
 &=d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
@@ -785,9 +812,10 @@ Var&\big[\hat{d_i^2}\big]=&& \text{comment example } x\\
 &=e^{-\frac{4}{\beta}\nu_i}\bigg(1-e^{-\frac{4}{\beta^2}\sigma^2_i}\bigg)\\
 &=\frac{1-e^{-\frac{4}{\beta^2}\sigma^2_i}}{e^{\frac{4}{\beta}\nu_i}}
 \end{align}
+The covariance matrix of the estimators is $$\mathbf{W}'=\text{diag}\big(\sigma^2_{\hat{d_1}},...,\sigma^2_{\hat{d_n}}\big)$$
 Now we get to the weighting matrix
 \begin{align}
-    &\mathbf{W}=\text{diag}\big((\sigma^2_{d_1})^{-1},...,(\sigma^2_{d_n})^{-1}\big)\\
+    \mathbf{W}&=\big(\mathbf{W'}\big)^{-1}=\text{diag}\big((\sigma^2_{\hat{d_1}})^{-1},...,(\sigma^2_{\hat{d_n}})^{-1}\big)\\
     &=\text{diag}\bigg(\frac{e^{\frac{4}{\beta}\nu_1}}{1-e^{-\frac{4}{\beta^2}\sigma^2_1}},...,\frac{e^{\frac{4}{\beta}\nu_n}}{1-e^{-\frac{4}{\beta^2}\sigma^2_n}}\bigg)
 \end{align}
 The improved cost function \cite{rzk} takes the following form 
@@ -799,7 +827,7 @@ that can be minimized with the usual LLS
 \begin{align}
     \hat{\theta}=(M^TWM)^{-1}M^TWb
 \end{align}
-The precision of this estimation can be further improved by imposing the constraint ?? ($\hat{\theta}_3=\hat{R}^2$) on the minimization. This condition is ignored if we use LLS, but it can be successfully employed with the method of Lagrange multipliers \cite{1275684,Lopez1994, pasa}.
+The precision of this estimation can be further improved by imposing the constraint \ref{eq:10} on the minimization. This condition is ignored if we use LLS, but it can be successfully employed with the method of Lagrange multipliers \cite{1275684,Lopez1994, pasa}.
 
 
 \clearpage
@@ -834,6 +862,7 @@ so that we have the following set of equations
 &\;\;\vdots\\
 (x_n-x)^2+(y_n-y)^2&=d_n^2 \\
 \end{split}
+\label{eq:11}
 \end{align}
 Consider 
 \begin{align}
@@ -843,14 +872,20 @@ Consider
 &=\frac{1}{n}\sum_{i=1}^n[x_i^2-2x_ix+x^2] + \frac{1}{n}\sum_{i=1}^n[y_i^2-2y_iy+y^2]\\
 &=\frac{1}{n}\sum_{i=1}^n[x_i^2]-2x\frac{1}{n}\sum_{i=1}^n[x_i]+ x^2 + \frac{1}{n}\sum_{i=1}^n[y_i^2]-2y\frac{1}{n}\sum_{i=1}^n[y_i]+ y^2
 \end{align}
-Frone one of the ?? it follows
+which is finally
+\begin{equation}
+    \frac{1}{n}\sum_{i=1}^n[x_i^2]-2x\frac{1}{n}\sum_{i=1}^n[x_i]+ x^2 + \frac{1}{n}\sum_{i=1}^n[y_i^2]-2y\frac{1}{n}\sum_{i=1}^n[y_i]+ y^2= \frac{1}{n}\sum_{i=1}^nd_i^2
+    \label{eq:12}
+\end{equation}
+Frone one of the \ref{eq:11} it follows
 \begin{equation}
 x_i^2+x^2-2x_ix+y_i^2+y^2-2y_iy=d_i^2      
 \end{equation}
 \begin{equation}
--x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy=-d_i^2      
+-x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy=-d_i^2
+\label{eq:13}
 \end{equation}
-Now by adding ?? to ?? previous you have 
+Now by adding member to member \ref{eq:12} to \ref{eq:13} you have 
 \begin{equation}
 \begin{split}
     \bigg(-x_i^2  + \frac{1}{n}\sum_{i=1}^n[x_i^2]\bigg)+
@@ -870,7 +905,7 @@ and by rearranging the equation
     =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
 \end{split}    
 \end{equation}
-then the previous set of equations ?? becomes
+then the previous set of equations \ref{eq:11} becomes
 \begin{align}
 \begin{split} 
     \bigg(x_1-\frac{1}{n}&\sum_{i=1}^nx_i\bigg)x+\bigg(y_1-\frac{1}{n}\sum_{i=1}^ny_i\bigg)y\\
@@ -880,7 +915,7 @@ then the previous set of equations ?? becomes
     &=\frac{1}{2}\bigg[\bigg(x_n^2-\frac{1}{n}\sum_{i=1}^nx^2_i\bigg)+\bigg(y_n^2-\frac{1}{n}\sum_{i=1}^ny^2_i\bigg)-\bigg(d_n^2-\frac{1}{n}\sum_{i=1}^nd_i^2\bigg)\bigg]
 \end{split}
 \end{align}
-So can write the above set of equations in matricial form $\mathbf{Mx}=\mathbf{b}$ by setting
+So can write the above set of equations in matricial form $\mathbf{Ax}=\mathbf{b}$ by setting
 $$
 \mathbf{M}=\begin{bmatrix}
     x_1-\frac{1}{n}\sum_{i=1}^nx_i&y_1-\frac{1}{n}\sum_{i=1}^ny_i\\
@@ -910,16 +945,13 @@ Also valid for non RSSI based localization
 
 
 \section{Lines intersection 858}
-Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation
+Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation \cite{rzk}
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
 \end{equation}
-from subtracting one equation of the circle to the other. Now a question arise, given the noise effect on the measurements, what happens if the two circles are not intersecting? Is the formula still valid? Yes. Why?... 
-
-The formula can be obtained by deriving $m$ and $q$. The parameter $m$ in the perpendicular to line passing between the two centers.
-
-Given $n$ measurements (so $n$ circles), only $n-1$ are needed to have an independent system of equations. For example, for the trilateration method, (thus with three circles), it is needed to have only 2 lines, for example the line passing between the first and the second circle, and the line passing between the first and the third one. (optimization! given instead using only the first circle use the previous one: (1,2), (1,3) use (1,2), (2,3)).
-Therefore, given $n$ points we have a set of $n-1$ equations like the above ??, that can be written in matricial form $\mathbf{Mx}=\mathbf{b}$ with
+Note that the formula is still valid even if the two circles do not intersect each other.
+Given $n$ measurements (so $n$ circles), only $n-1$ lines are needed to have an independent system of equations. For example, suppose to have three circles, it is needed to have only 2 lines, for example the line passing between the first and the second circle, and the line passing between the first and the third one.
+Therefore, given $n$ points we have a set of $n-1$ equations like the above \ref{eq:14}, that can be written in matricial form $\mathbf{Mx}=\mathbf{b}$ with
 $$\mathbf{M}=\begin{bmatrix}
 x_2-x_1&y_2-y_1\\
 x_3-x_1&y_3-y_1\\
@@ -930,14 +962,13 @@ $$\mathbf{x}=\begin{bmatrix}
 x\\
 y
 \end{bmatrix}$$
-$$\mathbf{b}=\begin{bmatrix}
+$$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
 (x^2_2+y^2_2)-(x_1^2+y^2_1)-(d_2^2-d_1^2)\\
 (x^2_3+y^2_3)-(x_1^2+y^2_1)-(d_3^2-d_1^2)\\
 \vdots\\
 (x^2_n+y^2_n)-(x_1^2+y^2_1)-(d_n^2-d_1^2)\\
 \end{bmatrix}$$
-The solution is obtained as an approximated intersection of all these lines with the LLS.
-
+The solution is obtained as an approximated intersection of all these lines with the LLS. Immagini quiii !!!!\\\\
 Given the high influence in this formula of the first anchor node (present in all equations), one can try an optimization by rearranging the above formula in a way that it relays more evenly to the all nodes as follows
 $$\mathbf{M}=\begin{bmatrix}
 x_2-x_1&y_2-y_1\\
@@ -960,65 +991,95 @@ Highly resistant to noise. Always gives a result. Fast.
 
 
 \section{Multilateration 435}
-(We can also set many different $\alpha_i$ one for each node deduced with previous chapter)
-Disadvantage, need a starting point quite close to the actual location, maybe estimated with some of the above methods, otherwise it diverges.
-If you assume to know $A$ then good results with GN method...\\
 This algorithm is the generalization of the trilateration method, and is known as multilateration. 
 This method can provide two main benefits over the classic trilateration:
 \begin{itemize}
     \item Always exists a solution (the algorithm may not be able to find it though)
     \item The result is made on more observation than the trilateration
 \end{itemize}
-The first point can be explained as follows:
-We start by measuring the rssi value in each position.This measurement can be fitted to the model of $RSSI$ propagation. Assuming that the exact distribution follows 
+So, from the measurement of each node we try straight away to fit those data to the canonical model. To do so we write a cost function to be minimized
 \begin{equation}
-rssi(x,y)=A^*-10\alpha^*\log_{10}\big(\sqrt{(x_t^*-x)^2+(y_t^*-y)^2}\big)    
+    J(\upsilon_0,\alpha,x_t,y_t)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha\log_{10}\big(\sqrt{(x_i-x_t)^2+(y_i-y_t)^2}\big)\bigg)^2
 \end{equation}
-with $A^*,\alpha^*,x^*_t,y^*_t$ unknown, we can write a performance index $J$
 \begin{equation}
-    J(A,n,x_t,y_t)=\sum_{i=1}^n\bigg(rssi_i-A+10\alpha\log_{10}\big(\sqrt{(x_i-x_t)^2+(y_i-y_t)^2}\big)\bigg)
+\Bar{x_t}, \Bar{y_t}=\arg \min_{\upsilon_0,\alpha,x_t,y_t}J(\upsilon_0,\alpha,x_t,y_t)
 \end{equation}
-and then choosing 
+The great advantage of this method is that it theoretically doesn't need to know any parameter of the model, however in reality to have good results at least $\upsilon_0$ must be known. This is usually not a problem, since the signal intensity at a fixed distance can be obtained by manual measurement beforehand.
+To increase the accuracy of this method, one can also redefine the cost function by letting 
 \begin{equation}
-\Bar{x_t}, \Bar{y_t}=\arg \min_{A,\alpha,x_t,y_t}J(A,\alpha,x_t,y_t)
+    J(\upsilon_0,\boldsymbol{\alpha},x_t,y_t)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha_i\log_{10}\big(\sqrt{(x_i-x_t)^2+(y_i-y_t)^2}\big)\bigg)^2
 \end{equation}
+\begin{equation}
+    \boldsymbol{\alpha}=\begin{bmatrix}
+    \alpha_1\\
+    \vdots\\
+    \alpha_n
+    \end{bmatrix}
+\end{equation}
+One big drawback of this method is that convergence is not guaranteed, and it often depend from the starting guess. A ``necessary condition" for convergence is that it must be quite close to the real location of the unknown device. For this reason, the usual starting guess is the estimation obtained by the linear methods.
 \clearpage
 
 
 \section{Maximum Likelihood method 486}
-When the error follows a zero mean gaussian distribution, this method is a weighted version of the Nonlinear Multilateration method. 
+  \begin{center}
+  \textbf{Assume to know:}
+  \begin{itemize}
+    \centering
+    \item $\upsilon_0$
+    \item $\xi_i,\forall i$
+  \end{itemize}
+  \end{center}
+This method is quite close to a weighted version of the Multilateration method. We can start by considering the model \ref{eq:14} and \ref{eq:15}.
+A look more closely related to the probability point of view is (with $p(\bullet)$ the probability density function)
 \begin{equation}
-    \beta=\frac{\alpha}{\ln(10)}
+    p(\nu_i)=\frac{1}{\sqrt{2\pi\sigma^2_i}}e^{-\frac{1}{2}\frac{(\nu_i+\beta\ln(d_i))^2}{\sigma^2_i}}
 \end{equation}
-Each anchor $i$ has a distribution like $\mathcal{N}(-\beta\ln(d_i),\sigma^2_i)$
-A look more closely related to the probability point of view is
+The joint probability distribution of all the nodes (assuming independence between the nodes) \begin{equation}
+    p(\nu_1,...,\nu_n)=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_i}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(\nu_i+\beta\ln(d_i))^2}{\sigma^2_i}}
+\end{equation}
+And in matrix form \cite{rzk}, we can write the covariance matrix as 
 \begin{equation}
-    \pi(\nu_i)=\frac{1}{\sqrt{2\pi\sigma^2_{\nu_i}}}e^{-\frac{1}{2}\frac{(\nu_i+\alpha\ln(d_i))^2}{\sigma^2_{\nu_i}}}
+    \boldsymbol{\Sigma}=\begin{bmatrix}
+    \sigma^2_1 & 0 & 0\\
+    0 &\ddots& 0\\
+    0&0&\sigma^2_n
+    \end{bmatrix}
 \end{equation}
-$\mathbf{\Sigma}$ is diagonal for uncorrelated (remember independent implies uncorrelated, but not the reverse) variables
-$$\mathbf{f}(\mathbf{x})=-\beta\begin{bmatrix}
-\ln(\sqrt{(x-x_1)^2+(y-y_1)^2})\\
+with
+\begin{equation}
+    \mathbf{x}=\begin{bmatrix}
+    x_t\\
+    y_t
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+    \mathbf{f}(\mathbf{x})=-\beta\begin{bmatrix}
+\ln(\sqrt{(x_t-x_1)^2+(y_t-y_1)^2})\\
 \vdots\\
-\ln(\sqrt{(x-x_n)^2+(y-y_n)^2})
-\end{bmatrix}$$
-For $n$ indepentent and (identically? mean is the value read which changes) distributed, the joint probabilty distribution is the product
-\begin{equation}
-    \pi(\mathbf{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_{\nu_i}}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(\nu_i+\alpha\ln(d_i))^2}{\sigma^2_{\nu_i}}}
+\ln(\sqrt{(x_t-x_n)^2+(y_t-y_n)^2})
+\end{bmatrix}
 \end{equation}
+To obtain
 \begin{equation}
-    \pi(\mathbf{r}_{RSS})=\frac{1}{(2\pi)^{\frac{n}{2}}|\mathbf{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)\mathbf{\Sigma}^{-1}\big(\mathbf{r}_{RSS}-\mathbf{f}(\mathbf{x})\big)}
+    p(\boldsymbol{\nu})=\frac{1}{(2\pi)^{\frac{n}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)}
+    \label{eq:16}
 \end{equation}
-For the Maximum Likelihood method we need to find the minimum of ??. To facilitate it we consider the log. The first part is independent of x, so we need only to maxmize the second part. We can now remove the logarithm because it is a monotonic increasing function, then we oibtain the previous forumula to be minimized. As you can see when $\mathbf{\Sigma}=diag{(\sigma_1,...)}$. The solution can be found with Newton raphson, GN...
+For the Maximum Likelihood method we need to find the minimum of \ref{eq:16} w.r.t $\mathbf{x}$. As usual to ease the computation we consider the log. 
+\begin{equation}
+    \ell_n(\mathbf{x})=-\ln\big((2\pi)^{\frac{n}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}\big)-\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
+\end{equation}
+The first part is independent of $\mathbf{x}$, so we need only to find the stationary point of the second part, that is 
+\begin{equation}
+\Bar{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
+\end{equation}
 
 \clearpage
-
-From \cite{KAUR201982} and also each bibliography
 \section{Centroid algorithm 677}
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwResult{Estimated position of the unknown node}
  Each node $i$ broadcasts its position $(x_i,y_i)$ to every other node\;
- Define threshold\;
+ Define the threshold\;
  Each anchor node retain the information of the nodes that are above the threshold\;
  The unknown node computes its position as:
  \begin{equation}
@@ -1027,12 +1088,27 @@ From \cite{KAUR201982} and also each bibliography
  which is the mean of the position of the retained nodes.
  \caption{Centroid algorithm}
 \end{algorithm}
-\noindent\\From \cite{878533} the threshold can be calculated in two ways. The first method consists of a simple selection based on the rssi level, that is, every nearest node (whose level is above the rssi threshold) is kept. The second method employs a more sofisticated approach. Every node broadcasts multiple packets in the network, then each node replies with one packet per packet received. Therefore we can draw a list for every node $i$ as follows 
+\noindent\\From \cite{878533} the filtering based on the threshold can be done in two ways. The first method consists of a simple selection based on the rssi level, that is, every nearest node (whose level is above the rssi threshold) is kept. The second method employs a more sofisticated approach. Every node broadcasts multiple packets in the network, then each node replies with one packet per packet received. Therefore node $j$ can draw a list for every node $i$ as follows 
 \begin{equation}
-    g_i = \frac{\text{n. of packets sent to node $i$}}{\text{n. of packets received from node $i$}}
+    g_i = \frac{\text{n. of packets received from node $i$}}{\text{n. of packets sent to node $i$}}
 \end{equation}
-Since the quality/quantity of packets degrades with the distance, closer node will have a higher grade, while farther nodes will have a lower one. Then only the packets with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold). There exists some improvements of the previous algorithm, for example the Weighted Centroid Algorithm. The new metric Just use $w_{u,i}=\frac{1}{h_{u,i}}$ h is hop count, then centroid is weighted, not simple average.
-(new algorithm here)
+Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower one. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold). There exists some improvements of the previous algorithm \cite{KAUR201982}, for example the Weighted Centroid Algorithm. Before getting into the formula we need to remind the meaning of hop count (immagine!!!). Given a set of connected nodes, the hop count is the number of nodes that the packet goes through before reaching the destination node. For example in the (immagine!!) ... 
+Here we define a new metric as 
+\begin{equation}
+    w_{u,i}=\frac{1}{h_{u,i}}
+\end{equation}
+where $h_{u,i}$ is the hop count from node $i$ to the unknown node $u$. The line 4 of the previous algorithm then becomes
+\begin{equation}
+     x_u=\frac{\sum_{i=1}^mw_{u,i}x_i}{\sum_{i=1}^mw_{u,i}},\quad y_u=\frac{\sum_{i=1}^mw_{u,i}y_i}{\sum_{i=1}^mw_{u,i}}
+\end{equation}
+
+
+
+
+
+
+
+
 \clearpage
 
 \section{DV-Hop Algorithm 422}
@@ -1052,8 +1128,21 @@ Each unknown node $u$ computes the approximate distance from anchor node i using
  \caption{DV-Hop algorithm}
 \end{algorithm}
 \noindent\\
-The algorithm begins with a broadcast of all nodes with a packet, that contains informations about its position and the hop count, which starts from zero and it is incremented by at each node it passes through. Each node upgrade its metrics accordingly. After some time necessary to reach a stable point where no information update happen, we have a situation where every node has the minimum hop count from itself to each node and the positions of each node in a table like... (table here). (picture of some nodes, show many paths, show the one with less hop counts) For example, node A has 2 path to reach node B, but the path abababa has hop count = 3...
-As soon as the data is available each unknown node can compute its approximated distance from each node $i $ as in line $3$ of the Algo ??. Therefore each unknown node $u$ is able to derive the following equations
+The algorithm begins with a broadcast of all nodes with a packet, that contains informations about its position and the hop count, which starts from zero and it is incremented by at each node it passes through. Each node upgrade its metrics accordingly. After some time necessary to reach a stable point where no information update happen, we have a situation where every node has the minimum hop count from itself to each node and the positions of each node. For example the following table could be the database stored in node $i$
+\begin{center}
+\begin{tabular}{ |c|c|c| } 
+ \hline
+ Node ID & position & hop count \\ 
+ \hline
+ \hline
+ 1 & (40,-35) & 6 \\ 
+ 2 & (-13,18) & 4 \\
+ $\hdots$ & $\hdots$ & $\hdots$\\
+ \hline
+\end{tabular}
+\end{center}
+(picture of some nodes, show many paths, show the one with less hop counts) For example, node A has 2 path to reach node B, but the path abababa has hop count = 3...
+As soon as the data is available each unknown node can compute its approximated distance from each node $i $ as in line $3$ of the previous algorithm. Therefore each unknown node $u$ is able to derive the following equations (with $x_u,y_u$) unknown
 \begin{align}
 \begin{split} 
 (x_1-x_u)^2+(y_1-y_u)^2&=d_{u,1}^2 \\ 
@@ -1104,14 +1193,12 @@ The result can be computed with the closed formula of the LLS
 
 
 \section{Fingerprinting 437}
-from \cite{YIU2017235} 1-NN compares how each anchor node sees all the other nodes to how the unknown node reads the rssi of all the anchor nodes. Then the estimated location would be the anchor node closest to the unknown node. kNN takes the mean of the first k\\\\\\
-Fingerprinting is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node w.r.t. the other nodes. The algorithm employed by this method is known as K-NN or K nearest neighbours \cite{10.5555/1162264}. Here it is presented the version working with $1-NN$, 
-In the learining (offline) phase, every node build an internal database with records of every node along with the received signal strength as in the the following table (table). As soon as the localization phase starts, (centralized algorithm?) the following formula is used
+Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it an efficient model free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node w.r.t. the other nodes. The algorithm employed by this method is known as K-NN or K nearest neighbours \cite{10.5555/1162264}. Here it is presented first the version working with $1-NN$.
+In the learining (offline) phase, every node build an internal database with records of every node along with the received signal strength as in the the following table (table). As soon as the localization phase starts (computed remotely, since we must have the signal intensity of all the nodes), the following formula is used
 \begin{equation}
-    \hat{i}=\arg \min_{\mathbf{x_h}}\bigg\{\sum_{k=1}^n(r_i(k)-r_{n+1(k)})^2\bigg\}
+    \hat{i}=\arg \min_i\bigg\{\sum_{\substack{j=1\\j\neq i}}^n(\upsilon_i^j-\upsilon_{n+1}^j)^2\bigg\}
 \end{equation}
-metti meglio, descrivi $(...)^2$ come cifra di merito,
-dunque questo algoritmo seleziona il nodo $i$ tale per cui la somma delle differenze di come il nodo $i$ vede tutti i nodi diversi da $i$ sia minore, ovvero, ideally, that, according to the signal intensity read, it should be closest to the unknown node. The estimated position is that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.  
+The above formula just iterate over all the nodes, and by each node $i$ it computes the difference squared between the intensity of the same node $j$ read by the node $i$ and by the node $n+1$ which is the unknown node. Clearly the summation skip the values of equal $i$ and $j$, because it doesn't make sense to measure the intensity of the signal produced by the same node. Therefore, the node $k$ with the least square difference, according to the signal intensity read, it should be closest to the unknown node. The estimated position is that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$ instead of one, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.  
 
 
 \chapter{Conclusioni (1 pag)}
