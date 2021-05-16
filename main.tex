@@ -16,6 +16,10 @@
 \usepackage[makeroom]{cancel}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{algorithmic}
+\usepackage{graphicx}
+
+
+\graphicspath{ {./images/} }
 
 \usepackage[
     backend=biber,
@@ -440,7 +444,7 @@ Here follows a quite complete classification of the localization methods conside
     \item $\alpha$
   \end{itemize}
   \end{center}
-Consider the trilateration method from a pure theoretical point of view. For this method it is required to have only 3 anchor nodes. Each of them can output its position $(x_i,y_i)$ along with the rssi read in its position of the unknown node. By exploiting the model of the distance and the rssi read, and assuming no noise or multipath fading at all, one can deduce the distance $d_i$ between the unknown node and current node from the model ?? $n_i$ as follows:  
+Consider the trilateration method from a pure theoretical point of view. For this method it is required to have only 3 anchor nodes. Each of them can output its position $(x_i,y_i)$ along with the rssi read in its position of the unknown node. By exploiting the model of the distance and the rssi read, and assuming no noise or multipath fading at all, one can deduce the distance $d_i$ between the unknown node and current node from the model \ref{eq:2} $n_i$ as follows:  
 \begin{equation}
     d_i=\sqrt{(x_u-x_i)^2+(y_u-y_i)^2}=10^{\frac{A-r_{rssi,i}}{10\alpha}}    
 \end{equation}
@@ -516,15 +520,15 @@ In the latter case, provided the algorithm has no software-level exception-catch
 \end{algorithm}
 \noindent\\The new distances will be obtained as follows:
 \begin{equation}
-    d^i_{min}=10^{\frac{A-min}{10\alpha}}    
+    d_i^{min}=10^{\frac{A-min}{10\alpha}}    
 \end{equation}
 \begin{equation}
-    d^i_{max}=10^{\frac{A-max}{10\alpha}}    
+    d_i^{max}=10^{\frac{A-max}{10\alpha}}    
 \end{equation}
 The result is now given as an area that corresponds to the intersection of all the three annulus, shown in fig \ref{fig:annulus}.
 \begin{figure}
     \centering
-    \scalebox{1.3}{
+    \scalebox{1.7}{
         \begin{tikzpicture}
             \draw[very thin,color=gray] (-4,-4) grid (4,4);
             \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
@@ -558,7 +562,7 @@ The result is now given as an area that corresponds to the intersection of all t
     \caption{}
     \label{fig:annulus}
 \end{figure}
-One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
+Although the results are quite promising, this algorithm is rarely used, due to the impractical computations when considering annulus. One important drawback stull present is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
 \clearpage
 
 \section{Min Max 151}
@@ -949,6 +953,10 @@ Let's start from a geometrical analysis. Given two intersecting circles at cente
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
 \end{equation}
+\begin{equation}
+    y=\frac{1}{y_2-y_1}\bigg(-(x_2-x_1)x+\frac{1}{2}\big(x_2^2+y_2^2-r_2^2-(x_1^2+y_1^2-r_1^2)\big)\bigg)
+\end{equation}
+or equivalently
 Note that the formula is still valid even if the two circles do not intersect each other.
 Given $n$ measurements (so $n$ circles), only $n-1$ lines are needed to have an independent system of equations. For example, suppose to have three circles, it is needed to have only 2 lines, for example the line passing between the first and the second circle, and the line passing between the first and the third one.
 Therefore, given $n$ points we have a set of $n-1$ equations like the above \ref{eq:14}, that can be written in matricial form $\mathbf{Mx}=\mathbf{b}$ with
@@ -968,8 +976,82 @@ $$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
 \vdots\\
 (x^2_n+y^2_n)-(x_1^2+y^2_1)-(d_n^2-d_1^2)\\
 \end{bmatrix}$$
-The solution is obtained as an approximated intersection of all these lines with the LLS. Immagini quiii !!!!\\\\
-Given the high influence in this formula of the first anchor node (present in all equations), one can try an optimization by rearranging the above formula in a way that it relays more evenly to the all nodes as follows
+The solution is obtained as an approximated intersection of all these lines with the LLS, as in fig. \ref{fig:2}. You can see that they do not need to intersect in exactly one point, that's why the solution is computed using LLS. In cyan it is shown the real position of the unknown node (U).
+\begin{figure}
+    \centering
+    \scalebox{1.2}{
+        \begin{tikzpicture}
+            \draw[very thin,color=gray] (-4,-4) grid (4,4);
+            \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+            \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+            \draw[color=red] (-2.4,2) circle (1.5);
+            \draw (-2.4,2) node {$\bullet$};
+            \node[anchor=north west] at (-2.4,2) {$A$};
+        
+            \draw[color=green] (-0.5,1.5) circle (1);
+            \draw (-0.5,1.5) node {$\bullet$};
+            \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+            \draw[color=blue] (-1,0) circle (1); %2sqrt(3)
+            \draw (-1,0) node {$\bullet$};
+            \node[anchor=north west] at (-1,0) {$C$};
+            
+            \draw (-1.35,0.95) [cyan] node {$\bullet$};
+            \node[anchor=north west] at (-1.2,1) {$U$};
+            
+            \draw[scale=1, domain=-2:-0.6, smooth, variable=\x, blue] plot ({\x}, {-((+2.4-0.5)/(1.5-2))*\x
+            +1/(2*(1.5-2))*(0.5^2+1.5^2-1-(2.4^2+2^2-1.5^2))});
+            
+            \draw[scale=1, domain=-2:0.5, smooth, variable=\x, blue] plot ({\x}, {(1/(-1.5))*(-(-1+0.5)*\x+0.5*(1-1-(0.5^2+1.5^2-1)))});
+            
+            %\draw[scale=0.5, domain=-3:3, smooth, variable=\y, red]  plot ({\y*\y}, {\y});
+        \end{tikzpicture}
+    }
+    %\includegraphics{}
+    \caption{}
+    \label{fig:1}
+\end{figure}
+\begin{figure}
+    \centering
+    \scalebox{1.8}{
+        \begin{tikzpicture}
+            \draw[very thin,color=gray] (-4,-4) grid (4,4);
+            \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
+            \draw[->] (0,-4.2) -- (0,4.2) node[above] {$y$};
+    
+            \draw[color=red] (-2.4,2) circle (1);
+            \draw (-2.4,2) node {$\bullet$};
+            \node[anchor=north west] at (-2.4,2) {$A$};
+        
+            \draw[color=green] (-0.5,1.5) circle (0.7);
+            \draw (-0.5,1.5) node {$\bullet$};
+            \node[anchor=north west] at (-0.5,1.5) {$B$};
+        
+            \draw[color=blue] (-1,0) circle (0.6); %2-2sqrt(3)
+            \draw (-1,0) node {$\bullet$};
+            \node[anchor=north west] at (-1,0) {$C$};
+            
+            \draw (-1.35,0.95) [cyan] node {$\bullet$};
+            \node[anchor=north west] at (-1.2,1) {$U$};
+            
+            
+            \draw[scale=1, domain=-2:-0.8, smooth, variable=\x, blue] plot ({\x}, {-((+2.4-0.5)/(1.5-2))*\x
+            +1/(2*(1.5-2))*(0.5^2+1.5^2-0.7^2-(2.4^2+2^2-1^2))});
+            
+            \draw[scale=1, domain=-2.5:0.5, smooth, variable=\x, blue] plot ({\x}, {(1/(-1.5))*(-(-1+0.5)*\x+0.5*(1-0.6^2-(0.5^2+1.5^2-0.7^2)))});
+            
+            
+            \draw[scale=1, domain=-3:0.5, smooth, variable=\x, blue] plot ({\x}, {(1/(-2))*(-(-1+2.4)*\x+0.5*(1-0.6
+            -(2.4^2+2^2-1^2)))});
+            
+        \end{tikzpicture}
+    }
+    %\includegraphics{}
+    \caption{}
+    \label{fig:2}
+\end{figure}
+\\\\Given the high influence in this formula of the first anchor node (present in all equations), one can try an optimization by rearranging the above formula in a way that it relays more evenly to the all nodes as follows
 $$\mathbf{M}=\begin{bmatrix}
 x_2-x_1&y_2-y_1\\
 x_3-x_2&y_3-y_2\\
@@ -986,7 +1068,7 @@ $$\mathbf{b}=\begin{bmatrix}
 \vdots\\
 (x^2_n+y^2_n)-(x_{n-1}^2+y^2_{n-1})-(d_n^2-d_{n-1}^2)\\
 \end{bmatrix}$$
-Highly resistant to noise. Always gives a result. Fast.
+Basically we consider the intersection of the line passing through the first and second circle, the one that passes through the second and the third one and so on, instead of the first circle and the second one, the first circle and the third one and so on, as in the previous formula. This is quite a good method, and has many advantages: it is highly resistant to noise, always gives a result and is fast.
 \clearpage
 
 
@@ -1004,7 +1086,7 @@ So, from the measurement of each node we try straight away to fit those data to 
 \begin{equation}
 \Bar{x_t}, \Bar{y_t}=\arg \min_{\upsilon_0,\alpha,x_t,y_t}J(\upsilon_0,\alpha,x_t,y_t)
 \end{equation}
-The great advantage of this method is that it theoretically doesn't need to know any parameter of the model, however in reality to have good results at least $\upsilon_0$ must be known. This is usually not a problem, since the signal intensity at a fixed distance can be obtained by manual measurement beforehand.
+The great advantage of this method is that it theoretically doesn't need to know any parameter of the model, however in reality to have good results at least $\upsilon_0$ must be known. This is usually not a problem, since the signal intensity at a fixed distance can be obtained by manual measurement beforehand.\\\\
 To increase the accuracy of this method, one can also redefine the cost function by letting 
 \begin{equation}
     J(\upsilon_0,\boldsymbol{\alpha},x_t,y_t)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha_i\log_{10}\big(\sqrt{(x_i-x_t)^2+(y_i-y_t)^2}\big)\bigg)^2
@@ -1016,7 +1098,7 @@ To increase the accuracy of this method, one can also redefine the cost function
     \alpha_n
     \end{bmatrix}
 \end{equation}
-One big drawback of this method is that convergence is not guaranteed, and it often depend from the starting guess. A ``necessary condition" for convergence is that it must be quite close to the real location of the unknown device. For this reason, the usual starting guess is the estimation obtained by the linear methods.
+One big drawback of this method is that convergence is not guaranteed, and it often depend from the starting guess. A ``necessary condition" for convergence is that the starting guess must be quite close to the real location of the unknown device. For this reason, the usual choice is the estimation obtained by the linear methods.
 \clearpage
 
 
@@ -1072,6 +1154,7 @@ The first part is independent of $\mathbf{x}$, so we need only to find the stati
 \begin{equation}
 \Bar{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
 \end{equation}
+This is not a linear system, therefore the solution must be computed with some iterative methods, (GN, steepest descent...) (cite also someone?)
 
 \clearpage
 \section{Centroid algorithm 677}
@@ -1092,7 +1175,20 @@ The first part is independent of $\mathbf{x}$, so we need only to find the stati
 \begin{equation}
     g_i = \frac{\text{n. of packets received from node $i$}}{\text{n. of packets sent to node $i$}}
 \end{equation}
-Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower one. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold). There exists some improvements of the previous algorithm \cite{KAUR201982}, for example the Weighted Centroid Algorithm. Before getting into the formula we need to remind the meaning of hop count (immagine!!!). Given a set of connected nodes, the hop count is the number of nodes that the packet goes through before reaching the destination node. For example in the (immagine!!) ... 
+Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower one. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below (fig. \ref{fig:3}) a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold).\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.6]{pic1}
+\caption{}
+\label{fig:3}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.6]{pic2}
+\caption{}
+\label{fig:4}
+\end{figure}
+There exists some improvements of the previous algorithm \cite{KAUR201982}, for example the Weighted Centroid Algorithm. Before getting into the formula we need to remind the meaning of hop count. Given a set of connected nodes, the hop count is the number of nodes that the packet goes through before reaching the destination node. For example in the fig \ref{fig:4} node A wants to send a packet to node D, but to do so, the packet need to be relayed by B, then by C and finally it reaches D. The hop count therefore is 3.\\\\
 Here we define a new metric as 
 \begin{equation}
     w_{u,i}=\frac{1}{h_{u,i}}
