@@ -1063,7 +1063,7 @@ $$\mathbf{x}=\begin{bmatrix}
 x\\
 y
 \end{bmatrix}$$
-$$\mathbf{b}=\begin{bmatrix}
+$$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
 (x^2_2+y^2_2)-(x_1^2+y^2_1)-(d_2^2-d_1^2)\\
 (x^2_3+y^2_3)-(x_2^2+y^2_2)-(d_3^2-d_2^2)\\
 \vdots\\
@@ -1112,13 +1112,13 @@ One big drawback of this method is that convergence is not guaranteed, and it of
     \item $\xi_i,\forall i$
   \end{itemize}
   \end{center}
-This method is quite close to a weighted version of the Multilateration method. We can start by considering the model \ref{eq:14} and \ref{eq:15}.
+This method is quite similar to a weighted version of the Multilateration method. We can start by considering the model \ref{eq:15} and \ref{eq:14}.
 A look more closely related to the probability point of view is (with $p(\bullet)$ the probability density function)
 \begin{equation}
     p(\nu_i)=\frac{1}{\sqrt{2\pi\sigma^2_i}}e^{-\frac{1}{2}\frac{(\nu_i+\beta\ln(d_i))^2}{\sigma^2_i}}
 \end{equation}
 The joint probability distribution of all the nodes (assuming independence between the nodes) \begin{equation}
-    p(\nu_1,...,\nu_n)=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_i}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(\nu_i+\beta\ln(d_i))^2}{\sigma^2_i}}
+    p(\nu_1,...,\nu_n)=p(\nu_1)\cdot...\cdot p(\nu_n)=\frac{1}{(2\pi)^{\frac{n}{2}}\Pi_{i=1}^n\sigma_i}e^{-\frac{1}{2}\sum_{i=1}^n\frac{(\nu_i+\beta\ln(d_i))^2}{\sigma^2_i}}
 \end{equation}
 And in matrix form \cite{rzk}, we can write the covariance matrix as 
 \begin{equation}
@@ -1153,9 +1153,9 @@ For the Maximum Likelihood method we need to find the minimum of \ref{eq:16} w.r
 \end{equation}
 The first part is independent of $\mathbf{x}$, so we need only to find the stationary point of the second part, that is 
 \begin{equation}
-\Bar{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
+\hat{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
 \end{equation}
-This is not a linear system, therefore the solution must be computed with some iterative methods, (GN, steepest descent...) (cite also someone?)
+This is not a linear system, therefore the solution must be computed with some iterative methods, (GN, steepest descent...) \cite{chong2013introduction}.
 
 \clearpage
 \section{Centroid algorithm 677}
@@ -1176,7 +1176,7 @@ This is not a linear system, therefore the solution must be computed with some i
 \begin{equation}
     g_i = \frac{\text{n. of packets received from node $i$}}{\text{n. of packets sent to node $i$}}
 \end{equation}
-Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower one. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below (fig. \ref{fig:3}) a possible arrangement (known nodes in grid, unknoen node random, with a circle around to set the threshold).\\
+Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower one. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below (fig. \ref{fig:3}) a possible arrangement of anchor nodes.\\
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.6]{pic1}
@@ -1289,17 +1289,16 @@ The result can be computed with the closed formula of the LLS
 
 
 \section{Fingerprinting 437}
-Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it an efficient model free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node w.r.t. the other nodes. The algorithm employed by this method is known as K-NN or K nearest neighbours \cite{10.5555/1162264}. Here it is presented first the version working with 1-NN.
+Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it an efficient model free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node w.r.t. the other nodes. The main principle underlying this method is to compute the squared difference between the signal intensity of all the anchor nodes measured by the unknown node and the signal intensity of all the other nodes measured by each node.
+The algorithm employed by this method is known as K-NN or K nearest neighbours \cite{10.5555/1162264}. Here it is presented first the version working with 1-NN.
 In the learining (offline) phase, every node build an internal database with records of every node along with the received signal strength as in the the following table (table). As soon as the localization phase starts (computed remotely, since we must have the signal intensity of all the nodes), the following formula is used
 \begin{equation}
     \hat{i}=\arg \min_i\bigg\{\sum_{\substack{j=1\\j\neq i}}^n(\upsilon_i^j-\upsilon_{n+1}^j)^2\bigg\}
 \end{equation}
-The above formula just iterate over all the nodes, and by each node $i$ it computes the difference squared between the intensity of the same node $j$ read by the node $i$ and by the node $n+1$ which is the unknown node. Clearly the summation skip the values of equal $i$ and $j$, because it doesn't make sense to measure the intensity of the signal produced by the node itself. Therefore, the node $\hat{i}$ with the minimum square difference, according to the signal intensity read, it should be closest to the unknown node. The estimated position is that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$ instead of one, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.  
-
-
-\chapter{Conclusioni (1 pag)}
-Advantages of drone.... however the employement of anchor nodes remains a good option (deduce itself parameters...)
-
+The above formula just iterate over all the nodes, and by each node $i$ it computes the difference squared between the intensity of the same node $j$ read by the node $i$ and by the node $n+1$ which is the unknown node. Clearly the summation skip the values of equal $i$ and $j$, because it doesn't make sense to measure the intensity of the signal produced by the node itself. Therefore, the node $\hat{i}$ with the minimum square difference, according to the signal intensity read, it should be closest to the unknown node. The estimated position is that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$ instead of one, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.
+\chapter{Conclusions}
+In this work, I have discussed about the main algorithms nowaday available to locate a device with unknown position. As a matter of facts, each algorithm has its own pros and cons. For example the most appealing seemed to be the Multilateration algorithm, due to is few to none knowledge beforehand, therefore it is well suited for applications like disaster recovery, where there is no time to dedicate to a learning phase, however, to give acceptable results, at least $\upsilon_0$ must be known, and an initial starting guess must be obtained from some other methods, otherwise it possibly diverges. Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\;\forall i$. For example the most accurate one would be the weighted linear estimation algorithm, which considers twice the effect of the variance of the measurements, which is in fact a representation of the noise itself. In my opinion the fingerprinting method would give also good results, provided a high number of anchor nodes. A particulr mention needs to be given also to the line intersection algorithm, mainly to its robustness to noise.\\\\
+As a consequence, the perfect algorithm doesn't exists, not even a perfect sequence of algorithms. It is a task for the operator to choose what fits best its need, based also on his known parametrs and his expectation on the accuracy
 
 
 
@@ -1310,7 +1309,7 @@ Advantages of drone.... however the employement of anchor nodes remains a good o
 \clearpage
 \printbibliography[
 heading=bibintoc,
-title={Whole bibliography}
+title={Bibliography}
 ]
 %Prints the entire bibliography with the title "Whole bibliography"
 
