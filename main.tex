@@ -248,6 +248,7 @@ note the last value, for the previous algorithm it should have been discarded, b
     \centering
     \item $\upsilon_0$
     \item $\sigma^2_i,\forall i$
+    \item $d_i^j,\forall i$
   \end{itemize}
   \end{center}
   Place a transmitting device $j,j>n$ at known position. For the anchor node $i,1\leq i\leq n$, the values of signal intensity of the node $j$ are obtained according to \ref{eq:2}. The referenced model is basically a constant term $[\upsilon_0-10\alpha\log_{10}(d_i)]$ added to a zero mean gaussian variable $[\xi_i]$, so from \cite{alma9926534668905776}, let $a \in \mathbb{R}$
@@ -317,10 +318,11 @@ Sometimes to ease the computation, $\sigma^2_i$ is assumed constant, so $\sigma_
     \centering
     \item $\upsilon_0$
     \item $\alpha$
+    \item $d_i^j$
   \end{itemize}
   \end{center}
-In this case instead we consider only one node, since we are interest to estimate $\sigma^2_i$.
-So we have $m$ samples of node $i$ $$\upsilon_{i,1},...,\upsilon_{i,m}$$ each of them follows the distribution
+In this case instead we consider only one node, since we are interest to estimate only $\sigma^2_i$ that is the variance of node $i$.
+So after placing a transmitting device $j$ as before, we have $m$ samples of node $i$ $$\upsilon_{i,1},...,\upsilon_{i,m}$$ each of them follows the distribution
 \begin{equation}
     X_i\sim \mathcal{N}(\mu_i,\sigma^2_i)
     \label{eq:3}
@@ -409,12 +411,11 @@ Here follows a classification of the localization methods considered. Model base
 
 \clearpage
 \section{Trilateration}
-
   \begin{center}
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $A$
+    \item $\upsilon_0$
     \item $\alpha$
   \end{itemize}
   \end{center}
@@ -545,7 +546,7 @@ Although the results are quite promising, this algorithm is rarely used, due to 
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $A$
+    \item $\upsilon_0$
     \item $\alpha$
   \end{itemize}
   \end{center}
@@ -611,7 +612,7 @@ The gray area in \ref{fig:mmax} shows the intersection of all the squares.
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $A$
+    \item $\upsilon_0$
     \item $\alpha$
     \item $\xi_i,\forall i$
   \end{itemize}
@@ -781,6 +782,7 @@ The target position can be finally obtained as
   \begin{itemize}
     \centering
     \item $\upsilon_0$
+    \item $\alpha$
     \item $\xi_i,\forall i$
   \end{itemize}
   \end{center}
@@ -822,7 +824,7 @@ The precision of this estimation can be further improved by imposing the constra
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $A$
+    \item $\upsilon_0$
     \item $\alpha$
   \end{itemize}
   \end{center}
@@ -936,7 +938,7 @@ A good point to note is that this algorithm can work also with non RSSI methods.
   \begin{itemize}
     \centering
     \item $\upsilon_0$
-    \item $\xi_i,\forall i$
+    \item $\alpha$
   \end{itemize}
   \end{center}
 Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation \cite{rzk}
@@ -966,6 +968,7 @@ $$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
 \vdots\\
 (x^2_n+y^2_n)-(x_1^2+y^2_1)-(d_n^2-d_1^2)\\
 \end{bmatrix}$$
+where the $d_i$ are computed with the \ref{eq:17}.\\\\
 The solution is obtained as an approximated intersection of all these lines with the LLS, as in fig. \ref{fig:2}. You can see that they do not need to intersect in exactly one point, that's why the solution is computed using LLS. In cyan it is shown the real position of the unknown node (U).
 \begin{figure}
     \centering
@@ -1041,7 +1044,7 @@ The solution is obtained as an approximated intersection of all these lines with
     \caption{}
     \label{fig:2}
 \end{figure}
-\\\\Given the high influence in this formula of the first anchor node (present in all equations), one can try an optimization by rearranging the above formula in a way that it relays more evenly to the all nodes as follows
+\\\\Given the high influence in this formula of the first anchor node (present in all equations), one can try an optimization by rearranging the above formula in a way that it relays more evenly to all the nodes as follows
 $$\mathbf{A}=\begin{bmatrix}
 x_2-x_1&y_2-y_1\\
 x_3-x_2&y_3-y_2\\
@@ -1137,6 +1140,14 @@ To obtain
     p(\boldsymbol{\nu})=\frac{1}{(2\pi)^{\frac{n}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}}e^{-\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)}
     \label{eq:16}
 \end{equation}
+with 
+\begin{equation}
+    \boldsymbol{\nu}=\begin{bmatrix}
+    \nu_1\\
+    \vdots\\
+    \nu_n
+    \end{bmatrix}
+\end{equation}
 For the Maximum Likelihood method we need to find the minimum of \ref{eq:16} w.r.t $\mathbf{x}$. As usual to ease the computation we consider the log. 
 \begin{equation}
     \ell_n(\mathbf{x})=-\ln\big((2\pi)^{\frac{n}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}\big)-\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
@@ -1153,8 +1164,7 @@ This is not a linear system, therefore the solution must be computed with some i
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $\upsilon_0$
-    \item $\xi_i,\forall i$
+    \item Nothing
   \end{itemize}
   \end{center}
 \begin{algorithm}[H]
@@ -1174,7 +1184,7 @@ This is not a linear system, therefore the solution must be computed with some i
 \begin{equation}
     g_i = \frac{\text{n. of packets received from node $i$}}{\text{n. of packets sent to node $i$}}
 \end{equation}
-Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower one. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below (fig. \ref{fig:3}) a possible arrangement of anchor nodes.
+Since the quality/quantity of packets degrades with the distance, closer nodes will send back many packets, therefore having a high grade, whereas farther nodes will reply back with less packets, therefore will have a lower grade. Then only the nodes with a grade greather or equal to a certain threshold (e.g. $0.9$) will be considered. This is a quite simple algorithm, since it generally assumes that the nodes with known position are positioned in a regular grid. It presents however low accuracy, and also it may be difficult to determine threshold value. The main advantage however is the simultaneous localization of multiple unknown nodes. Below (fig. \ref{fig:3}) a possible arrangement of anchor nodes.
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.6]{pic1}
@@ -1211,8 +1221,7 @@ where $h_{u,i}$ is the hop count from node $i$ to the unknown node $u$. The line
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $\upsilon_0$
-    \item $\xi_i,\forall i$
+    \item Nothing
   \end{itemize}
   \end{center}
 The DV-Hop algorithm was first published by in \cite{965964}.\\
@@ -1300,8 +1309,7 @@ The result can be computed with the closed formula of the LLS
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item $\upsilon_0$
-    \item $\xi_i,\forall i$
+    \item Nothing
   \end{itemize}
   \end{center}
 Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it an efficient model free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node ($u,u>n$) w.r.t. the other nodes. The main principle underlying this method is to compute the squared difference between the signal intensity of all the anchor nodes measured by the unknown node and the signal intensity of all the other nodes measured by each node.
