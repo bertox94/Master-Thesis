@@ -247,7 +247,7 @@ note the last value, for the previous algorithm it should have been discarded, b
   \begin{itemize}
     \centering
     \item $\upsilon_0$
-    \item $\sigma^2_i,\forall i$
+    \item $\xi_i,\forall i$
     \item $d_i^j,\forall i$
   \end{itemize}
   \end{center}
@@ -681,6 +681,7 @@ From equations \ref{eq:6} and \ref{eq:7}
     &=Var\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]\\
     &=d_i^4Var\bigg[e^{-\frac{2}{\beta}\xi_i}\bigg]\\
     &=d_i^4(e^{\frac{4}{\beta^2}\sigma_i^2}-1)e^{\frac{4}{\beta^2}\sigma^2_i}
+    \label{eq:21}
 \end{align}
 As we can see from \ref{eq:8}, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$ (which is the bias itself). Therefore, an unbiased estimate of $d_i^2$ is 
 \begin{equation}
@@ -724,42 +725,42 @@ we can write it in matrix form
         e^{-\frac{2}{\beta}\nu_n-\frac{2}{\beta^2}\sigma^2_n} & -x_n^2 & -y_n^2\\
     \end{bmatrix}
 \end{equation}
-with $$M=\begin{bmatrix}
+with $$\mathbf{A}=\begin{bmatrix}
         -2x_1 & -2y_1 & 1\\
         \vdots&\vdots&\vdots\\
         -2x_n & -2y_n & 1
     \end{bmatrix}$$
-$$\theta =     \begin{bmatrix}
+$$\mathbf{x} =     \begin{bmatrix}
         x\\
         y\\
         R^2
     \end{bmatrix}$$
-$$b=    \begin{bmatrix}
+$$\mathbf{b}=    \begin{bmatrix}
         e^{-\frac{2}{\beta}\nu_1-\frac{2}{\beta^2}\sigma^2_1} & -x_1^2 & -y_1^2\\
         \vdots&\vdots&\vdots\\
         e^{-\frac{2}{\beta}\nu_n-\frac{2}{\beta^2}\sigma^2_n} & -x_n^2 & -y_n^2\\
     \end{bmatrix}$$
-Now since $\theta^*$ is unknown we would like to choose $\theta\approx\theta^*$ to have 
+Now since $\mathbf{x^*}$ is unknown we would like to choose $\mathbf{x}\approx\mathbf{x^*}$ to have 
 \begin{equation}
-    M\theta-b\approx0
+    \mathbf{Ax-b}\approx0
 \end{equation}
 One easy way is to seek the minimum of 
 \begin{align}
-    J&(\theta)=(M\theta - b)^T(M\theta - b)\\
-    &=\theta^TA^TM\theta-2\theta^TA^Tb+b^Tb
+    J(\mathbf{x})&=\mathbf{(Ax-b)^T(Ax - b)}\\
+    &=\mathbf{x^TA^TAx-2x^TA^Tb+b^Tb}
 \end{align}
-We can fit this model with the Least Square Method, that for a linear model (which is the ours) has a known explicit solution \cite{10.5555/1557273} that can be easily verified. In fact since $J(\theta)$ is a quadratic function of $\theta$, then there is a unique minimum \cite{Ortega1987,rzk}. The LLS estimate corresponds to:
+We can fit this model with the Least Square Method, that for a linear model (which is the ours) has a known explicit solution \cite{10.5555/1557273} that can be easily verified. In fact since $J(\mathbf{x})$ is a quadratic function of $\mathbf{x}$, then there is a unique minimum \cite{Ortega1987,rzk}. The LLS estimate corresponds to:
 \begin{equation}
-    \hat{\theta}=\arg \min_\theta J(\theta)
+    \hat{\mathbf{x}}=\arg \min_\mathbf{x} J(\mathbf{x})
 \end{equation}
 which can be found by setting to $0$ its derivative
     
 \begin{align}
 \begin{split}
-&\frac{\partial J(\theta)}{\partial \theta}=0\\
-    &2A^TM\hat{\theta}-2A^Tb=0\\
-    &A^TA\hat{\theta}=A^Tb\\
-    &\hat{\theta}=(A^TA)^{-1}A^Tb
+&\frac{\partial J(\mathbf{x})}{\partial \mathbf{x}}=0\\
+    &2\mathbf{A^TA}\hat{\mathbf{x}}-2\mathbf{A^Tb}=0\\
+    &\mathbf{A^TA\hat{x}}=\mathbf{A^Tb}\\
+    &\hat{\mathbf{x}}=\mathbf{(A^TA)^{-1}A^Tb}
 \end{split}
 \end{align}
 The target position can be finally obtained as 
@@ -769,8 +770,8 @@ The target position can be finally obtained as
     \hat{y}
 \end{bmatrix}=
 \begin{bmatrix}
-    [\hat{\theta}]_1\\
-    [\hat{\theta}]_2
+    [\hat{\mathbf{x}}]_1\\
+    [\hat{\mathbf{x}}]_2
 \end{bmatrix}
 \end{equation}
 \clearpage
@@ -790,11 +791,11 @@ In the previous section we have seen how to use statistics to obtain an estimato
 \begin{align}
 \sigma^2_{\hat{d_i}}=&Var\big[\hat{d_i^2}\big]=&& \\
 &=Var\bigg[e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg] && \text{from \ref{eq:9}}\\
-&=\bigg(e^{-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
-&=\cancel{e^{-\frac{4}{\beta^2}\sigma^2_i}}d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\cancel{e^{\frac{4}{\beta^2}\sigma^2}}\\
+&=\bigg(e^{-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2Var\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]&& \text{because it is a constant}\\
+&=\cancel{e^{-\frac{4}{\beta^2}\sigma^2_i}}d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\cancel{e^{\frac{4}{\beta^2}\sigma^2}} &&\text{from } \ref{eq:21}\\
 &=d_i^4\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
 &\approx \big(\hat{d_i}^2\big)^2\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
-&=\bigg(e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)\\
+&=\bigg(e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}\bigg)^2\bigg(e^{\frac{4}{\beta^2}\sigma_i^2}-1\bigg)&&\text{from }\ref{eq:9}\\
 &=e^{-\frac{4}{\beta}\nu_i-\frac{4}{\beta^2}\sigma^2_i}\bigg(e^{\frac{4}{\beta^2}\sigma^2_i}-1\bigg)\\
 &=e^{-\frac{4}{\beta}\nu_i}\bigg(1-e^{-\frac{4}{\beta^2}\sigma^2_i}\bigg)\\
 &=\frac{1-e^{-\frac{4}{\beta^2}\sigma^2_i}}{e^{\frac{4}{\beta}\nu_i}}
@@ -866,13 +867,11 @@ which is finally
     \label{eq:12}
 \end{equation}
 Frone one of the \ref{eq:11} it follows
-\begin{equation}
-x_i^2+x^2-2x_ix+y_i^2+y^2-2y_iy=d_i^2      
-\end{equation}
-\begin{equation}
--x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy=-d_i^2
+\begin{align}
+x_i^2+x^2-2x_ix+y_i^2+y^2-2y_iy&=d_i^2 &&\text{develop the square}\\ 
+-x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy&=-d_i^2 && \text{multiply by } -1
 \label{eq:13}
-\end{equation}
+\end{align}
 Now by adding member to member \ref{eq:12} to \ref{eq:13} you have 
 \begin{equation}
 \begin{split}
@@ -893,7 +892,7 @@ and by rearranging the equation
     =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
 \end{split}    
 \end{equation}
-then the previous set of equations \ref{eq:11} becomes
+Then the previous set of equations \ref{eq:11} becomes
 \begin{align}
 \begin{split} 
     \bigg(x_1-\frac{1}{n}&\sum_{i=1}^nx_i\bigg)x+\bigg(y_1-\frac{1}{n}\sum_{i=1}^ny_i\bigg)y\\
@@ -928,7 +927,6 @@ Both $\mathbf{A}$ and $\mathbf{b}$ are completely known, also $d_i$, due to \ref
 \begin{equation}
     \mathbf{x}=(\mathbf{A^TA})^{-1}\mathbf{A^Tb}
 \end{equation}
-A good point to note is that this algorithm can work also with non RSSI methods. For example you can employ also sound intensity, with its appropriate propagation model to estimate the distance, replace \ref{eq:17}, and the rest of the framework remains unchanged.
 \clearpage
 
 
@@ -1254,7 +1252,7 @@ The algorithm begins with a broadcast of all nodes with a packet, that contains 
  \hline
 \end{tabular}
 \end{center}
-As soon as the data is available each unknown node can compute its approximated distance from each node $i $ as in line $3$ of the previous algorithm. Therefore the unknown node $u, 1\leq u\leq n$ (si o no? Si, le equazioni sotto, ne avremo una in meno perche xu-xu..., non serve specificare) is able to derive the following equations (with $x_u,y_u$) unknown
+As soon as the data is available each unknown node can compute its approximated distance from each node $i $ as in line $3$ of the previous algorithm. Therefore the unknown node $u, 1\leq u\leq n$ is able to derive the following equations (with $x_u,y_u$) unknown
 \begin{align}
 \begin{split} 
 (x_1-x_u)^2+(y_1-y_u)^2&=d_{u,1}^2 \\ 
@@ -1267,16 +1265,16 @@ where $d_{u,i}$ is the distance (in meters) from node $u$ to node $i$ unknown ex
 \\\\By subtracting the $n$-th equation to all the others, those can be transformed to
 \begin{align}
 \begin{split} 
-x_1^2-x_m^2+y_1^2-d_{u,1}^2-d_{u,n}^2&=2x_u(x_1-x_n)+2y_u(y_1-y_u)\\ 
-x_2^2-x_m^2+y_2^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_2-x_n)+2y_u(y_2-y_u)\\
+x_1^2-x_n^2+y_1^2-y_n^2-d_{u,1}^2-d_{u,n}^2&=2x_u(x_1-x_n)+2y_u(y_1-y_u)\\ 
+x_2^2-x_n^2+y_2^2-y_n^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_2-x_n)+2y_u(y_2-y_u)\\
 &\;\;\vdots\\
-x_2^2-x_m^2+y_2^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_{n-1}-x_n)+2y_u(y_2-y_u)
+x_2^2-x_n^2+y_2^2-y_n^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_{n-1}-x_n)+2y_u(y_2-y_u)
 \end{split}
 \end{align}
-Can be written in matrix form $AX_u=B$
+Can be written in matrix form $\mathbf{Ax}=\mathbf{b}$
 where 
 \begin{equation}
-    A=2\begin{bmatrix}
+    \mathbf{A}=2\begin{bmatrix}
     x_1-x_m & y_1-y_m\\
     x_2-x_m & y_2-y_m\\
     \vdots & \vdots\\
@@ -1284,13 +1282,13 @@ where
     \end{bmatrix}
 \end{equation}
 \begin{equation}
-    X_u=\begin{bmatrix}
+    \mathbf{x}=\begin{bmatrix}
     x_u\\
     y_u
     \end{bmatrix}
 \end{equation}
 \begin{equation}
-    B=\begin{bmatrix}
+    \mathbf{b}=\begin{bmatrix}
         x_{1}^2-x_m^2+y_{1}^2-y_m^2-d_{u,1}^2-d^2_{u,m}\\
         x_{2}^2-x_m^2+y_{2}^2-y_m^2-d_{u,2}^2-d^2_{u,m}\\
         \vdots\\
@@ -1299,7 +1297,7 @@ where
 \end{equation}
 The result can be computed with the closed formula of the LLS
 \begin{equation}
-    X_u=(A^TA)^{-1}A^TB
+    \mathbf{x}=\mathbf{(A^TA)^{-1}A^Tb}
 \end{equation}
 \clearpage
 
@@ -1321,6 +1319,7 @@ In the learining (offline) phase, every node build an internal database with rec
 This formula just iterate over all the nodes, and by each node $i$ it computes the difference squared between the intensity of the same node $j$ read by the node $i$ ($\upsilon_i^j$) and by the node $u$ ($\upsilon_u^j$) for every node. Clearly the summation skip the values of equal $i$ and $j$, because it doesn't make sense to measure the intensity of the signal produced by the node itself. Therefore, the node $\hat{i}$ with the minimum sum of square differences, according to the signal intensity read, it should be closest to the unknown node. The estimated position is the position of that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$ instead of one, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.
 \chapter{Conclusions}
 In this work, I have discussed about the main algorithms nowaday available to locate a device with unknown position. As a matter of facts, each algorithm has its own pros and cons. For example the most appealing seemed to be the Multilateration algorithm, due to is few to none knowledge beforehand, therefore it is well suited for applications like disaster recovery, where there is no time to dedicate to a learning phase, however, to give acceptable results, at least $\upsilon_0$ must be known, and an initial starting guess must be obtained from some other methods, otherwise it possibly diverges. Another peculiarity of this algorithm is the possibility to customize the path loss index of each node. Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\;\forall i$. For example the most accurate one would be the weighted linear estimation algorithm, which considers carefully the effect of the variance of the measurements, which is in fact a representation of the noise itself. In my opinion the fingerprinting method would give also good results, provided a high number of anchor nodes. A particulr mention needs to be given also to the line intersection algorithm, mainly to its robustness to noise.\\\\
+A good point to note is that this algorithm can work also with non RSSI methods. For example you can employ also sound intensity, with its appropriate propagation model to estimate the distance, replace \ref{eq:17}, and the rest of the framework remains unchanged.\\\\
 As a consequence, the perfect algorithm doesn't exists, not even a perfect sequence of algorithms. It is a task for the operator to choose what fits best its need, based also on his known parameters and his expectations on the accuracy.
 Numeric example?
 
