@@ -690,21 +690,21 @@ As we can see from \ref{eq:8}, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate 
 \end{equation}
 We want to use the above estimator obtained from the measurements to build a linear models in $\mathbf{x}$. Since the estimator is now unbiased by writing 
 \begin{equation}
-    (x-x_i)^2+(y-y_i)^2=\hat{d}_i^2
+    (x_u-x_i)^2+(y_u-y_i)^2=\hat{d}_i^2
 \end{equation}
 we can write
 \begin{equation}
-    (x-x_i)^2+(y-y_i)^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+    (x_u-x_i)^2+(y_u-y_i)^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
 \end{equation}
 \begin{equation}
-    -2x_ix-2y_iy+x^2+y^2+x_i^2+y_i^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
+    -2x_ix_u-2y_iy_u+x^2_u+y^2_u+x_i^2+y_i^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
 \end{equation}
 \begin{equation}
-    -2x_ix-2y_iy+x^2+y^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}-x_i^2-y_i^2
+    -2x_ix_u-2y_iy_u+x_u^2+y_u^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}-x_i^2-y_i^2
 \end{equation}
 By setting the condition 
 \begin{equation}
-R^2=x^2+y^2    
+R^2=x_u^2+y_u^2    
 \label{eq:10}
 \end{equation}
 we can write it in matrix form
@@ -715,8 +715,8 @@ we can write it in matrix form
         -2x_n & -2y_n & 1
     \end{bmatrix}
     \begin{bmatrix}
-        x\\
-        y\\
+        x_u\\
+        y_u\\
         R^2
     \end{bmatrix} = 
     \begin{bmatrix}
@@ -731,8 +731,8 @@ with $$\mathbf{A}=\begin{bmatrix}
         -2x_n & -2y_n & 1
     \end{bmatrix}$$
 $$\mathbf{x} =     \begin{bmatrix}
-        x\\
-        y\\
+        x_u\\
+        y_u\\
         R^2
     \end{bmatrix}$$
 $$\mathbf{b}=    \begin{bmatrix}
@@ -766,8 +766,8 @@ which can be found by setting to $0$ its derivative
 The target position can be finally obtained as 
 \begin{equation}
 \begin{bmatrix}
-    \hat{x}\\
-    \hat{y}
+    \hat{x}_u\\
+    \hat{y}_u
 \end{bmatrix}=
 \begin{bmatrix}
     [\hat{\mathbf{x}}]_1\\
@@ -808,12 +808,12 @@ Now we get to the weighting matrix
 \end{align}
 The improved cost function \cite{rzk} takes the following form 
 \begin{align}
-    J&(\theta)=(M\theta - b)^TW(M\theta - b)\\
-    &=\theta^TA^TWM\theta-2\theta^TA^TWb+b^TWb
+    J&(\mathbf{x})=\mathbf{(Ax-b)^TW(Ax - b)}\\
+    &=\mathbf{x^TA^TWAx-2x^TA^TWb+b^TWb}
 \end{align}
 that can be minimized with the usual LLS
 \begin{align}
-    \hat{\theta}=(A^TWA)^{-1}A^TWb
+    \mathbf{\hat{x}=(A^TWA)^{-1}A^TWb}
 \end{align}
 The precision of this estimation can be further improved by imposing the constraint \ref{eq:10} on the minimization. This condition is ignored if we use LLS, but it can be successfully employed with the method of Lagrange multipliers \cite{1275684,Lopez1994, pasa}.
 
@@ -846,19 +846,19 @@ From the canonical model extract $d_i$ as follows
 so that we have the following set of equations
 \begin{align}
 \begin{split} 
-(x_1-x)^2+(y_1-y)^2&=d_1^2 \\ 
-(x_2-x)^2+(y_2-y)^2&=d_2^2 \\ 
+(x_1-x_u)^2+(y_1-y_u)^2&=d_1^2 \\ 
+(x_2-x_u)^2+(y_2-y_u)^2&=d_2^2 \\ 
 &\;\;\vdots\\
-(x_n-x)^2+(y_n-y)^2&=d_n^2 \\
+(x_n-x_u)^2+(y_n-y_u)^2&=d_n^2 \\
 \end{split}
 \label{eq:11}
 \end{align}
 Consider 
 \begin{align}
 \frac{1}{n}&\sum_{i=1}^nd_i^2=\\
-&=\frac{1}{n}\sum_{i=1}^n\big[(x_i-x)^2+(y_i-y)^2\big]\\
-&=\frac{1}{n}\sum_{i=1}^n(x_i-x)^2+\frac{1}{n}\sum_{i=1}^n(y_i-y)^2\\
-&=\frac{1}{n}\sum_{i=1}^n[x_i^2-2x_ix+x^2] + \frac{1}{n}\sum_{i=1}^n[y_i^2-2y_iy+y^2]\\
+&=\frac{1}{n}\sum_{i=1}^n\big[(x_i-x_u)^2+(y_i-y_u)^2\big]\\
+&=\frac{1}{n}\sum_{i=1}^n(x_i-x_u)^2+\frac{1}{n}\sum_{i=1}^n(y_i-y_u)^2\\
+&=\frac{1}{n}\sum_{i=1}^n[x_i^2-2x_ix_u+x^2] + \frac{1}{n}\sum_{i=1}^n[y_i^2-2y_iy_u+y^2]\\
 &=\frac{1}{n}\sum_{i=1}^n[x_i^2]-2x\frac{1}{n}\sum_{i=1}^n[x_i]+ x^2 + \frac{1}{n}\sum_{i=1}^n[y_i^2]-2y\frac{1}{n}\sum_{i=1}^n[y_i]+ y^2
 \end{align}
 which is finally
@@ -868,8 +868,8 @@ which is finally
 \end{equation}
 Frone one of the \ref{eq:11} it follows
 \begin{align}
-x_i^2+x^2-2x_ix+y_i^2+y^2-2y_iy&=d_i^2 &&\text{develop the square}\\ 
--x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy&=-d_i^2 && \text{multiply by } -1
+x_i^2+x^2-2x_ix_u+y_i^2+y^2-2y_iy_u&=d_i^2 &&\text{develop the square}\\ 
+-x_i^2-x^2+2x_ix_u-y_i^2-y^2+2y_iy_u&=-d_i^2 && \text{multiply by } -1
 \label{eq:13}
 \end{align}
 Now by adding member to member \ref{eq:12} to \ref{eq:13} you have 
@@ -877,8 +877,8 @@ Now by adding member to member \ref{eq:12} to \ref{eq:13} you have
 \begin{split}
     \bigg(-x_i^2  + \frac{1}{n}\sum_{i=1}^n[x_i^2]\bigg)+
     \bigg(-y_i^2+ \frac{1}{n}\sum_{i=1}^n[y_i^2]\bigg)+\\
-    +\bigg(2x_ix-2x\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
-    \bigg(2y_iy -2y\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)
+    +\bigg(2x_ix_u-2x\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
+    \bigg(2y_iy_u -2y\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)
     =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
 \end{split}    
 \end{equation}
