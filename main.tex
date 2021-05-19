@@ -52,7 +52,7 @@
 \setcounter{page}{1}
 
 \chapter{Abstract, possibili applicazioni, descrizione}
-Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate hiding objects, and that technology is now low cost and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred.
+Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate hiding objects, and that technology is now low cost and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm what are the parameters that one need to know beforehand.
 
 \section{Environment settings}
 The main setting that will be presented is the most common used up to now, which is a space filled with receiving/transmitting devices (anchor nodes), each placed in regular position (usually a grid) with known postions, that can read the signal intensity of the other nodes. The activity starts when a device with unknown position is put in the area and many (if not every) nodes are close enough to get the signal intensity of that unknown node. This range of sensitivity can be seen as a circle of radius of about $50$ meters. At this point each anchor node can communicate outside a tuple like this $(x_i,y_i,\upsilon_i^u)$ where $x_i,y_i$ are the position of the node itself, and $\upsilon_i^u$ is the signal strenght intensity of the unknown node, measured by the anchor node $i$. Usually the data is sent to a central processing device that makes the computations and outputs the estimated position. \\\\
@@ -1059,8 +1059,6 @@ $$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
 \vdots\\
 (x^2_n+y^2_n)-(x_{n-1}^2+y^2_{n-1})-(d_n^2-d_{n-1}^2)\\
 \end{bmatrix}$$
-Qui sotto sistema ..................
-Basically we consider the intersection of the line passing through the first and second circle, the one that passes through the second and the third one and so on, instead of the first circle and the second one, the first circle and the third one and so on, as in the previous formula. This method has many advantages: it is highly resistant to noise, always gives a result and is fast. Also this algorithm as the previous (as the trilateration... does it make sense?)................
 \clearpage
 
 
@@ -1081,6 +1079,7 @@ This method can provide two main benefits over the classic trilateration:
 So, from the measurement of each node we try straight away to fit those data to the canonical model. To do so we write a cost function to be minimized
 \begin{equation}
     J(\upsilon_0,\alpha,x_u,y_u)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha\log_{10}\big(\sqrt{(x_i-x_u)^2+(y_i-y_u)^2}\big)\bigg)^2
+    \label{eq:23}
 \end{equation}
 \begin{equation}
 \hat{x}_u, \hat{y}_u=\arg \min_{\upsilon_0,\alpha,x_u,y_u}J(\upsilon_0,\alpha,x_u,y_u)
@@ -1089,8 +1088,10 @@ The great advantage of this method is that it theoretically doesn't need to know
 To increase the accuracy of this method, one can also redefine the cost function as
 \begin{equation}
     J(\upsilon_0,\alpha_1,...,\alpha_n,x_u,y_u)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha_i\log_{10}\big(\sqrt{(x_i-x_u)^2+(y_i-y_u)^2}\big)\bigg)^2
+    \label{eq:22}
 \end{equation}
-One big drawback of this method is that convergence is not guaranteed, and it often depends from the starting guess. A ``necessary condition" for convergence is that the starting guess must be quite close to the real location of the unknown device. For this reason, the usual choice for the initial guess is the estimation obtained by the linear methods. The minimization of the cost function must be done with some iterative algorithms... confronta se dirlo qua o in ML method
+One big drawback of this method is that convergence is not guaranteed, and it often depends from the starting guess. A ``necessary condition" for convergence is that the starting guess must be quite close to the real location of the unknown device. For this reason, the usual choice for the initial guess is the estimation obtained by the linear methods.\\\\ 
+The \ref{eq:23} and \ref{eq:22} are not linear systems, therefore the solution must be computed with some iterative methods, (GN, steepest descent...) \cite{chong2013introduction}.
 \clearpage
 
 
@@ -1154,7 +1155,7 @@ The first part is independent of $\mathbf{x}$, so we need only to find the stati
 \begin{equation}
 \hat{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
 \end{equation}
-This is not a linear system, therefore the solution must be computed with some iterative methods, (GN, steepest descent...) \cite{chong2013introduction}.
+As the multilateration case, the minimization must be done with iterative algorithms.
 
 \clearpage
 \section{Centroid algorithm}
