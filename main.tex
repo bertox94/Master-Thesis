@@ -52,7 +52,7 @@
 \setcounter{page}{1}
 
 \chapter{Abstract, possibili applicazioni, descrizione}
-Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate hiding objects, and that technology is now low cost and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm what are the parameters that one need to know beforehand.
+Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate hiding objects, and that technology is now low cost and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one need to know beforehand.
 
 \section{Environment settings}
 The main setting that will be presented is the most common used up to now, which is a space filled with receiving/transmitting devices (anchor nodes), each placed in regular position (usually a grid) with known postions, that can read the signal intensity of the other nodes. The activity starts when a device with unknown position is put in the area and many (if not every) nodes are close enough to get the signal intensity of that unknown node. This range of sensitivity can be seen as a circle of radius of about $50$ meters. At this point each anchor node can communicate outside a tuple like this $(x_i,y_i,\upsilon_i^u)$ where $x_i,y_i$ are the position of the node itself, and $\upsilon_i^u$ is the signal strenght intensity of the unknown node, measured by the anchor node $i$. Usually the data is sent to a central processing device that makes the computations and outputs the estimated position. \\\\
@@ -322,7 +322,7 @@ Sometimes to ease the computation, $\sigma^2_i$ is assumed constant, so $\sigma_
   \end{itemize}
   \end{center}
 In this case instead we consider only one node, since we are interest to estimate only $\sigma^2_i$ that is the variance of node $i$.
-So after placing a transmitting device $j$ as before, we have $m$ samples of node $i$ $$\upsilon_{i,1},...,\upsilon_{i,m}$$ each of them follows the distribution
+So after placing a transmitting device $j$ as before, we have $m$ samples from node $i$ $$\upsilon_{i,1},...,\upsilon_{i,m}$$ each of them follows the distribution
 \begin{equation}
     X_i\sim \mathcal{N}(\mu_i,\sigma^2_i)
     \label{eq:3}
@@ -661,7 +661,7 @@ Remind that the exponentiation of a gaussian distribution is \cite{Beran2011} a 
     Var[Y]=Var\big[e^X\big]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}
     \label{eq:7}
 \end{equation}
-From \cite{alma9926534668905776}, it is clear that if $a\in \mathbb{R}$ and $X\sim \mathcal{N}(\mu,\sigma^2)$ then
+From \cite{alma9926534668905776}, it is clear also that if $a\in \mathbb{R}$ and $X\sim \mathcal{N}(\mu,\sigma^2)$ then
 \begin{equation}
 aX\sim \mathcal{N}(a\mu,a^2\sigma^2)    
 \end{equation}
@@ -683,7 +683,7 @@ From equations \ref{eq:6} and \ref{eq:7}
     &=d_i^4(e^{\frac{4}{\beta^2}\sigma_i^2}-1)e^{\frac{4}{\beta^2}\sigma^2_i}
     \label{eq:21}
 \end{align}
-As we can see from \ref{eq:8}, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$ since its mean is not $d_i^2$ as we wanted, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$ (which is the bias itself). Therefore, an unbiased estimate of $d_i^2$ is 
+As we can see from \ref{eq:8}, $e^{-\frac{2}{\beta}\nu_i}$ is a biased estimate of $d_i^2$, however we can remove its bias by dividing it by $e^{\frac{2}{\beta^2}\sigma^2_i}$ (which is the bias itself). Therefore, an unbiased estimate of $d_i^2$ is 
 \begin{equation}
     \hat{d}_i^2=e^{-\frac{2}{\beta}\nu_i-\frac{2}{\beta^2}\sigma^2_i}
     \label{eq:9}
@@ -1176,7 +1176,7 @@ As the multilateration case, the minimization must be done with iterative algori
  \begin{equation}
      x_u=\frac{\sum_{i=1}^mx_i}{m},\quad y_u=\frac{\sum_{i=1}^my_i}{m}
  \end{equation}
- which is the mean of the position of the retained nodes.
+which is the mean of the position of the retained nodes.
  \caption{Centroid algorithm}
 \end{algorithm}
 \noindent\\From \cite{878533} the filtering based on the threshold can be done in two ways. The first method consists of a simple selection based on the rssi level, that is, every nearest node (whose level is above the rssi threshold) is kept. The second method employs a more sofisticated approach. Every node broadcasts multiple packets in the network, then each node replies with one packet per packet received. Therefore node $j$ can draw a list for every node $i$ as follows 
