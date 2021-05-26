@@ -52,7 +52,7 @@
 \setcounter{page}{1}
 
 \chapter{Abstract, possibili applicazioni, descrizione}
-Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate hiding objects, and that technology is now low cost and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one need to know beforehand.
+Finding the location of unknown objects has been since long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unhautorized intrusions, to warfare, to discover a nearby opoonents, or detecting submarines, but also to localize someone who need to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate objects with low cost technology, and available to almost every people in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of art of the rssi-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one need to know beforehand.
 
 \section{Environment settings}
 The main setting that will be presented is the most common used up to now, which is a space filled with receiving/transmitting devices (anchor nodes), each placed in regular position (usually a grid) with known postions, that can read the signal intensity of the other nodes. The activity starts when a device with unknown position is put in the area and many (if not every) nodes are close enough to get the signal intensity of that unknown node. This range of sensitivity can be seen as a circle of radius of about $50$ meters. At this point each anchor node can communicate outside a tuple like this $(x_i,y_i,\upsilon_i^u)$ where $x_i,y_i$ are the position of the node itself, and $\upsilon_i^u$ is the signal strenght intensity of the unknown node, measured by the anchor node $i$. Usually the data is sent to a central processing device that makes the computations and outputs the estimated position. \\\\
@@ -93,8 +93,8 @@ and then obtaining
 \clearpage
 
 \chapter{Disturbances of RSSI}
-The RSSI noise has a great influence over the measurements, thereby complicating the attempt to get precise location. To give some numbers, the theoretical range within the RSSI can vary goes from $-30$ to $-120$ however the available range of signal intensity that a common WiFi device can measure varies in the interval $-30\div-90$ dbm. This is because to estabilish a connection (and to retrieve at least the name of the transmitting device), some packets must be sent, and if the signal strength is too low, the quality of the packets degrades, therefore making impossible the communication. The value measured at the receiving end includes also the noise, so the measurement generally deviate from the exact value by at most $6$ dbm which is as much as $10\%$ over the range of measurement.
-Due to its significant influence, this issue has been investigated many times in order to discover something more, for example about its probability distribution, but up to now, few to no answers have been found. To cite one, \cite{4608603} showed that there are no significant patterns over the time domain neither in the frequency domain. The causes of the noise are the same that affects the propagation of any electromagnetic wave. Of course in industrial environments with strong electromagnetic interferences (EMI) the noise is more pronounced \cite{746e8399}.(da tenere o togliere?) We can summarize the main sources of noise in the following sections: 
+The RSSI noise has a great influence over the measurements, thereby complicating the attempt to get precise location. To give some numbers, the theoretical range within the RSSI can vary goes from $-30$ to $-120$ however the available range of signal intensity that a common WiFi device can measure varies in the interval $-30\div-90$ dbm. This is because to estabilish a connection (and to retrieve at least the name of the transmitting device), some packets must be sent, and if the signal strength is too low, the quality of the packets degrades, therefore making impossible the communication. The value measured at the receiving end includes also the noise, so the measurement deviates from the exact value generally by at most $6$ dbm which is as much as $10\%$ over the range of measurement.
+Due to its significant influence, this issue has been investigated many times in order to discover something more, for example about its probability distribution, but up to now, few to no answers have been found. To cite one, \cite{4608603} showed that there are no significant patterns over the time domain neither in the frequency domain. The causes of the noise are the same that affects the propagation of any electromagnetic wave. We can summarize the main sources of noise in the following sections: 
 \section{Multipath Fading} 
 As outlined in \cite{onl11}, multipath fading occurs when there are multiple ways for the signal to reach the receiving device. This causes the signal waves to reach the receiving end in two different times, that is, there is a non negligible delay between the time of arrival of the two (or more) waves. This means phase shifting, leading to constructive/destructive interference, therefore causing oscillations in the signal intensity read. This effect is very preeminent in closed environments, when there are many surfaces able to reflect the signal. It is totally randomic \cite{10.5555/559977} which means unpredictable by definition. Due to its nature, the alterations of the signal caused are like spikes above or below the mean value. Therefore it can be removed to some extent by filtering the outliers with some of the methods presented later.
 \section{Shadow Fading}
@@ -381,7 +381,7 @@ return results\;
 Here follows a classification of the localization methods considered. Model based means that the algorithms children of that node, employs directly the model of log propagation seen in Chapter 2, whereas model free don't use it. Closed formula/iterative methods are quite self explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$. Of course, model free methods, since they do not use the model above, they do not consider either the variance of the noise, nor any other probabilistic parameters.
 
 \begin{sidewaysfigure}
-\scalebox{1}{
+\scalebox{1.2}{
 \begin{forest}
     for tree={
         grow=0,reversed, % tree direction
@@ -1067,7 +1067,7 @@ $$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item Theoretically nothing
+    \item $\emptyset$
   \end{itemize}
   \end{center}
 This algorithm is the generalization of the trilateration method, and is known as multilateration. 
@@ -1163,7 +1163,7 @@ As the multilateration case, the minimization must be done with iterative algori
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item Nothing
+    \item $\emptyset$
   \end{itemize}
   \end{center}
 \begin{algorithm}[H]
@@ -1220,7 +1220,7 @@ where $h_{u,i}$ is the hop count from node $i$ to the unknown node $u$. The line
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item Nothing
+    \item $\emptyset$
   \end{itemize}
   \end{center}
 The DV-Hop algorithm was first published by in \cite{965964}.\\
@@ -1308,7 +1308,7 @@ The result can be computed with the closed formula of the LLS
   \textbf{Assume to know:}
   \begin{itemize}
     \centering
-    \item Nothing
+    \item $\emptyset$
   \end{itemize}
   \end{center}
 Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, that need to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shpping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it is an efficient model free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signals intensity observed by the unknown node ($u,u>n$) w.r.t. the other nodes. The main principle underlying this method is to compute the squared difference between the signal intensity of all the anchor nodes measured by the unknown node and the signal intensity of all the other nodes measured by each node.
@@ -1317,12 +1317,18 @@ In the learining (offline) phase, every node build an internal database with rec
 \begin{equation}
     \hat{i}=\arg \min_i\bigg\{\sum_{\substack{j=1\\j\neq i}}^n(\upsilon_i^j-\upsilon_{u}^j)^2\bigg\}
 \end{equation}
-This formula just iterate over all the nodes, and by each node $i$ it computes the difference squared between the intensity of the same node $j$ read by the node $i$ ($\upsilon_i^j$) and by the node $u$ ($\upsilon_u^j$) for every node. Clearly the summation skip the values of equal $i$ and $j$, because it doesn't make sense to measure the intensity of the signal produced by the node itself. Therefore, the node $\hat{i}$ with the minimum sum of square differences, according to the signal intensity read, it should be closest to the unknown node. The estimated position is the position of that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$ instead of one, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.
+This formula just iterate over all the nodes, and by each node $i$ it computes the difference squared between the intensity of the node $j$ read by the node $i$ ($\upsilon_i^j$) and by the node $u$ ($\upsilon_u^j$) for every node. Clearly the summation skip the values of equal $i$ and $j$, because it doesn't make sense to measure the intensity of the signal produced by the node itself. Therefore, the node $\hat{i}$ with the minimum sum of square differences, according to the signal intensity read, it should be closest to the unknown node. The estimated position is the position of that node. Clearly this is a quite raw estimation, since can take only one out of the $n$ known positions, but in can be efficiently improved for higher values of $k$. In those cases, the selected nodes are $k$ instead of one, and the final estimate is computed as the mean of the position of those $k$ nodes, as the name says, the $k$ nearest neighbours.
+
 \chapter{Conclusions}
 In this work, I have discussed about the main algorithms nowaday available to locate a device with unknown position. As a matter of facts, each algorithm has its own pros and cons. For example the most appealing seemed to be the Multilateration algorithm, due to is few to none knowledge beforehand, therefore it is well suited for applications like disaster recovery, where there is no time to dedicate to a learning phase, however, to give acceptable results, at least $\upsilon_0$ must be known, and an initial starting guess must be obtained from some other methods, otherwise it possibly diverges. Another peculiarity of this algorithm is the possibility to customize the path loss index of each node. Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\;\forall i$. For example the most accurate one would be the weighted linear estimation algorithm, which considers carefully the effect of the variance of the measurements, which is in fact a representation of the noise itself. In my opinion the fingerprinting method would give also good results, provided a high number of anchor nodes. A particulr mention needs to be given also to the line intersection algorithm, mainly to its robustness to noise.\\\\
 A good point to note is that this algorithm can work also with non RSSI methods. For example you can employ also sound intensity, with its appropriate propagation model to estimate the distance, replace \ref{eq:17}, and the rest of the framework remains unchanged.\\\\
-As a consequence, the perfect algorithm doesn't exists, not even a perfect sequence of algorithms. It is a task for the operator to choose what fits best its need, based also on his known parameters and his expectations on the accuracy.
-Numeric example?
+As a consequence, the perfect algorithm doesn't exists, not even a perfect sequence of algorithms. It is a task for the operator to choose what fits best its need, based also on his known parameters and his expectations on the accuracy.\\\\
+Spiega perché theoretically nothing in ml, perché Iterative algorithms... sigma perché seno' non ha senso... E upsilon zero altrimenti non posso ottenere $nu_i$
+The model free are I teresting because they do not require anything, but they are more error prone
+Fingerprint works well if the nodes are disposed as in a grid
+Asa moving anchor node, however range free methods can be available or not?
+
+
 
 
 
