@@ -1149,11 +1149,11 @@ with
 \end{equation}
 For the Maximum Likelihood method we need to find the minimum of \ref{eq:16} w.r.t $\mathbf{x}$. As usual to ease the computation we consider the log. 
 \begin{equation}
-    \ell_n(\mathbf{x})=-\ln\big((2\pi)^{\frac{n}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}\big)-\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
+    \ell_n(\mathbf{x})=-\ln\big((2\pi)^{\frac{n}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}\big)-\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)^\mathbf{T}\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
 \end{equation}
 The first part is independent of $\mathbf{x}$, so we need only to find the stationary point of the second part, that is 
 \begin{equation}
-\hat{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
+\hat{\mathbf{x}}=\arg \min_{\beta,\mathbf{x}}\frac{1}{2}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)^\mathbf{T}\boldsymbol{\Sigma}^{-1}\big(\boldsymbol{\nu}-\mathbf{f}(\mathbf{x})\big)
 \end{equation}
 As the Multilateration case, the minimization must be done with iterative algorithms.
 
