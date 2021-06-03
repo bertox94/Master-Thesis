@@ -266,7 +266,6 @@ where
 which has probability density function
 \begin{equation}
     p_i(x)=\frac{1}{\sqrt{2\pi\sigma_i^2}}e^{-\frac{1}{2}\frac{(x-\mu_i)^2}{\sigma^2_i}}
-    \label{eq:20}
 \end{equation} 
 Given a sample of $n$ measurements $$\upsilon_1,...,\upsilon_n$$ one for each node, where each $\upsilon_i$ follows \ref{eq:3}. Then we can employ the Maximum Likelihood to estimate the path loss index. It follows
 \begin{equation}
@@ -276,7 +275,6 @@ Given a sample of $n$ measurements $$\upsilon_1,...,\upsilon_n$$ one for each no
 by applying the logarithm to both members
 \begin{equation}
     \ell_m(\alpha,\sigma_1^2,...,\sigma_n^2)=-\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln\bigg(\prod_{i=1}^n\sigma^2_i\bigg)-\frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i}
-    \label{eq:4}
 \end{equation}
 Maximizing $\ell_n^i$ w.r.t to $\alpha$ is equal to finding the stationary point of the third term in the above equation since the first and second one are independent of $\alpha$ therefore \cite{MUNOZ200923} 
 \begin{equation}
@@ -334,7 +332,6 @@ where
 Accordingly, the pdf is
 \begin{equation}
     p_{i}(x)=\frac{1}{\sqrt{2\pi\sigma_i^2}}e^{-\frac{1}{2}\frac{(x-\mu_i)^2}{\sigma^2_i}}
-    \label{eq:20}
 \end{equation}
 The Maximum Likelihood function is
 \begin{equation}
@@ -344,7 +341,6 @@ The Maximum Likelihood function is
 by applying the logarithm to both members
 \begin{equation}
     \ell_m(\alpha,\sigma^2_i)=-\frac{m}{2}\ln(2\pi\sigma^2_i)-\frac{1}{2\sigma^2_i}\sum_{j=1}^m(\upsilon_{i,j}-\mu_i)^2
-    \label{eq:4}
 \end{equation}
 Its derivative w.r.t $\sigma^2_i$ set to $0$ has the following form 
 \begin{equation}
@@ -655,7 +651,7 @@ By exponentiating both members of \ref{eq:6} we have
 Remind that the exponentiation of a gaussian distribution is \cite{Beran2011} a log-normal distribution. In other words, given $X\sim \mathcal{N}(\mu,\sigma^2)$, then $Y=e^X\sim \text{Lognormal}(\mu,\sigma^2)$ with
 \begin{equation}
     E[Y]=E\big[e^X\big]=e^{\mu+\frac{\sigma^2}{2}}
-    \label{eq:6}
+    \label{eq:20}
 \end{equation}
 \begin{equation}
     Var[Y]=Var\big[e^X\big]=(e^{\sigma^2}-1)e^{2\mu+\sigma^2}
@@ -669,7 +665,7 @@ so in this case,
 \begin{equation}
     -\frac{2}{\beta}\xi_i\sim \mathcal{N}\bigg(0,\frac{4}{\beta^2}\sigma^2_i\bigg)
 \end{equation}
-From equations \ref{eq:6} and \ref{eq:7}
+From equations \ref{eq:20} and \ref{eq:7}
 \begin{align}
     &E\bigg[e^{-\frac{2}{\beta}\nu_i}\bigg]\\
     &=E\bigg[d_i^2e^{-\frac{2}{\beta}\xi_i}\bigg]\\
@@ -1228,7 +1224,7 @@ The DV-Hop algorithm was first published by in \cite{965964}.\\
 \SetAlgoLined
 \KwResult{Estimated position of the unknown node}
 Each node has built its own database\;
-Each node compute the average distance for one hop
+Each node compute the average distance of one hop
 \begin{equation}
     AvgHopDistance_i=\frac{\sum_{j=1,j\neq i}^n\sqrt{(x_j-x_i)^2+(y_j-y_i)^2}}{\sum_{j=1,j\neq i}^nh_{i,j}}
 \end{equation}\\
