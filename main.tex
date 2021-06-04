@@ -33,6 +33,7 @@
 \addbibresource{mybib.bib} %Imports local bibliography file
 
 
+%IN caso stampa in un file a parte il titolo, per allineamento amrgini destro e sinistro
 
 \title{Master Thesis}
 \author{Alberto Tiraboschi}
@@ -42,12 +43,31 @@
 
 \numberwithin{equation}{section}
 
+\thispagestyle{empty}
 \maketitle
-\clearpage
+\clearpage % end title page
+\begingroup
+  \thispagestyle{empty}
+  \null
+  \newpage
+%  \null
+%  \newpage
+\endgroup
+
+
 \thispagestyle{empty}
 \tableofcontents
 \thispagestyle{empty}
-\clearpage
+
+\clearpage % end title page
+\begingroup
+  \thispagestyle{empty}
+  \null
+  \newpage
+%  \null
+%  \newpage
+\endgroup
+
 
 \setcounter{page}{1}
 
@@ -621,7 +641,7 @@ Consider the model \ref{eq:5} below reported
 \end{equation}
 After some time, for each anchor node, we will have a list of measurements, drawn from the random variable 
 \begin{equation}
--\beta\ln(d_i)+\xi_i\sim \mathcal{N}(-\beta\ln(d_i),\sigma^2)
+-\beta\ln(d_i)+\xi_i\sim \mathcal{N}(-\beta\ln(d_i),\sigma_i^2)
 \label{eq:14}
 \end{equation}
 Rewrite the \ref{eq:15} as follows 
@@ -938,6 +958,7 @@ Both $\mathbf{A}$ and $\mathbf{b}$ are completely known, also $d_i$, due to \ref
 Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation \cite{rzk}
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
+    \label{eq:25}
 \end{equation}
 or equivalently
 \begin{equation}
@@ -945,7 +966,7 @@ or equivalently
 \end{equation}
 Note that the formula is still valid even if the two circles do not intersect each other.
 Given $n$ measurements (so $n$ circles), only $n-1$ lines are needed to have an independent system of equations. For example, suppose to have three circles, it is needed to have only 2 lines, for example the line passing between the first and the second circle, and the line passing between the first and the third one, as in fig \ref{fig:1}.
-Therefore, given $n$ points we have a set of $n-1$ equations like the above \ref{eq:14}, that can be written in matrix form $\mathbf{Mx}=\mathbf{b}$ with
+Therefore, given $n$ points we have a set of $n-1$ equations like the above \ref{eq:25}, that can be written in matrix form $\mathbf{Ax}=\mathbf{b}$ with
 $$\mathbf{A}=\begin{bmatrix}
 x_2-x_1&y_2-y_1\\
 x_3-x_1&y_3-y_1\\
@@ -1320,8 +1341,7 @@ In this work, I have discussed the main algorithms nowadays available to locate 
 It seems appealing that some algorithms don't require the knowledge of any parameter beforehand. Those are some of the model-free methods and the Multilateration. Regarding the model-free methods, it should be said however that they work well if the anchor nodes are many and regularly positioned (in a grid for example), otherwise the precision downgrades. 
 Good results can be obtained with the Fingerprinting method, however, its downside is that it requires a learning phase, where each device measures the intensity read of all the other devices. This reduces the range of applicability of this algorithm. For example, it could not be used generally for disaster response, since there is no physical time to learn the signal intensity of the other nodes. Regarding instead the Multilateration, it could actually work without any previous learning phase nor any parameter but the quality of the estimation degrades. Usually, at least $\upsilon_0$ is required. Additionally, one important drawback is the starting guess. It must be close enough to the real location, otherwise, the method could diverge. A good choice for the starting guess is to use the estimated position from other methods. A good increase in the performance is given by employing an array of custom path loss indexes, different for each anchor node, particularly useful if the location process happens in an environment fitted with obstacles. This improvement comes however with a decrease in performance. \\\\
 Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\,\forall i$ with the algorithm presented earlier. In my opinion, the most accurate one would be the Weighted linear estimation, which considers carefully the effect of the variance of the measurements, which is in fact a concise representation of the noise. A particular mention needs to be given also to the line intersection algorithm.\\\\
-The use of UAV is spreading more and more in many areas.
-As a moving anchor node, however, range-free methods can be available or not?\\\\
+The use of UAV is spreading more and more in many areas. As a moving anchor node, it could be effectively employed in Multilateration for example, by moving in the area while recording samples as $$(x_i,y_i,\upsilon_i)$$ and then proceed with the usual computation. However it could not be employed in some range free methods, for example the Fingerprinting, since we cannot compare simultaneous measurements in different places.\\\\
 As a consequence, it seems that the perfect algorithm doesn't exist, not even a perfect sequence of algorithms. It is a task for the user to choose what fits best its need, based also on his known parameters and his expectations on the accuracy.\\\\
 
 
