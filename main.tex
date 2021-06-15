@@ -1,4 +1,5 @@
-\documentclass[12pt,twoside]{report}
+\documentclass[12pt]{report}
+%\documentclass[12pt,twoside]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{csquotes}
@@ -10,7 +11,7 @@
 \usepackage{pgfplots}
 \usepackage{rotating}
 \pgfplotsset{compat=1.7}
-\usepackage[a4paper,width=140mm,top=35mm,bottom=35mm]{geometry}
+\usepackage[a4paper,width=130mm,top=45mm,bottom=45mm]{geometry}
 %\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{marginnote}
 \usepackage[makeroom]{cancel}
@@ -379,7 +380,7 @@ Maximizing $\ell_n^i$ w.r.t to $\alpha$ is equal to finding the stationary point
 \begin{equation}
 \alpha=\frac{\upsilon_0\sum_{i=1}^n\frac{\log_{10}(d_i)}{\sigma^2_i}-\sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)}{\sigma^2_i}}{10\sum_{i=1}^n\frac{(\log_{10}(d_i))^2}{\sigma^2_i}}
 \end{equation}
-Sometimes to ease the computation, $\sigma^2_i$ is assumed constant, so $\sigma_1^2=...=\sigma_n^2=\sigma^2$. Then the equation simplifies as
+Sometimes to ease the computation, $\sigma^2_i$ is assumed constant, so $$\sigma_1^2=...=\sigma_n^2=\sigma^2$$ Then the equation simplifies as
 \begin{equation}
 \alpha=\frac{\upsilon_0\sum_{i=1}^n\log_{10}(d_i)- \sum_{i=1}^n\upsilon_i\log_{10}(d_i)}{10\sum_{i=1}^n(\log_{10}(d_i))^2}
 \end{equation}
@@ -452,7 +453,7 @@ return results\;
 Here follows a classification of the localization methods considered. Model-based means that the algorithms children of that node employ directly the model of log propagation seen in Chapter 2, whereas model-free don't use it. Closed formula/iterative methods are quite self-explaining. Regarding statistics, the sub-classification is based on the employment of probabilistic parameters, one above all, the variance $\sigma^2_i$ of the noise error $\xi_i$. Of course, model-free methods, since they do not use the model above, they do not consider either the variance of the noise or any other probabilistic parameters.
 
 \begin{sidewaysfigure}
-\scalebox{1.2}{
+\scalebox{1.1}{
 \begin{forest}
     for tree={
         grow=0,reversed, % tree direction
@@ -1141,19 +1142,19 @@ This method can provide two main benefits over the classic trilateration:
     \item The result is made on more observation than the trilateration
 \end{itemize}
 So, from the measurement of each node, we try straight away to fit those data to the canonical model. To do so we write a cost function to be minimized
-\begin{equation}
-    J(\upsilon_0,\alpha,x_u,y_u)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha\log_{10}\big(\sqrt{(x_i-x_u)^2+(y_i-y_u)^2}\big)\bigg)^2
+\begin{multline}
+    J(\upsilon_0,\alpha,x_u,y_u)=\\=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha\log_{10}\big(\sqrt{(x_i-x_u)^2+(y_i-y_u)^2}\big)\bigg)^2
     \label{eq:23}
-\end{equation}
+\end{multline}
 \begin{equation}
 \hat{x}_u, \hat{y}_u=\arg \min_{\upsilon_0,\alpha,x_u,y_u}J(\upsilon_0,\alpha,x_u,y_u)
 \end{equation}
 The great advantage of this method is that it theoretically doesn't need to know any parameter of the model, however in reality to have good results at least $\upsilon_0$ must be known. This is usually not a problem, since the signal intensity at a fixed distance can be obtained by manual measurement beforehand.\\\\
 To increase the accuracy of this method, one can also redefine the cost function as
-\begin{equation}
-    J(\upsilon_0,\alpha_1,...,\alpha_n,x_u,y_u)=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha_i\log_{10}\big(\sqrt{(x_i-x_u)^2+(y_i-y_u)^2}\big)\bigg)^2
+\begin{multline}
+    J(\upsilon_0,\alpha_1,...,\alpha_n,x_u,y_u)=\\=\sum_{i=1}^n\bigg(\upsilon_i-\upsilon_0+10\alpha_i\log_{10}\big(\sqrt{(x_i-x_u)^2+(y_i-y_u)^2}\big)\bigg)^2
     \label{eq:22}
-\end{equation}
+\end{multline}
 One big drawback of this method is that convergence is not guaranteed, and it often depends from the starting guess. A ``necessary condition" for convergence is that the starting guess must be quite close to the real location of the unknown device. For this reason, the usual choice for the initial guess is the estimation obtained by the linear methods.\\\\ 
 The \ref{eq:23} and \ref{eq:22} are not linear systems, therefore the solution must be computed with some iterative methods, (GN, steepest descent...) \cite{chong2013introduction}.
 \clearpage
