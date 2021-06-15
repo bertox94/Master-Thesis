@@ -35,7 +35,7 @@
 
 %IN caso stampa in un file a parte il titolo, per allineamento amrgini destro e sinistro
 
-\title{Master Thesis}
+\title{RSSI-based Geolocalization}
 \author{Alberto Tiraboschi}
 %\date{ }
 
@@ -71,8 +71,8 @@
 
 \setcounter{page}{1}
 
-\chapter{Abstract, possibili applicazioni, descrizione}
-Finding the location of unknown objects has been since a long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unauthorized intrusions, to warfare, to discover nearby opponents, or detecting submarines, but also to localize someone who needs to be rescued, for example in disaster recovery. With the recent advances in technology it has been possible to locate objects with low-cost technology, and available to almost every person in the world, Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of the art of the RSSI-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one needs to know beforehand.
+\chapter{Introduction}
+Finding the location of unknown objects has been since a long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unauthorized intrusions, to warfare, to discover nearby opponents, or detecting submarines, but also to localize someone who needs to be rescued, for example in disaster response. With the recent advances in technology it has been possible to locate objects with low-cost technology, and available to almost every person in the world, Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of the art of the RSSI-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to implement algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one needs to know beforehand.
 
 \section{Environment settings}
 The main setting that will be presented is the most commonly used up to now, which is a space filled with receiving/transmitting devices (anchor nodes), each placed in a regular position (usually a grid) with known positions, that can read the signal intensity of the other nodes. The activity starts when a device with an unknown position is put in the area and many (if not every) nodes are close enough to get the signal intensity of that unknown node. This range of sensitivity can be seen as a circle of radius of about $50$ meters. At this point, each anchor node can communicate outside a tuple like this $(x_i,y_i,\upsilon_i^u)$ where $x_i,y_i$ are the position of the node itself, and $\upsilon_i^u$ is the signal strength intensity of the unknown node, measured by the anchor node $i$. Usually, the data is sent to a central processing device that makes the computations and outputs the estimated position. \\\\
@@ -80,7 +80,7 @@ This is not the only way however, the other way, which is lately becoming increa
 
 \clearpage
 
-\chapter{Modello matematico della propagazione del segnale (2 pag)}
+\chapter{Mathematical model of RSSI propagation}
 \section{Path loss model}
 Given a transmitting device $j$ and a receiving device $i$, placed at distance $d_i^j$ to one another, the receiver device can measure the signal intensity $\upsilon_i^j$ of the transmitting device. Those readings (according to the log-normal propagation model  \cite{MUNOZ200923}) are of the form
 \begin{equation}
@@ -90,7 +90,7 @@ Given a transmitting device $j$ and a receiving device $i$, placed at distance $
 \begin{equation}
     d_i^j=\sqrt{(x_i-x_j)^2+(y_i-y_j)^2}
 \end{equation}
-where $\xi_i$ is a zero-mean gaussian variable ( $\mathcal{N}(0,\sigma^2_i)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $\upsilon_0^j$ is the RSSI read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify, the \ref{eq:1} as:
+where $\xi_i$ is a zero-mean gaussian variable ($\mathcal{N}(0,\sigma^2_i)$) that represents the noise, $\alpha$ is the path loss index, which can vary between $2$ (open field) and $4$ (environment fitted with obstacles) and $\upsilon_0^j$ is the RSSI read at $d_0$. Commonly $d_0$ is taken as $1$ meter, so that we can simplify, the \ref{eq:1} as:
 \begin{equation}
 \upsilon_i = \upsilon_0-10\alpha\log_{10}(d_i) + \xi_i, \quad d_i>d_0
 \label{eq:2}
@@ -260,7 +260,7 @@ note the last value, for the previous algorithm it should have been discarded, b
 
 \clearpage
 
-\chapter{Algorithms to estimate some parameters}
+\chapter{Algorithms for parameters estimation}
 \section{Estimation of path loss index $\alpha$}
   \begin{center}
   \textbf{Assume to know:}
@@ -373,7 +373,7 @@ Since $\sigma^2_i>0$ we have
 
 \clearpage
 
-\chapter{Algoritmi per la stima della posizione(16 pag)}
+\chapter{Algorithms for position estimation}
 \section{Common Paradigm}
 To avoid redundancy, given the fact that each algorithm differences itself from the others only because of the mathematic tools employed, it makes sense to focus mainly on it in the description of the algorithms and to present here the common instructions of them.
 When instead the steps are quite different, there will be a more detailed description of all the procedures.
