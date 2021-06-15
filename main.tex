@@ -10,13 +10,14 @@
 \usepackage{pgfplots}
 \usepackage{rotating}
 \pgfplotsset{compat=1.7}
-\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
+\usepackage[a4paper,width=140mm,top=35mm,bottom=35mm]{geometry}
 %\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{marginnote}
 \usepackage[makeroom]{cancel}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{algorithmic}
 \usepackage{graphicx}
+
 
 
 \graphicspath{ {./images/} }
@@ -35,8 +36,6 @@
 
 %IN caso stampa in un file a parte il titolo, per allineamento amrgini destro e sinistro
 
-\title{RSSI-based Geolocalization}
-\author{Alberto Tiraboschi}
 %\date{ }
 
 \begin{document}
@@ -50,11 +49,11 @@
   \large
   POLITECNICO DI MILANO\\
   \normalsize
-  Corso di Laurea \textbf{(MAGISTRALE ?)} in Ingegneria Informatica\\
+  Corso di Laurea \textbf{MAGISTRALE} in Ingegneria Informatica\\
   Dipartimento di Elettronica e Informazione\\
   \begin{figure}[htbp]
     \begin{center}
-      \includegraphics[width=3.5cm]{./pictures/logopm}
+      \includegraphics[width=3.5cm]{./pictures/logopm.jpg}
 %	\psfig{file=./pictures/logopm.jpg,width=3.5cm}
     \end{center}
   \end{figure}
@@ -62,7 +61,7 @@
 
 
 
-  \textbf{TITOLO DELLA TESI}\\
+  \textbf{A SURVEY ON SHORT-RANGE RSSI-BASED GEOLOCALIZATION}\\
 
 
 
@@ -93,10 +92,11 @@
 
 
 
-  Anno Accademico 200N-200N+1
+  Anno Accademico 2020-2021
 \end{center} \clearpage
 }
 \thispagestyle{empty}  \normalfont \cleardoublepage
+\newpage
 
 
 
@@ -679,15 +679,7 @@ The gray area in \ref{fig:mmax} shows the intersection of all the squares.
 \clearpage
 
 \section{Linear estimation}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\alpha$
-    \item $\xi_i,\forall i$
-  \end{itemize}
-  \end{center}
+\textbf{Assume to know:} $$\upsilon_0\qquad \alpha\qquad\xi_i,\forall i$$\\
 In \cite{rzk} you can find this version but using a slightly different model.
 Consider the model \ref{eq:5} below reported
 \begin{equation}
@@ -849,15 +841,15 @@ The target position can be finally obtained as
 
 
 \section{Weighted linear estimation}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\alpha$
-    \item $\xi_i,\forall i$
-  \end{itemize}
-  \end{center}
+ \begin{center}
+\begin{tabular}{ |c|c|c| } 
+ \hline
+\multicolumn{3}{|c|}{ \textbf{Assume to know:} } \\
+ \hline
+ $\upsilon_0$ & $\alpha$ & $\xi_i,\forall i$\\
+ \hline
+\end{tabular}
+\end{center}
 In the previous section we have seen how to use statistics to obtain an estimator of the distance from each anchor node to the unknown node, and then putting all this in a linear form, to deduce the location of the unknown node with a simple closed formula such as the linear least squares. However we can still improve it by givin to each anchor node a weight, bound to the variance of the estimator $\hat{d}_i^2$ obtained from the anchor node $i$. A good idea would be to give more importance to the nodes that produces an estimator with low variance, and to give less importance to those node that produces estimators with high variance. To ease the computation we consider each anchor node to be indepentendet from each other. One way to do that is to introduce a symmetric covariance matrix $\mathbf{W}'$, which is also diagonal (because of the independence of anchor nodes). Since we want the weight assigned to each node to be inversely proportional to the variance we consider $\mathbf{W}=(\mathbf{W}')^{-1}$ \cite{rzk,899498y4hd}. It is important to note that this improvement does not regard the generation of the vector of estimators, rather the minimization of the cost function. Now we compute the variance of the estimator $\hat{d}_i^2$
 \begin{align}
 \sigma^2_{\hat{d_i}}=&Var\big[\hat{d_i^2}\big]=&& \\
