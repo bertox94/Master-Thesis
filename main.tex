@@ -522,7 +522,7 @@ As a consequence we can imagine to draw a circle centered in $(x_i,y_i)$ with ra
         \end{tikzpicture}
     }
     %\includegraphics{}
-    \caption{}
+    \caption{Trilateration with noise $=0$}
     \label{fig:trilOK}
 \end{figure}
 When we step into reality however the disturbances of the signal inevitably lead to wrong estimation of the distance between the current node and the unknown node, causing the circles to intersect in wrong points or to not intersect at all, as in fig.\ref{fig:trilKO}.
@@ -551,7 +551,7 @@ When we step into reality however the disturbances of the signal inevitably lead
         \end{tikzpicture}
     }
     %\includegraphics{}
-    \caption{}
+    \caption{Trilateration with noise $\neq0$}
     \label{fig:trilKO}
 \end{figure}
 In the latter case, provided the algorithm has no software-level exception-catching, it would cause a runtime error and give no results at all. However, some improvements can be applied. The most intuitive one is to consider from the RSSI read, not just a single value but taking the max and the min values recorded during the sampling phase, and draw an annulus of possible locations as follows:
@@ -607,7 +607,7 @@ The result is now given as an area that corresponds to the intersection of all t
         \end{tikzpicture}
     }
     %\includegraphics{}
-    \caption{}
+    \caption{Trilateration with noise compensation}
     \label{fig:annulus}
 \end{figure}
 Although the results are quite promising, this algorithm is rarely used, due to the computation difficulties of treating annulus. One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
@@ -674,7 +674,7 @@ The gray area in \ref{fig:mmax} shows the intersection of all the squares.
         \end{tikzpicture}
     }
     %\includegraphics{}
-    \caption{}
+    \caption{Min-Max estimation}
     \label{fig:mmax}
 \end{figure}
 \clearpage
@@ -910,19 +910,19 @@ From the canonical model extract $d_i$ as follows
 so that we have the following set of equations
 \begin{align}
 \begin{split} 
-(x_1-x_u)^2+(y_1-y_u)^2&=d_1^2 \\ 
-(x_2-x_u)^2+(y_2-y_u)^2&=d_2^2 \\ 
+(x_1-x)^2+(y_1-y)^2&=d_1^2 \\ 
+(x_2-x)^2+(y_2-y)^2&=d_2^2 \\ 
 &\;\;\vdots\\
-(x_n-x_u)^2+(y_n-y_u)^2&=d_n^2 \\
+(x_n-x)^2+(y_n-y)^2&=d_n^2 \\
 \end{split}
 \label{eq:11}
 \end{align}
 Consider 
 \begin{align}
 \frac{1}{n}&\sum_{i=1}^nd_i^2=\\
-&=\frac{1}{n}\sum_{i=1}^n\big[(x_i-x_u)^2+(y_i-y_u)^2\big]\\
-&=\frac{1}{n}\sum_{i=1}^n(x_i-x_u)^2+\frac{1}{n}\sum_{i=1}^n(y_i-y_u)^2\\
-&=\frac{1}{n}\sum_{i=1}^n[x_i^2-2x_ix_u+x^2] + \frac{1}{n}\sum_{i=1}^n[y_i^2-2y_iy_u+y^2]\\
+&=\frac{1}{n}\sum_{i=1}^n\big[(x_i-x)^2+(y_i-y)^2\big]\\
+&=\frac{1}{n}\sum_{i=1}^n(x_i-x)^2+\frac{1}{n}\sum_{i=1}^n(y_i-y)^2\\
+&=\frac{1}{n}\sum_{i=1}^n[x_i^2-2x_ix+x^2] + \frac{1}{n}\sum_{i=1}^n[y_i^2-2y_iy+y^2]\\
 &=\frac{1}{n}\sum_{i=1}^n[x_i^2]-2x\frac{1}{n}\sum_{i=1}^n[x_i]+ x^2 + \frac{1}{n}\sum_{i=1}^n[y_i^2]-2y\frac{1}{n}\sum_{i=1}^n[y_i]+ y^2
 \end{align}
 which is finally
@@ -932,8 +932,8 @@ which is finally
 \end{equation}
 Frone one of the \ref{eq:11} it follows
 \begin{align}
-x_i^2+x^2-2x_ix_u+y_i^2+y^2-2y_iy_u&=d_i^2 &&\text{develop the square}\\ 
--x_i^2-x^2+2x_ix_u-y_i^2-y^2+2y_iy_u&=-d_i^2 && \text{multiply by } -1
+x_i^2+x^2-2x_ix+y_i^2+y^2-2y_iy&=d_i^2 &&\text{develop the square}\\ 
+-x_i^2-x^2+2x_ix-y_i^2-y^2+2y_iy&=-d_i^2 && \text{multiply by } -1
 \label{eq:13}
 \end{align}
 Now by adding member to member \ref{eq:12} to \ref{eq:13} you have 
@@ -941,8 +941,8 @@ Now by adding member to member \ref{eq:12} to \ref{eq:13} you have
 \begin{split}
     \bigg(-x_i^2  + \frac{1}{n}\sum_{i=1}^n[x_i^2]\bigg)+
     \bigg(-y_i^2+ \frac{1}{n}\sum_{i=1}^n[y_i^2]\bigg)+\\
-    +\bigg(2x_ix_u-2x\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
-    \bigg(2y_iy_u -2y\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)
+    +\bigg(2x_ix-2x\frac{1}{n}\sum_{i=1}^n[x_i]\bigg)+
+    \bigg(2y_iy -2y\frac{1}{n}\sum_{i=1}^n[y_i]\bigg)
     =\frac{1}{n}&\sum_{i=1}^n[d_i^2]-d_i^2
 \end{split}    
 \end{equation}
@@ -1065,7 +1065,7 @@ The solution is obtained as an approximated intersection of all these lines with
         \end{tikzpicture}
     }
     %\includegraphics{}
-    \caption{}
+    \caption{Application of the algorithm with 3 circles and 2 lines}
     \label{fig:1}
 \end{figure}
 \begin{figure}
@@ -1104,7 +1104,7 @@ The solution is obtained as an approximated intersection of all these lines with
         \end{tikzpicture}
     }
     %\includegraphics{}
-    \caption{}
+    \caption{Application of the algorithm with noise compensation}
     \label{fig:2}
 \end{figure}
 \\\\Given the high influence in this formula of the first anchor node (present in all equations), one can try an optimization by rearranging the above formula in a way that it relays more evenly to all the nodes as follows
@@ -1252,13 +1252,13 @@ Since the quality/quantity of packets degrades with the distance, closer nodes w
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.6]{pic1}
-\caption{}
+\caption{Possible arrangement of nodes}
 \label{fig:3}
 \end{figure}
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.6]{pic2}
-\caption{}
+\caption{Path from node A to node D, hop-count $=3$}
 \label{fig:4}
 \end{figure}
 \\\\There exists some improvements of the previous algorithm \cite{KAUR201982}, for example the Weighted Centroid Algorithm. Before getting into the formula we need to remind the meaning of hop count. Given a set of connected nodes, the hop count is the number of nodes that the packet goes through before reaching the destination node. For example in the fig \ref{fig:4} node A wants to send a packet to node D, but to do so, the packet need to be relayed by B, then by C and finally it reaches D. The hop count therefore is 3.\\\\
@@ -1388,7 +1388,7 @@ This formula just iterates over all the nodes, and by each node $i$ it computes 
 In this work, I have discussed the main algorithms nowadays available to locate a device with an unknown position through the received signal strength. It is very important to note, however, that those algorithms can be used for the whole class of problems that are based on some path decreasing propagation, regardless of the nature of the signal itself (e.g. sound intensity). Let's take the Quadratic linearization algorithm. Provided you have the mathematical description of the propagation model, and you can derive the distance as in \ref{eq:17}, then the final matrices only depend on the position of the sensing devices and the estimated distances. This reasoning applies also to the other algorithms, clearly the Multilateration algorithm and also the model-free method (possibly with some little adjustments). \\\\
 It seems appealing that some algorithms don't require the knowledge of any parameter beforehand. Those are some of the model-free methods and the Multilateration. Regarding the model-free methods, it should be said however that they work well if the anchor nodes are many and regularly positioned (in a grid for example), otherwise the precision downgrades. 
 Good results can be obtained with the Fingerprinting method, however, its downside is that it requires a learning phase, where each device measures the intensity read of all the other devices. This reduces the range of applicability of this algorithm. For example, it could not be used generally for disaster response, since there is no physical time to learn the signal intensity of the other nodes. Regarding instead the Multilateration, it could actually work without any previous learning phase nor any parameter but the quality of the estimation degrades. Usually, at least $\upsilon_0$ is required. Additionally, one important drawback is the starting guess. It must be close enough to the real location, otherwise, the method could diverge. A good choice for the starting guess is to use the estimated position from other methods. A good increase in the performance is given by employing an array of custom path loss indexes, different for each anchor node, particularly useful if the location process happens in an environment fitted with obstacles. This improvement comes however with a decrease in performance. \\\\
-Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\,\forall i$ with the algorithm presented earlier. In my opinion, the most accurate one would be the Weighted linear estimation, which considers carefully the effect of the variance of the measurements, which is in fact a concise representation of the noise. A particular mention needs to be given also to the line intersection algorithm.\\\\
+Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\,\forall i$ with the algorithms presented earlier. In my opinion, the most accurate one would be the Weighted linear estimation, which considers carefully the effect of the variance of the measurements, which is in fact a concise representation of the noise. A particular mention needs to be given also to the line intersection algorithm.\\\\
 The use of UAV is spreading more and more in many areas. As a moving anchor node, it could be effectively employed in Multilateration for example, by moving in the area while recording samples as $$(x_i,y_i,\upsilon_i)$$ and then proceed with the usual computation. However it could not be employed in some range free methods, for example the Fingerprinting, since we cannot compare simultaneous measurements in different places.\\\\
 As a consequence, it seems that the perfect algorithm doesn't exist, not even a perfect sequence of algorithms. It is a task for the user to choose what fits best its need, based also on his known parameters and his expectations on the accuracy.\\\\
 
