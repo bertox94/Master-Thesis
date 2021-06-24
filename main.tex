@@ -75,7 +75,7 @@
 \begin{flushleft}
 
 
-  Relatore: Prof. Lorenzo Fagiano \\
+  Relatore: Prof. Lorenzo Mario Fagiano \\
   %Correlatore: ?? 
 
 \end{flushleft}
@@ -351,11 +351,13 @@ by applying the logarithm to both members
 \begin{equation}
     \ell_m(\alpha,\sigma_1^2,...,\sigma_n^2)=-\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln\bigg(\prod_{i=1}^n\sigma^2_i\bigg)-\frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i}
 \end{equation}
-Maximizing $\ell_n^i$ w.r.t to $\alpha$ is equal to finding the stationary point of the third term in the above equation since the first and second one are independent of $\alpha$ therefore \cite{MUNOZ200923} 
+Maximizing $\ell_n^i$ w.r.t to $\alpha$ is equal to finding the stationary point of the third term in the above equation since the first and second one are independent from $\alpha$ therefore \cite{MUNOZ200923} 
 \begin{equation}
 \frac{\partial}{\partial \alpha} \frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\mu_i)^2}{\sigma^2_i} =0
 \end{equation}
 
+
+\if 0
 \begin{equation}
 \frac{\partial}{\partial \alpha} \frac{1}{2}\sum_{i=1}^n\frac{(\upsilon_i-\upsilon_0+10\alpha\log_{10}(d_i))^2}{\sigma^2_i} =0
 \end{equation}
@@ -371,6 +373,8 @@ Maximizing $\ell_n^i$ w.r.t to $\alpha$ is equal to finding the stationary point
 \begin{equation}
 \sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)-\upsilon_0\log_{10}(d_i)+10\alpha(\log_{10}(d_i))^2}{\sigma^2_i}=0
 \end{equation}
+\fi
+
 
 \begin{equation}
 \sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)}{\sigma^2_i}-\upsilon_0\sum_{i=1}^n\frac{\log_{10}(d_i)}{\sigma^2_i}+10\alpha\sum_{i=1}^n\frac{(\log_{10}(d_i))^2}{\sigma^2_i}=0
@@ -379,7 +383,7 @@ Maximizing $\ell_n^i$ w.r.t to $\alpha$ is equal to finding the stationary point
 \begin{equation}
 \alpha=\frac{\upsilon_0\sum_{i=1}^n\frac{\log_{10}(d_i)}{\sigma^2_i}-\sum_{i=1}^n\frac{\upsilon_i\log_{10}(d_i)}{\sigma^2_i}}{10\sum_{i=1}^n\frac{(\log_{10}(d_i))^2}{\sigma^2_i}}
 \end{equation}
-Sometimes to ease the computation, $\sigma^2_i$ is assumed constant, so $$\sigma_1^2=...=\sigma_n^2=\sigma^2$$ Then the equation simplifies as
+Sometimes to ease the computation, $\sigma^2_i$ is assumed constant $$\sigma_1^2=...=\sigma_n^2=\sigma^2$$ then the equation simplifies as
 \begin{equation}
 \alpha=\frac{\upsilon_0\sum_{i=1}^n\log_{10}(d_i)- \sum_{i=1}^n\upsilon_i\log_{10}(d_i)}{10\sum_{i=1}^n(\log_{10}(d_i))^2}
 \end{equation}
@@ -482,14 +486,15 @@ Here follows a classification of the localization methods considered. Model-base
 
 \clearpage
 \section{Trilateration}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\alpha$
-  \end{itemize}
-  \end{center}
+ \begin{center}
+    \begin{tabular}{ |c|c| } 
+    \hline
+    \multicolumn{2}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\upsilon_0$ & $\alpha$ \\
+    \hline
+    \end{tabular}
+\end{center}
 Consider the trilateration method from a purely theoretical point of view. For this method, it is required to have only 3 anchor nodes. Each of them can output its position $(x_i,y_i)$ along with the RSSI read in its position of the unknown node. By exploiting the model of the distance and the RSSI read, and assuming no noise or multipath fading at all, one can deduce the distance $d_i$ between the unknown node $u, u>n$ and current node from the model \ref{eq:2} as follows:  
 \begin{equation}
     d_i=\sqrt{(x_u-x_i)^2+(y_u-y_i)^2}=10^{\frac{\upsilon_0-\upsilon_i}{10\alpha}}   
@@ -609,18 +614,19 @@ The result is now given as an area that corresponds to the intersection of all t
     \caption{Trilateration with noise compensation}
     \label{fig:annulus}
 \end{figure}
-Although the results are quite promising, this algorithm is rarely used, due to the computation difficulties of treating annulus. One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
+Although the results are quite promising, this algorithm is rarely used, due to the computation difficulties of treating annuli. One important drawback is the low number of measurements exploited. Clearly, a higher number of samples implies a lower influence of the noise on the final estimation.
 \clearpage
 
 \section{Min Max}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\alpha$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c|c| } 
+    \hline
+    \multicolumn{2}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\upsilon_0$ & $\alpha$ \\
+    \hline
+    \end{tabular}
+\end{center}
 Consider the previous framework. As usual one can deduce the distance of the unknown node, by reverting the propagation model as done in the previous section. Then we can obtain a number of circumferences, one for each anchor node, that represent the possible locations of the unknown node. In this algorithm, however, you need to consider not circles but squares. The development of this algorithm follows \cite{inproceedings}. Each anchor node $i$ with estimated distance $d_i$ from node $u,u>n$ (with \ref{eq:18}) is associated to a square centered in $(x_i,y_i)$ with side equal to $2d_i$. At this point, one has a set of overlapping squares, and can easily find the intersection of all those squares,  which results in a rectangles of vertices $(x_{min},y_{min}), (x_{max},y_{min}), (x_{max},y_{max}), (x_{min},y_{max})$ with the following equations:
 \begin{equation}
     x_{min}=\max(x_1-d_1,...,x_n-d_n)
@@ -841,15 +847,15 @@ The target position can be finally obtained as
 
 
 \section{Weighted linear estimation}
- \begin{center}
-\begin{tabular}{ |c|c|c| } 
- \hline
-\multicolumn{3}{|c|}{ \textbf{Assume to know:} } \\
- \hline
- $\upsilon_0$ & $\alpha$ & $\xi_i,\forall i$\\
- \hline
-\end{tabular}
-\end{center}
+\begin{center}
+    \begin{tabular}{ |c|c|c| } 
+    \hline
+    \multicolumn{3}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\upsilon_0$ & $\alpha$ & $\xi_i,\forall i$\\
+    \hline
+    \end{tabular}
+\end{center}    
 In the previous section we have seen how to use statistics to obtain an estimator of the distance from each anchor node to the unknown node, and then putting all this in a linear form, to deduce the location of the unknown node with a simple closed formula such as the linear least squares. However we can still improve it by givin to each anchor node a weight, bound to the variance of the estimator $\hat{d}_i^2$ obtained from the anchor node $i$. A good idea would be to give more importance to the nodes that produces an estimator with low variance, and to give less importance to those node that produces estimators with high variance. To ease the computation we consider each anchor node to be indepentendet from each other. One way to do that is to introduce a symmetric covariance matrix $\mathbf{W}'$, which is also diagonal (because of the independence of anchor nodes). Since we want the weight assigned to each node to be inversely proportional to the variance we consider $\mathbf{W}=(\mathbf{W}')^{-1}$ \cite{rzk,899498y4hd}. It is important to note that this improvement does not regard the generation of the vector of estimators, rather the minimization of the cost function. Now we compute the variance of the estimator $\hat{d}_i^2$
 \begin{align}
 \sigma^2_{\hat{d_i}}=&Var\big[\hat{d_i^2}\big]=&& \\
