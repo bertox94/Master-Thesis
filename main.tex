@@ -891,13 +891,14 @@ The precision of this estimation can be further improved by imposing the constra
 
 \section{Quadratic linearization}
   \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\alpha$
-  \end{itemize}
-  \end{center}
+    \begin{tabular}{ |c|c| } 
+    \hline
+    \multicolumn{2}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\upsilon_0$ & $\alpha$ \\
+    \hline
+    \end{tabular}
+\end{center}
 From the canonical model extract $d_i$ as follows
 \begin{equation*}
     10^{\upsilon_{i}}=10^{\upsilon_0-10\alpha\log_{10}(d_i)}
@@ -1000,14 +1001,15 @@ Both $\mathbf{A}$ and $\mathbf{b}$ are completely known, also $d_i$, due to \ref
 
 
 \section{Lines intersection}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\alpha$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c|c| } 
+    \hline
+    \multicolumn{2}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\upsilon_0$ & $\alpha$ \\
+    \hline
+    \end{tabular}
+\end{center}
 Let's start from a geometrical analysis. Given two intersecting circles at center $x_{1},y_{1}$ and $x_{2},y_{2}$ respectively and with radius $r_1$ and $r_2$ respectively, the line that passes by the two points of intersection has the following equation \cite{rzk}
 \begin{equation}
     (x_2-x_1)x+(y_2-y_1)y=\frac{1}{2}\big[(x_2^2+y_2^2)-(x_1^2+y_1^2)-(r_2^2-r_1^2)\big]
@@ -1133,13 +1135,15 @@ $$\mathbf{b}=\frac{1}{2}\begin{bmatrix}
 
 
 \section{Multilateration}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\emptyset$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c| } 
+    \hline
+    \multicolumn{1}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\emptyset$\\
+    \hline
+    \end{tabular}
+\end{center}
 This algorithm is the generalization of the trilateration method and is known as Multilateration. 
 This method can provide two main benefits over the classic trilateration:
 \begin{itemize}
@@ -1166,14 +1170,15 @@ The \ref{eq:23} and \ref{eq:22} are not linear systems, therefore the solution m
 
 
 \section{Maximum Likelihood method}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\upsilon_0$
-    \item $\xi_i,\forall i$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c|c| } 
+    \hline
+    \multicolumn{2}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\upsilon_0$ & $\xi_i,\forall i$ \\
+    \hline
+    \end{tabular}
+\end{center}
 We can start by considering the model \ref{eq:15} and \ref{eq:14}.
 A look more closely related to the probability point of view is (with $p(\bullet)$ the probability density function)
 \begin{equation}
@@ -1229,13 +1234,15 @@ As the Multilateration case, the minimization must be done with iterative algori
 
 \clearpage
 \section{Centroid algorithm}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\emptyset$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c| } 
+    \hline
+    \multicolumn{1}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\emptyset$\\
+    \hline
+    \end{tabular}
+\end{center}
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwResult{Estimated position of the unknown node}
@@ -1286,13 +1293,15 @@ where $h_{u,i}$ is the hop count from node $i$ to the unknown node $u$. The line
 \clearpage
 
 \section{DV-Hop Algorithm}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item $\emptyset$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c| } 
+    \hline
+    \multicolumn{1}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    $\emptyset$\\
+    \hline
+    \end{tabular}
+\end{center}
 The DV-Hop algorithm was first published by in \cite{965964}.\\
 \begin{algorithm}[H]
 \SetAlgoLined
@@ -1374,13 +1383,15 @@ The result can be computed with the closed formula of the LLS
 
 
 \section{Fingerprinting}
-  \begin{center}
-  \textbf{Assume to know:}
-  \begin{itemize}
-    \centering
-    \item previous $\upsilon_i^j,\forall i,j$
-  \end{itemize}
-  \end{center}
+\begin{center}
+    \begin{tabular}{ |c| }
+    \hline
+    \multicolumn{1}{|c|}{ \textbf{Assume to know:} } \\
+    \hline
+    previous $\upsilon_i^j,\forall i,j$\\
+    \hline
+    \end{tabular}
+\end{center}
 Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, which needs to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shopping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it is an efficient model-free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signal intensity observed by the unknown node ($u,u>n$) w.r.t. the other nodes. The main principle underlying this method is to compute the squared difference between the signal intensity of all the anchor nodes measured by the unknown node and the signal intensity of all the other nodes measured by each node.
 The algorithm employed by this method is known as K-NN or K nearest neighbors \cite{10.5555/1162264}. Here is presented first the version working with 1-NN.
 In the learning (offline) phase, each node builds an internal database with records of every node along with the received signal strength as in the the following table (table). As soon as the localization phase starts (computed remotely, since we must have the signal intensity of all the nodes), the following formula is used
