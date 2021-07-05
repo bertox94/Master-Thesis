@@ -232,7 +232,7 @@ s3 = d3.size()\;
 }
  \caption{Quartiles computation}
 \end{algorithm}
-\noindent \\A little explanation here is required. At the beginning, the algorithm sorts the initial dataset $d1$ in ascending order. We will take the median ($Q2$) of $d1$. Therefore we have two possible paths. If $s1$, size of $d1$ is odd, then the median is at $s1/2$, the central position (remind the assumption about array indexing and decimal casting). If it is not, the median will be the average of the two elements at the center. Either the cases, we get two datasets, the upper half ($d2$) and the lower half ($d3$), separated by the median. Then the operation is repeated for each one of $d2,d3$, to obtain $Q1$ median of the upper half, and $Q3$ median of the lower half. As can be seen, $25\%$ of data is below $Q1$, $50\%$ of data is below $Q2$, which is the common median, and $75\%$ of data is below $Q3$. \\\\Going back to the IQR method the algorithm goes through the following steps:
+\noindent \\A little explanation here is required. At the beginning, the algorithm sorts the initial dataset $d1$ in ascending order. We will take the median ($Q2$) of $d1$. Therefore we have two possible paths. If $s1$, size of $d1$, is odd, then the median is at $1/2s$, the central position (remind the assumption about array indexing and decimal casting). If it is not, the median will be the average of the two elements at the center. Either the cases, we get two datasets, the upper half ($d2$) and the lower half ($d3$), separated by the median. Then the operation is repeated for each one of $d2,d3$, to obtain $Q1$ median of the upper half, and $Q3$ median of the lower half. As can be seen, $25\%$ of data is below $Q1$, $50\%$ of data is below $Q2$, which is the common median, and $75\%$ of data is below $Q3$. \\\\Going back to the IQR method the algorithm goes through the following steps:
 
 \begin{algorithm}[H]
 \SetAlgoLined
@@ -580,7 +580,7 @@ In the latter case, provided the algorithm has no software-level exception-catch
 The result is now given as an area that corresponds to the intersection of all the three annuli, shown in fig \ref{fig:annulus}.
 \begin{figure}
     \centering
-    \scalebox{1.7}{
+    \scalebox{1.2}{
         \begin{tikzpicture}
             \draw[very thin,color=gray] (-4,-4) grid (4,4);
             \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
@@ -650,7 +650,7 @@ The final location will be estimated as the center of this rectangle, as follows
 The gray area in \ref{fig:mmax} shows the intersection of all the squares.
 \begin{figure}
     \centering
-    \scalebox{1.7}{
+    \scalebox{1.2}{
         \begin{tikzpicture}
             \draw[very thin,color=gray] (-4,-4) grid (4,4);
             \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
@@ -972,7 +972,7 @@ Then the previous set of equations \ref{eq:11} becomes
     &=\frac{1}{2}\bigg[\bigg(x_n^2-\frac{1}{n}\sum_{i=1}^nx^2_i\bigg)+\bigg(y_n^2-\frac{1}{n}\sum_{i=1}^ny^2_i\bigg)-\bigg(d_n^2-\frac{1}{n}\sum_{i=1}^nd_i^2\bigg)\bigg]
 \end{split}
 \end{align}
-So can write the above set of equations in matrix form $\mathbf{Ax}=\mathbf{b}$ by setting
+So we can write the above set of equations in matrix form $\mathbf{Ax}=\mathbf{b}$ by setting
 $$
 \mathbf{A}=\begin{bmatrix}
     x_1-\frac{1}{n}\sum_{i=1}^nx_i&y_1-\frac{1}{n}\sum_{i=1}^ny_i\\
