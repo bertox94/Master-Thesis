@@ -1020,7 +1020,7 @@ or equivalently
     y=\frac{1}{y_2-y_1}\bigg(-(x_2-x_1)x+\frac{1}{2}\big(x_2^2+y_2^2-r_2^2-(x_1^2+y_1^2-r_1^2)\big)\bigg)
 \end{equation}
 Note that the formula is still valid even if the two circles do not intersect each other.
-Given $n$ measurements (so $n$ circles), only $n-1$ lines are needed to have an independent system of equations. For example, suppose to have three circles, it is needed to have only 2 lines, for example the line passing between the first and the second circle, and the line passing between the first and the third one, as in fig \ref{fig:1}.
+Given $n$ measurements (so $n$ circles), only $n-1$ lines are needed to have an independent system of equations. For example, suppose to have three circles, it is needed to have only 2 lines, for example the line passing between the first and the second circle, and the line passing between the second and the third one, as in fig \ref{fig:1}.
 Therefore, given $n$ points we have a set of $n-1$ equations like the above \ref{eq:25}, that can be written in matrix form $\mathbf{Ax}=\mathbf{b}$ with
 $$\mathbf{A}=\begin{bmatrix}
 x_2-x_1&y_2-y_1\\
@@ -1077,7 +1077,7 @@ The solution is obtained as an approximated intersection of all these lines with
 \end{figure}
 \begin{figure}
     \centering
-    \scalebox{1.8}{
+    \scalebox{1.2}{
         \begin{tikzpicture}
             \draw[very thin,color=gray] (-4,-4) grid (4,4);
             \draw[->] (-4.2,0) -- (4.2,0) node[right] {$x$};
@@ -1394,7 +1394,20 @@ The result can be computed with the closed formula of the LLS
 \end{center}
 Fingerprinting \cite{YIU2017235} is a quite general technique, that can be used for many scenarios. Its main drawback is the offline training phase, which needs to be done before the localization takes place, therefore its use is mostly reserved for example for the location of devices in a known area, that can be for example factories, shopping center, where the nodes have all the time to acquire a precise and accurate representation of the normal environment. This comes with a positive side, it is an efficient model-free algorithm, therefore its use is not restricted to signal intensity localization only. As soon as this phase is done, it can start the localization phase. The main principle underlying this method is the analysis of the similarity of signal intensity observed by the unknown node ($u,u>n$) w.r.t. the other nodes. The main principle underlying this method is to compute the squared difference between the signal intensity of all the anchor nodes measured by the unknown node and the signal intensity of all the other nodes measured by each node.
 The algorithm employed by this method is known as K-NN or K nearest neighbors \cite{10.5555/1162264}. Here is presented first the version working with 1-NN.
-In the learning (offline) phase, each node builds an internal database with records of every node along with the received signal strength as in the the following table (table). As soon as the localization phase starts (computed remotely, since we must have the signal intensity of all the nodes), the following formula is used
+In the learning (offline) phase, each node builds an internal database with records of every node along with the received signal strength as in the the following table. 
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ Node ID & RSSI\\ 
+ \hline
+ \hline
+ 1 & -54 \\ 
+ 2 & -68 \\
+ $\hdots$ & $\hdots$\\
+ \hline
+\end{tabular}
+\end{center}
+As soon as the localization phase starts (computed remotely, since we must have the signal intensity of all the nodes), the following formula is used
 \begin{equation}
     \hat{i}=\arg \min_i\bigg\{\sum_{\substack{j=1\\j\neq i}}^n(\upsilon_i^j-\upsilon_{u}^j)^2\bigg\}
 \end{equation}
