@@ -128,7 +128,7 @@
 \setcounter{page}{1}
 
 \chapter{Introduction}
-Finding the location of unknown objects has been since a long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unauthorized intrusions, to warfare, to discover nearby opponents, or detecting submarines, but also to localize someone who needs to be rescued, for example in disaster response. With the recent advances in technology it has been possible to locate objects with low-cost technology, available to almost every person in the world, Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of the art of the RSSI-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to be implemented algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one needs to know beforehand.
+Finding the location of unknown objects has been since a long time a topic under investigation. The applications are vast and span many different topics, from security, to discover unauthorized intrusions, to warfare, to discover nearby opponents, or detecting submarines, but also to localize someone who needs to be rescued, for example in disaster response. With the recent advances in technology it has been possible to locate objects using low-cost technology, available to almost every person in the world, the Wi-Fi. The main purpose of this thesis is to tidy up a little the actual state of the art of the RSSI-based localization algorithms. Here I will do a revisitation of the most important algorithms, trying to mediate from theory to application, without losing mathematical accuracy, by adapting the theoretical concepts in a form that is ready to be implemented algorithmically in whichever language it is preferred. I will also add at the top of the description of each algorithm which are the parameters that one needs to know beforehand.
 
 \section{Environment settings}
 The main setting that will be presented is the most commonly used up to now, which is a space filled with receiving/transmitting devices (anchor nodes), each placed in a regular position (usually a grid) with known positions, that can read the signal intensity of the other nodes. The activity starts when a device with an unknown position is put in the area and many (if not every) nodes are close enough to get the signal intensity of that unknown node. For commercial devices with average transmitting power and average amplification gain, this range of sensitivity can be seen as a circle of radius of about $50$ meters in open environment. At this point, each anchor node can communicate a tuple like this $(x_i,y_i,\upsilon_i^u)$, where $x_i,y_i$ are the position of the node itself, and $\upsilon_i^u$ is the signal strength intensity of the unknown node, measured by the anchor node $i$. Usually, the data is sent to a central processing device that makes the computations and outputs the estimated position. \\\\
@@ -995,7 +995,7 @@ $$
 $$
 $$\mathbf{b}=\frac{1}{2}
 \begin{bmatrix}
-\bigg(x_1^2-\frac{1}{n}\sum_{i=1}^nx^2_i\bigg)+\bigg(y_i^2-\frac{1}{n}\sum_{i=1}^ny^2_i\bigg)-\bigg(d_i^2-\frac{1}{n}\sum_{i=1}^nd_i^2\bigg)\\
+\bigg(x_1^2-\frac{1}{n}\sum_{i=1}^nx^2_i\bigg)+\bigg(y_1^2-\frac{1}{n}\sum_{i=1}^ny^2_i\bigg)-\bigg(d_1^2-\frac{1}{n}\sum_{i=1}^nd_i^2\bigg)\\
 \vdots\\
 \bigg(x_n^2-\frac{1}{n}\sum_{i=1}^nx^2_i\bigg)+\bigg(y_n^2-\frac{1}{n}\sum_{i=1}^ny^2_i\bigg)-\bigg(d_n^2-\frac{1}{n}\sum_{i=1}^nd_i^2\bigg)
 \end{bmatrix}
@@ -1255,7 +1255,7 @@ As the Multilateration case, the minimization must be done with iterative algori
 \KwResult{Estimated position of the unknown node}
  Each node $i$ broadcasts its position $(x_i,y_i)$ to every other node\;
  Define the threshold\;
- Each anchor node retain the information of the nodes that are above the threshold\;
+ Each anchor node retains the information of the nodes that are above the threshold\;
  The unknown node computes its position as:
  \begin{equation}
      x_u=\frac{\sum_{i=1}^mx_i}{m},\quad y_u=\frac{\sum_{i=1}^my_i}{m}
@@ -1355,7 +1355,7 @@ where $d_{u,i}$ is the distance (in meters) from node $u$ to node $i$ unknown ex
 x_1^2-x_n^2+y_1^2-y_n^2-d_{u,1}^2-d_{u,n}^2&=2x_u(x_1-x_n)+2y_u(y_1-y_u)\\ 
 x_2^2-x_n^2+y_2^2-y_n^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_2-x_n)+2y_u(y_2-y_u)\\
 &\;\;\vdots\\
-x_2^2-x_n^2+y_2^2-y_n^2-d_{u,2}^2-d_{u,n}^2&=2x_u(x_{n-1}-x_n)+2y_u(y_2-y_u)
+x_{n-1}^2-x_n^2+y_{n-1}^2-y_n^2-d_{u,n-1}^2-d_{u,n}^2&=2x_u(x_{n-1}-x_n)+2y_u(y_{n-1}-y_u)
 \end{split}
 \end{align}
 Can be written in matrix form $\mathbf{Ax}=\mathbf{b}$
@@ -1427,50 +1427,30 @@ Good results can be obtained with the Fingerprinting method, however, its downsi
 Optimum results can be obtained when the field of application is well known and the algorithm has all the time required to estimate parameters $\alpha,\sigma_i^2\,\forall i$ with the algorithms presented earlier. In my opinion, the most accurate one would be the Weighted linear estimation, which considers carefully the effect of the variance of the measurements, which is in fact a concise representation of the noise. A particular mention needs to be given also to the line intersection algorithm.\\\\
 The use of UAV is spreading more and more in many areas. As a moving anchor node, it could be effectively employed in Multilateration for example, by moving in the area while recording samples as $$(x_i,y_i,\upsilon_i)$$ and then proceed with the usual computation. However it could not be employed in some range free methods, for example the Fingerprinting, since we cannot compare simultaneous measurements in different places.\\\\
 As a consequence, it seems that the perfect algorithm doesn't exist, not even a perfect sequence of algorithms. It is a task for the user to choose what fits best its need, based also on his known parameters and his expectations on the accuracy.\\\\
-Below it is presented a summary of the proposed algorithms
-\begin{center}
-    \begin{tabular}{ |c|c|c|c| } 
-    \hline
-    \textbf{Approach} & \textbf{Ref} & \textbf{Pros} & \textbf{Cons}\\
-    \hline
-    Trilateration&\cite{rzk}&&\\
-    \hline
-    Min-Max&\cite{inproceedings}&\shortstack{a \\ bb \\ c}&\\
-    \hline
-    Quadratic linearization&\cite{rzk}&&\\
-    \hline
-    Lines intersection&\cite{rzk}&&\\
-    \hline
-    Linear estimation&\cite{rzk}&&\\
-    \hline
-    Weighted linear estimation&\cite{rzk}&&\\
-    \hline
-    Multilateration&\cite{rzk}&&\\
-    \hline
-    Maximum Likelihood&\cite{rzk}&&\\
-    \hline
-    Centroid algorithm&\cite{878533}&&\\
-    \hline
-    DV-Hop algorithm&\cite{965964}&&\\
-    \hline
-    Fingerprinting&\cite{YIU2017235}&&\\
-    \hline
-    \end{tabular}
-\end{center}
+Below it is presented a table that briefly summarizes pros and cons of the algorithms.
 
-\begin{tabularx}{\textwidth}{|c|X|X|}
+\begin{tabularx}{\textwidth}{|X|X|X|X|X|}
 \hline
-Use Case Navn:          & Opret Server & add\\
+\textbf{Approach} & \textbf{Ref} & \textbf{Pros} & \textbf{Cons} & \textbf{Exp. testing}\\
 \hline
-Scenarie:               & At oprette en server med bestemte regler som tillader folk at spille sammen. More Text more text More Text &add\\
+Trilateration&\cite{rzk}&Easiness of computation, Few samples required&Low accuracy&\cite{inproceedings}\\
 \hline
+Min-Max&\cite{inproceedings}&Easiness of computation, Few samples required&Low accuracy&\cite{inproceedings}\\
+\hline
+    Lines intersection&\cite{rzk}&Easy to compute, robust to noise&Medium accuracy&\\
+    \hline
+    Weighted linear estimation&\cite{rzk}&High precision, sensible to variance, easy to compute&Required probabilistic parameters&\\
+    \hline
+    Multi-lateration&\cite{rzk}&Hard computation, starting guess&Up to no parameters needed&\cite{rzk}\\
+    \hline
+    Centroid algorithm&\cite{878533}&No model neither parameters needed&Low accuracy, regular placement of nodes&\cite{7061739}\\
+    \hline
+    DV-Hop algorithm&\cite{965964}&No model neither parameters needed&Low accuracy&\cite{jjd7e7diu}\\
+    \hline
+    Fingerprint.&\cite{YIU2017235}&No model neither parameters needed&Low accuracy, regular placement of nodes&\\
+    \hline
+
 \end{tabularx}
-
-
-
-
-
-
 
 
 
